@@ -14,6 +14,7 @@ Contains functions for conversion of gene networks to degree distributions
 Contains the data necessary to run the scripts in the folder
 
 - `get_data.sh` - Shell script for downloading Biogrid and STRING PPI data
+- `efo.owl` - Experimental factor ontology file. Used to generate categories
 - 9606.protein.links.v11.0.txt.gz - STRING PPI database data. Needed for Connectivity_Comparison_*. Produced from get_data.sh
 - BIOGRID-ALL-3.5.174.mitab.txt - Biogrid PPI database data. Needed for Connectivity_Comparison_undirected. Produced from running get_data.sh and unzipping BIOGRID-ALL-3.5.174.mitab.zip
 
