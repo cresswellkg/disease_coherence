@@ -1,0 +1,264 @@
+---
+title: "GWAS_Prep"
+output:
+  html_document:
+    toc: true
+    # toc_float: true
+    # theme: united
+    theme: cerulean
+    # number_sections: true
+date: "`r Sys.Date()`"
+author: "Mikhail Dozmorov"
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=F, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+panderOptions('knitr.auto.asis', FALSE)
+set.seed(1)
+library(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+#Read in data and packages
+
+library(gwascat)
+library(limma)
+library(dplyr)
+library(DO.db)
+library(DBI)
+library(MDmisc)
+library(ontoCAT)
+library(rowr)
+require(readr)
+
+data(ebicat37)
+```
+
+```{r}
+#Initial summary
+
+#Convert to data frame
+
+ebi_dat = as.data.frame(mcols(ebicat37))
+
+#Put comma seperated genes on different lines
+
+ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = ",")
+ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = " - ")
+
+#Remove extra whitespace from unmebed
+
+ebi_dat$MAPPED_GENE = gsub(" ", "", ebi_dat$MAPPED_GENE)
+
+#Summarise
+
+init_sum = ebi_dat %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, SNPS)  %>% distinct() %>% group_by(DISEASE.TRAIT) %>% summarise(snp_count_total = length(unique(SNPS)), snp_count_no_gene = sum(MAPPED_GENE == ""), snp_prop_nogene = snp_count_no_gene/snp_count_total,gene_count_total = length(unique(MAPPED_GENE)) - sum(unique(MAPPED_GENE =="")))
+
+write.csv(init_sum, "supplementary_table_diseases_raw.csv", row.names = FALSE)
+
+
+```
+
+```{r }
+#Converting aliases to gene names
+
+alias2SymbolEbicat = function(ebicat37) {
+  
+  ebi_dat = as.data.frame(mcols(ebicat37))
+  
+  #Unembed comma and - seperated values
+  
+  ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = ",")
+  ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = " - ")
+  
+  #Remove extra spaces
+  
+  ebi_dat$MAPPED_GENE = gsub(" ", "", ebi_dat$MAPPED_GENE)
+
+  #Summarise the results
+  
+  #Keeping track of changes (sapply necessary to keep placeholders for unmapped genes)
+  
+  recomb_genes = sapply(ebi_dat$MAPPED_GENE, function(x) alias2Symbol(x, species = "Hs"))
+  
+  recomb_genes = unlist(lapply(recomb_genes, function(x) paste0(x,collapse=' ')))
+  
+  change = (ebi_dat$MAPPED_GENE == recomb_genes)
+  
+  sum_vec = ifelse(change == TRUE, "Same", ifelse(change == FALSE & recomb_genes == "", "No Match", "Converted"))
+
+  ebi_dat$MAPPED_GENE = recomb_genes
+  
+  return(ebi_dat)
+}
+
+ebi_dat = alias2SymbolEbicat(ebicat37)
+```
+
+```{r}
+#Pulling out useful info
+
+main_inf = ebi_dat %>% dplyr::select(MAPPED_GENE, SNPS, CHR_ID, CHR_POS, INITIAL.SAMPLE.DESCRIPTION, MAPPED_TRAIT, MAPPED_TRAIT_URI, DISEASE.TRAIT)
+
+#Updated EFO table
+
+
+```
+
+
+```{r}
+#Using EFO IDs from ebicat to get a hierarchy 
+
+efo_loc = "https://raw.githubusercontent.com/EBISPOT/efo/master/efo.owl"
+
+efo = getOntology(efo_loc)
+# save(list = "efo",file =  "./data/efo.rdata")
+# 
+# load("./data/efo.rdata")
+
+
+#Cleaning up efo data to remove urls and putting comma seperated values on new lines
+
+main_inf = unembed(main_inf, "MAPPED_TRAIT_URI", sep = ",")
+main_inf$MAPPED_TRAIT_URI = basename(main_inf$MAPPED_TRAIT_URI)
+
+tree = c()
+for (i in unique(main_inf$MAPPED_TRAIT_URI)) {
+  
+  #Get entire EFO tree
+  
+  parents = getAllTermParentsById(efo, i)
+  
+  #Pull out labels and make into vector
+  
+  parents = sapply(parents, getLabel)
+  
+  #Cbind and fill in non-matching entries with NA
+  
+  tree = rowr::cbind.fill(tree,parents, fill = NA)
+  
+}
+
+#Remove original column
+
+tree = tree[,-1]
+
+colnames(tree) = unique(main_inf$MAPPED_TRAIT_URI)
+
+#Pick out important disorder groups
+
+imp_cats = c("Abnormality of refraction", "Abnormality of the eye", "age", "anthropometric measurement", "auditory system disease", "autoimmune disease", "body weights and measures", "bone measurement", "cancer", "carcinoma", "cardiovascular disease", "cardiovascular disease biomarker measurement", "cardiovascular measurement", "diabetes mellitus", "diabetes mellitus biomarker", "digestive system disease", "eye measurement", "glucose measurement", "head and neck disorder", "heart function measurement", "hematological measurement", "immune system disease", "infectious disease biomarker", "insulin measurement", "lipid measurement", "lipid or lipoprotein measurement", "lipoprotein measurement", "mental or behavioural disorder", "metabolic disease", "metabolite measurement", "neoplasm", "nervous system disease", "neurodegenerative disease", "pulmonary function measurement", "reproductive system disease", "respiratory disease biomarker", "skin disease", "sleep measurement", "temporal measurement")
+
+#Output cats by pipe
+
+#Get categories for each unique EFO ID
+
+cat_ass = apply(tree, 2, function(x) c(na.omit(match(x, imp_cats))))
+
+#Replace categoryless values with NA
+
+cat_ass = lapply(cat_ass, function(x) {
+  if (length(x)<1) {
+    cat = NA 
+  } else {
+    cat = x
+  }
+  return(cat)
+})
+
+#Assign category names
+
+mapped_groups = stack(cat_ass)
+mapped_groups$values = imp_cats[mapped_groups$values]
+colnames(mapped_groups) = c("Category", "MAPPED_TRAIT_URI")
+
+#Add groups to original data frame
+
+main_inf = left_join(main_inf,mapped_groups, by = "MAPPED_TRAIT_URI")
+
+main_inf$Category = as.character(main_inf$Category)
+
+main_inf = main_inf %>% group_by(MAPPED_TRAIT_URI) %>% mutate(Category = paste0(unique(Category), collapse = "|")) %>% distinct()
+
+#Collapse genes and disease names for simplifcation purposes and then get unique combinations
+
+names_genes = main_inf %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% distinct()
+
+#Loop through disease traits and print a gene list for each
+
+dir.create('./data/Disease_Genes')
+
+dis_dir = "./data/Disease_Genes/"
+
+
+for (i in unique(names_genes$DISEASE.TRAIT)) {
+genes_curr = names_genes %>% filter(DISEASE.TRAIT == i & MAPPED_GENE != "") %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% mutate(DISEASE.TRAIT = gsub("\\/", "-", DISEASE.TRAIT), DISEASE.TRAIT = gsub("\\*", "-", DISEASE.TRAIT), File_Path =  DISEASE.TRAIT[1]) %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, File_Path) %>% distinct()
+
+genes_disease = genes_curr %>% ungroup() %>% dplyr::select(MAPPED_GENE) %>% distinct()
+
+genes_curr = unique(genes_curr)
+
+write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
+}
+
+
+#Create map of EFO ids to terms
+
+EFO_list = lapply(unique(main_inf$MAPPED_TRAIT_URI), function(x) {
+  if (x == "GO_190252") {
+    term = NA
+  } else {
+  term = getLabel(getTermById(efo, x))
+  }
+  return(term)
+  })
+
+names(EFO_list) = unique(main_inf$MAPPED_TRAIT_URI)
+
+EFO_Frame = stack(EFO_list)
+
+colnames(EFO_Frame) = c("EFO_Name", "MAPPED_TRAIT_URI")
+
+main_inf = left_join(main_inf, EFO_Frame, "MAPPED_TRAIT_URI")
+
+```
+
+
+```{r}
+main_sum = main_inf %>% ungroup() %>%  dplyr::select(DISEASE.TRAIT, MAPPED_GENE, Category, SNPS)  %>% distinct() %>% group_by(DISEASE.TRAIT) %>% mutate(snp_count_total = length(unique(SNPS)), snp_count_no_gene = sum(MAPPED_GENE == ""), snp_prop_nogene = snp_count_no_gene/snp_count_total,gene_count_total = length(unique(MAPPED_GENE))) %>% dplyr::select(DISEASE.TRAIT, Category, snp_count_total, snp_count_no_gene, snp_prop_nogene, gene_count_total) %>% distinct()
+
+write.csv(main_sum, "supplementary_table_diseases_eof.csv", row.names = FALSE)
+```
+
+```{r}
+#Creating KEGG pathways
+
+mart  = useMart("ensembl", dataset="hsapiens_gene_ensembl")
+min_genes = 5
+
+xx = as.list(KEGGPATHID2EXTID)     # All KEGG pathways
+xx = xx[ grepl("hsa", names(xx)) ] # Keep hsa pathways only
+xx_length = sapply(xx, length)     # Number of genes in each pathway
+xx = xx[xx_length > min_genes]     # Keep pathways with minimum number of genes or higher
+xx_sample = sample(1:length(xx), size = length(xx), replace = FALSE) # reshuffled indices
+# Get all gene symbols for KEGG pathways
+genes = getBM(attributes=c('entrezgene', 'hgnc_symbol'), filters='entrezgene', values=unique(unlist(xx)), mart=mart, uniqueRows=T)
+
+kegg_paths = lapply(xx, function(x) left_join(data.frame(entrezgene = as.integer(x)), genes))
+
+#Loop through kegg pathways and save genes 
+
+dir.create("./data/Disease_Genes/KEGG")
+
+for (i in 1:length(kegg_paths)) {
+  genes = kegg_paths[[i]][,2]
+  write.table(genes, paste0("./data/Disease_Genes/KEGG/", names(kegg_paths)[i] ), row.names = FALSE, col.names = FALSE)
+
+}
+
+```

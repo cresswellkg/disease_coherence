@@ -1,0 +1,361 @@
+---
+title: "Secondary analysis of tables"
+# author: "Author's Name"
+# date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    theme: cerulean
+    toc: yes
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=F, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+set.seed(1)
+library(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+library(ggrepel)
+library(gridExtra)
+source("https://raw.githubusercontent.com/mdozmorov/MDmisc/master/R/venn.R")
+library(corrplot)
+col3 <- colorRampPalette(c("blue", "white", "red"))
+library(openxlsx)
+library(cowplot)
+```
+
+```{r}
+max_genes <- 200 # Maximum number of genes for a network to be included
+
+fileNameIn0  <- "tables/supplementary_table_S1.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
+# iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S1.csv > tmp.csv
+mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
+rownames(mtx0) <- mtx0$Disease
+```
+
+### Coherence distribution
+
+```{r}
+mtx0[, "String Filt Coherence KEGG"] %>% unlist %>% c %>% unname %>% hist
+mtx0[, "String Filt Coherence KEGG"] %>% unlist %>% c %>% unname %>% summary
+```
+
+
+### FigS1_corr_coherence.png
+
+**Supplementary Figure S1.[FILE: Figures/FigS1_corr_coherence.png] Normalized coherence is unaffected by network size.** Red/blue gradient and numbers represent Pearson correlation coefficients between corresponding entries. 
+
+```{r}
+# Selected data for correlation
+# "Disease", "Category", "Number of SNPs", "Number of genes", "Biogrid Coherence", "String Coherence", "String Filt Coherence", "Biogrid Coherence Reactome", "String Coherence Reactome", "String Filt Coherence Reactome""Biogrid Coherence CC", "String Coherence CC", "String Filt Coherence CC", "Biogrid P-value", "String P-value", "String Filt P-value" 
+mtx0_cor <- mtx0 %>% dplyr::select(c("Number of SNPs", "Number of genes", "Biogrid Coherence KEGG", "String Coherence KEGG", "String Filt Coherence KEGG"))
+# Remove large networks
+mtx0_cor <- mtx0_cor[mtx0_cor$`Number of genes` < max_genes, ]
+# Go through each pairs of columns and calculate pairwise complete observations
+# pairwise_columns <- combn(ncol(mtx0_cor), 2)
+# for(j in 1:ncol(pairwise_columns)) {
+#   print(paste0(colnames(mtx0_cor)[pairwise_columns[1, j]], " - ", colnames(mtx0_cor)[pairwise_columns[2, j]], " : ", nrow(mtx0_cor[complete.cases(mtx0_cor[, c(pairwise_columns[1, j], pairwise_columns[2, j])]), c(pairwise_columns[1, j], pairwise_columns[2, j])])))
+# }
+# Actual correlation
+diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
+
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+# Selected correlations
+png(filename = "Figures/FigS1_corr_coherence.png", height = 2000, width = 2000, res = 300)
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+dev.off()
+```
+
+### FigS2_corr_references.png
+
+**Supplementary Figure S2.[FILE: Figures/FigS2_corr_references.png] Coherence estimates are similar when using different references of high coherences and PPI databases.** Red/blue gradient and numbers represent Pearson correlation coefficients between corresponding entries. 
+
+```{r}
+# Selected data for correlation
+# "Disease", "Category", "Number of SNPs", "Number of genes", "Biogrid Coherence", "String Coherence", "String Filt Coherence", "Biogrid Coherence Reactome", "String Coherence Reactome", "String Filt Coherence Reactome""Biogrid Coherence CC", "String Coherence CC", "String Filt Coherence CC", "Biogrid P-value", "String P-value", "String Filt P-value" 
+mtx0_cor <- mtx0 %>% dplyr::select(c("Biogrid Coherence KEGG", "String Coherence KEGG", "String Filt Coherence KEGG", "Biogrid Coherence Reactome", "String Coherence Reactome", "String Filt Coherence Reactome", "Biogrid Coherence GOCC", "String Coherence GOCC", "String Filt Coherence GOCC"))
+# Remove large networks
+# mtx0_cor <- mtx0_cor[mtx0_cor$`Number of genes` < max_genes, ]
+# Go through each pairs of columns and calculate pairwise complete observations
+# pairwise_columns <- combn(ncol(mtx0_cor), 2)
+# for(j in 1:ncol(pairwise_columns)) {
+#   print(paste0(colnames(mtx0_cor)[pairwise_columns[1, j]], " - ", colnames(mtx0_cor)[pairwise_columns[2, j]], " : ", nrow(mtx0_cor[complete.cases(mtx0_cor[, c(pairwise_columns[1, j], pairwise_columns[2, j])]), c(pairwise_columns[1, j], pairwise_columns[2, j])])))
+# }
+# Actual correlation
+diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
+
+paste0("Average Pearson: ", diff_cors[upper.tri(diff_cors)] %>% mean()) # Average correlation
+
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+# Selected correlations
+png(filename = "Figures/FigS2_corr_references.png", height = 2000, width = 2000, res = 300)
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+dev.off()
+```
+
+\pagebreak
+
+# Summary plots
+
+```{r}
+mtx_traits_selected_dotplot <- function(category = "Intelligence", mtx_traits = mtx_traits, databases = c("Biogrid", "STRING full", "STRING filtered"), reference = c("KEGG")) {
+  mtx_traits_selected <- mtx_traits[mtx_traits$Category == category, grepl(reference, colnames(mtx_traits))]
+  
+  mtx_traits_selected_Biogrid <- data.frame(Disease = rownames(mtx_traits_selected), 
+                                            Pvalue = mtx_traits_selected[, grepl("P-value", colnames(mtx_traits_selected)) & grepl("Biogrid", colnames(mtx_traits_selected))], 
+                                            Coherence = mtx_traits_selected[, grepl("Coherence", colnames(mtx_traits_selected)) & grepl("Biogrid", colnames(mtx_traits_selected))], 
+                                            PPI = paste0("Biogrid ", reference))
+
+  mtx_traits_selected_STRING_full <- data.frame(Disease = rownames(mtx_traits_selected), 
+                                            Pvalue = mtx_traits_selected[, grepl("P-value", colnames(mtx_traits_selected)) & grepl("String", colnames(mtx_traits_selected)) & !grepl("Filt", colnames(mtx_traits_selected))], 
+                                            Coherence = mtx_traits_selected[, grepl("Coherence", colnames(mtx_traits_selected)) & grepl("String", colnames(mtx_traits_selected)) & !grepl("Filt", colnames(mtx_traits_selected))], 
+                                            PPI = paste0("STRING full ", reference))
+  
+  mtx_traits_selected_STRING_filt <- data.frame(Disease = rownames(mtx_traits_selected), 
+                                            Pvalue = mtx_traits_selected[, grepl("P-value", colnames(mtx_traits_selected)) & grepl("String Filt", colnames(mtx_traits_selected))], 
+                                            Coherence = mtx_traits_selected[, grepl("Coherence", colnames(mtx_traits_selected)) & grepl("String Filt", colnames(mtx_traits_selected))], 
+                                            PPI = paste0("STRING filtered ", reference))
+  # Append plots from selected databases
+  mtx_traits_selected_to_plot <- rbind()
+  if( "Biogrid" %in% databases) {
+    mtx_traits_selected_to_plot <- rbind(mtx_traits_selected_to_plot, mtx_traits_selected_Biogrid)
+  }
+  if( "STRING full" %in% databases) {
+    mtx_traits_selected_to_plot <- rbind(mtx_traits_selected_to_plot, mtx_traits_selected_STRING_full)
+  }
+  if( "STRING filtered" %in% databases) {
+    mtx_traits_selected_to_plot <- rbind(mtx_traits_selected_to_plot, mtx_traits_selected_STRING_filt)
+  }
+
+  mtx_traits_selected_to_plot <- mtx_traits_selected_to_plot[complete.cases(mtx_traits_selected_to_plot), ]
+  
+  Coherence_levels <- mtx_traits_selected_to_plot[mtx_traits_selected_to_plot$PPI == paste0("STRING filtered ", reference), ]
+  if (length(setdiff(mtx_traits_selected_to_plot$Disease, Coherence_levels$Disease)) > 0) {
+    Coherence_levels <- rbind(Coherence_levels, mtx_traits_selected_to_plot[(mtx_traits_selected_to_plot$Disease %in% setdiff(mtx_traits_selected_to_plot$Disease, Coherence_levels$Disease)) & mtx_traits_selected_to_plot$PPI != paste0("STRING filtered ", reference), , drop = FALSE])
+  }
+  
+  mtx_traits_selected_to_plot$Disease <- factor(mtx_traits_selected_to_plot$Disease, levels = Coherence_levels$Disease[order(Coherence_levels$Coherence)])
+  PPI_levels <- unique(mtx_traits_selected_to_plot$PPI)
+  mtx_traits_selected_to_plot$PPI <- factor(mtx_traits_selected_to_plot$PPI, levels = c(PPI_levels[grepl("filtered", PPI_levels)], PPI_levels[grepl("full", PPI_levels)], PPI_levels[grepl("Biogrid", PPI_levels)]))
+  # mtx_traits_selected_to_plot$Pvalue <- -log10(mtx_traits_selected_to_plot$Pvalue)
+  
+  p <- ggplot(data=mtx_traits_selected_to_plot, aes(x=Disease, y=Coherence, colour=PPI, size = Coherence)) + # label = Pvalue, 
+    geom_point() +
+    facet_grid(. ~ PPI) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ylab("Normalized coherence") +
+    # geom_text_repel(size = 4, colour = "black") +
+    coord_flip() +
+    # theme_cowplot(12) +
+    theme(legend.position="none") +
+    theme(axis.text = element_text(size = 12)) + 
+    ggtitle(category)
+}
+```
+
+## Traits
+
+### Fig3_summary_traits.png
+
+```{r results='hide'}
+# STRING filtered plots only
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+
+png(filename = "Figures/Fig3_summary_traits.png", height = 2500, width = 5000, res = 300)
+lay1 <- rbind(c(1, 2, 3))
+lay2 <- rbind(c(1, 2, 3))
+g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_eye, p_intelligence), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS3_summary_traits_KEGG.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, reference = "KEGG"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, reference = "KEGG"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, reference = "KEGG"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "KEGG"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "KEGG"))
+
+png(filename = "Figures/FigS3_summary_traits_KEGG.png", height = 2500, width = 6000, res = 300)
+lay1 <- rbind(c(1, 2, 3))
+lay2 <- rbind(c(1, 2, 3))
+g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_eye, p_intelligence), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS4_summary_traits_GOCC.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, reference = "GOCC"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, reference = "GOCC"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, reference = "GOCC"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "GOCC"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "GOCC"))
+
+png(filename = "Figures/FigS4_summary_traits_GOCC.png", height = 2500, width = 6000, res = 300)
+lay1 <- rbind(c(1, 2, 3))
+lay2 <- rbind(c(1, 2, 3))
+g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_eye, p_intelligence), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS5_summary_traits_Reactome.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, reference = "Reactome"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, reference = "Reactome"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, reference = "Reactome"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "Reactome"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "Reactome"))
+
+png(filename = "Figures/FigS5_summary_traits_Reactome.png", height = 2500, width = 6000, res = 300)
+lay1 <- rbind(c(1, 2, 3))
+lay2 <- rbind(c(1, 2, 3))
+g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_eye, p_intelligence), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+## Diseases
+
+### Fig4_summary_diseases.png
+
+```{r results='hide'}
+# STRING filtered plots only
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG")) 
+
+png(filename = "Figures/Fig4_summary_diseases.png", height = 2500, width = 5000, res = 300)
+lay1 <- rbind(c(1, 2, 3, 4))
+lay2 <- rbind(c(1, 2, 3, 4))
+g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS6_summary_diseases_KEGG.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, reference = "KEGG"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, reference = "KEGG"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, reference = "KEGG"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, reference = "KEGG"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, reference = "KEGG"))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "KEGG"))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "KEGG"))
+
+png(filename = "Figures/FigS6_summary_diseases_KEGG.png", height = 3000, width = 8000, res = 300)
+lay1 <- rbind(c(1, 2, 3, 4))
+lay2 <- rbind(c(1, 2, 3, 4))
+g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS7_summary_diseases_GOCC.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, reference = "GOCC"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, reference = "GOCC"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, reference = "GOCC"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, reference = "GOCC"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, reference = "GOCC"))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "GOCC"))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "GOCC"))
+
+png(filename = "Figures/FigS7_summary_diseases_GOCC.png", height = 3000, width = 8000, res = 300)
+lay1 <- rbind(c(1, 2, 3, 4))
+lay2 <- rbind(c(1, 2, 3, 4))
+g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+### FigS8_summary_diseases_Reactome.png
+
+```{r }
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, reference = "Reactome"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, reference = "Reactome"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, reference = "Reactome"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, reference = "Reactome"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, reference = "Reactome"))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "Reactome"))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "Reactome"))
+
+png(filename = "Figures/FigS8_summary_diseases_Reactome.png", height = 3000, width = 8000, res = 300)
+lay1 <- rbind(c(1, 2, 3, 4))
+lay2 <- rbind(c(1, 2, 3, 4))
+g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
+
+# Modularity investigation
+
+```{r}
+fileNameIn0  <- "tables/Mod_Table.xlsx"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
+# iconv -f UTF-8 -t ISO-8859-1 -c Mod_Table.csv >tmp.txt
+fileNameIn0  <- "tables/tmp.txt"
+mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
+rownames(mtx0) <- mtx0$Disease
+```
+
+
+```{r}
+# Selected data for correlation
+# "Disease", "Category", "Number of SNPs", "Number of genes", "Biogrid Coherence", "String Coherence", "String Filt Coherence", "Biogrid Coherence Reactome", "String Coherence Reactome", "String Filt Coherence Reactome""Biogrid Coherence CC", "String Coherence CC", "String Filt Coherence CC", "Biogrid P-value", "String P-value", "String Filt P-value" 
+mtx0_cor <- mtx0 %>% dplyr::select(c("Number of SNPs", "Number of genes", "Biogrid Coherence KEGG", "String Coherence KEGG", "String Filt Coherence KEGG", "Modularity Biogrid", "Modularity String", "Modularity String Filt"))
+# Remove large networks
+mtx0_cor <- mtx0_cor[mtx0_cor$`Number of genes` < max_genes, ]
+# Go through each pairs of columns and calculate pairwise complete observations
+# pairwise_columns <- combn(ncol(mtx0_cor), 2)
+# for(j in 1:ncol(pairwise_columns)) {
+#   print(paste0(colnames(mtx0_cor)[pairwise_columns[1, j]], " - ", colnames(mtx0_cor)[pairwise_columns[2, j]], " : ", nrow(mtx0_cor[complete.cases(mtx0_cor[, c(pairwise_columns[1, j], pairwise_columns[2, j])]), c(pairwise_columns[1, j], pairwise_columns[2, j])])))
+# }
+# Actual correlation
+diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
+
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+# Selected correlations
+png(filename = "Figures/FigS1_corr_coherence.png", height = 2000, width = 2000, res = 300)
+# corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
+corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
+dev.off()
+```
+
+

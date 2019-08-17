@@ -1,0 +1,1252 @@
+---
+title: "Connectivity Comparison Undirected"
+author: "Kellen Cresswell"
+date: "June 30, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.height = 6, fig.width = 9, digits = 4)
+```
+
+```{r}
+source("./functions/perm_slopes.R")
+source("./functions/GeneSample.R")
+source("./functions/genes2interactions.R")
+source("./functions/disease2frame.R")
+source("./functions/diseases2mod.R")
+
+require(KEGGREST)
+require(KEGG.db)
+require(readr)
+require(dplyr)
+require(biomaRt)
+require(ggplot2)
+require(broom)
+require(stringr)
+require(dplyr)
+require(tidyr)
+require(igraph)
+```
+
+```{r}
+#Reading in biogrid data
+
+links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
+
+links = links %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
+
+#Split based on Biogrid ID system then pull out gene names
+
+protein1 = lapply(strsplit(links$`Alt IDs Interactor A`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
+protein2 = lapply(strsplit(links$`Alt IDs Interactor B`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
+
+protein1 = unlist(protein1)
+protein2 = unlist(protein2)
+
+#Place into matrix in form that disease2frame works on
+
+links = links %>% mutate(protein1 =protein1, 
+                             protein2 = protein2) %>% dplyr::select(protein1, protein2)
+
+links = links %>% dplyr::select(hgnc_symbol_a = protein1,hgnc_symbol_b = protein2)
+
+
+dim(links)
+```
+
+```{r}
+#Repeating for string
+
+data_dir = "./data/"
+
+string = read_table2(paste0(data_dir,"9606.protein.links.v11.0.txt.gz"))
+
+string= string %>% mutate(protein1 = gsub("9606.", "", protein1), 
+                             protein2 = gsub("9606.", "", protein2))
+
+#Read in ensemble protein ID
+
+ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "www")
+
+genes = biomaRt::getBM(attributes=c('ensembl_peptide_id','hgnc_symbol'), mart = ensembl)
+
+
+#Join gene names with string
+
+string = left_join(string, genes, by = c("protein1" = "ensembl_peptide_id", "protein2" = "ensembl_peptide_id"))
+
+colnames(string)[4] ="hgnc_symbol_a"
+
+string = left_join(string, genes, by = c("protein2" = "ensembl_peptide_id"))
+
+colnames(string)[5] ="hgnc_symbol_b"
+
+dim(string)
+
+
+```
+
+
+```{r}
+#Repeating for string
+
+data_dir = "./data/"
+
+string_old = read_table2(paste0(data_dir,"9606.protein.links.v10.5.txt.gz"))
+
+string_old= string_old %>% mutate(protein1 = gsub("9606.", "", protein1), 
+                             protein2 = gsub("9606.", "", protein2))
+
+#Read in ensemble protein ID
+
+ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "www")
+
+genes = biomaRt::getBM(attributes=c('ensembl_peptide_id','hgnc_symbol'), mart = ensembl)
+
+
+#Join gene names with string_old
+
+string_old = left_join(string_old, genes, by = c("protein1" = "ensembl_peptide_id", "protein2" = "ensembl_peptide_id"))
+
+colnames(string_old)[4] ="hgnc_symbol_a"
+
+string_old = left_join(string_old, genes, by = c("protein2" = "ensembl_peptide_id"))
+
+colnames(string_old)[5] ="hgnc_symbol_b"
+
+dim(string)
+```
+
+```{r}
+combined_int = paste0(pmin(string_old$hgnc_symbol_a, string_old$hgnc_symbol_b), pmax(string_old$hgnc_symbol_a, string_old$hgnc_symbol_b)  ) %in%  paste0(pmin(string$hgnc_symbol_a, string$hgnc_symbol_b), pmax(string$hgnc_symbol_a, string$hgnc_symbol_b))
+
+sum(combined_int)/length(combined_int)
+
+string = string %>% mutate(Combined = paste0(pmin(hgnc_symbol_a, hgnc_symbol_b), "-", pmax(hgnc_symbol_a, hgnc_symbol_b))) %>% distinct()
+
+string_old = string_old %>% mutate(Combined = paste0(pmin(hgnc_symbol_a, hgnc_symbol_b), "-", pmax(hgnc_symbol_a, hgnc_symbol_b))) %>% distinct()
+
+string = string %>% arrange(Combined)
+string_old = string_old %>% arrange(Combined)
+
+#source("https://raw.githubusercontent.com/mdozmorov/MDmisc/master/R/venn.R")
+
+#Venn2(string$Combined, string_old$Combined)
+
+new_in_old = sum(string$Combined %in% string_old$Combined)/length(string$Combined)
+old_in_new = sum(string_old$Combined %in% string$Combined)/length(string_old$Combined)
+```
+
+```{r}
+
+#Get directory with diseases
+
+disease_directory = "./data/Disease_Genes/"
+
+disease_names = list.files(disease_directory)
+
+disease_list = paste0("./data/Disease_Genes/", disease_names, "/")
+
+#Read in manually selected diseases
+
+disease_select = read_csv("supplementary_table_diseases_selected.csv")
+eof = read_csv("supplementary_table_diseases_eof.csv")
+
+disease_traits = disease_select %>% dplyr::select(`Disease name`, Category)
+
+#Pull out disease and category information from select diseases
+
+eof_counts = eof %>% dplyr::select(-Category)
+
+#Join diseases to add categories and remove non-selected diseases
+
+disease_select = inner_join(eof_counts, disease_traits, c("DISEASE.TRAIT" = "Disease name")) %>% distinct()
+
+#Place category second
+
+disease_select = disease_select[,c(1,6,2:5)]
+
+#Summarizing
+
+# disease_sum = disease_select %>% group_by(Category) %>% summarise(Med_SNP = median(snp_count_total), Med_Gene = median(Number.of.genes), Mean_Missing = mean(per_missing)) %>% arrange(-Mean_Missing)
+# 
+# disease_mann_whit = disease_select[1:137,]  %>% do(tidy(pairwise.wilcox.test(.$snp_count_total, g = .$Category, p.adjust.method = "none")))
+# 
+# disease_mann_whit_prop = disease_select[1:137,]  %>% mutate(Prop_Miss = 1- Number.of.genes/snp_count_total) %>% group_by(Category) %>% summarise(Med_Miss = median(Prop_Miss)) %>% arrange(-Med_Miss) # %>% do(tidy(pairwise.wilcox.test(.$Prop_Miss, g = .$Category, p.adjust.method = "none")))
+# 
+# disease_mann_whit_gene = disease_select[1:137,]  %>% do(tidy(pairwise.wilcox.test(.$Number.of.genes, g = .$Category, p.adjust.method = "none"))) %>% arrange(p.value)
+# 
+# disease_mann_whit_miss = disease_select[1:137,]  %>% do(tidy(pairwise.wilcox.test(.$per_missing, g = .$Category, p.adjust.method = "none"))) %>% arrange(p.value)
+
+#Change first column to make more clear
+
+colnames(disease_select)[1] = "Disease"
+
+#Creating a vector of file names from disease select
+
+disease_files =  unique(paste0(disease_select$Disease, ".txt"))
+
+#Make full path
+
+disease_selected = paste0("./data/Disease_Genes/", disease_files)
+
+```
+
+```{r}
+#Loop through diseases and pull out internal and external edges
+
+disease_length = 1:length(disease_selected)
+
+disease_frames = lapply(disease_length, function(x) {
+
+  #Run function to find internal and external connectivity 
+  diseases = diseases2frame(disease_selected[x], links = links)
+  
+  #Record ppi missing
+  
+  per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
+  return(list(diseases = diseases, lengths = per_no_ppi))
+  })
+
+#Calculate modularity
+
+disease_mod = lapply(disease_length, function(x) {
+
+  #Run function to find internal and external connectivity 
+  mod = diseases2mod(disease_selected[x], links = links)
+  
+})
+
+saveRDS(disease_mod, "Modularity_Biogrid.rds")
+
+#Pull out network information for overall data frame
+
+disease_protein = lapply(disease_frames, function(x) x$diseases)
+
+#Convert to data frame
+
+disease_overall = bind_rows(disease_protein)
+
+disease_overall = left_join(disease_overall, disease_select %>% dplyr::select(Disease, Category), "Disease")
+
+
+#Add number of snps with no connection to original data frame
+
+per_no_ppi_bio = sapply(disease_frames, function(x) x$lengths)
+
+per_no_ppi_frame = data.frame(Disease = unique(disease_select$Disease), per_no_ppi_bio = per_no_ppi_bio)
+
+disease_select = left_join(disease_select, per_no_ppi_frame, "Disease")
+
+
+```
+
+```{r}
+#Repeat for string
+
+#Loop through diseases and pull out internal and external edges
+
+disease_frames_string = lapply(disease_length, function(x) {
+
+  #Run function to find internal and external connectivity 
+  diseases = diseases2frame(disease_selected[x], links = string)
+  
+  #Record ppi missing
+  
+  per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
+  return(list(diseases = diseases, lengths = per_no_ppi))
+  })
+
+#String
+
+disease_mod_string = lapply(disease_length, function(x) {
+
+  #Run function to find internal and external connectivity 
+  mod = diseases2mod(disease_selected[x], links = string)
+  
+})
+
+saveRDS(disease_mod_string, "Modularity_String.rds")
+
+#Pull out network information for overall data frame
+
+disease_protein_string = lapply(disease_frames_string, function(x) x$diseases)
+
+#Convert to data frame
+
+disease_overall_string = bind_rows(disease_protein_string)
+
+disease_overall_string = left_join(disease_overall_string, disease_select %>% dplyr::select(Disease, Category), "Disease")
+
+#Add number of snps with no connection to original data frame
+
+per_no_ppi_string = sapply(disease_frames_string, function(x) x$lengths)
+
+per_no_ppi_frame = data.frame(Disease = unique(disease_select$Disease), per_no_ppi_string = per_no_ppi_string)
+
+saveRDS(disease_overall_string, "string_edges_new.rds")
+
+disease_select = left_join(disease_select, per_no_ppi_frame, "Disease")
+
+saveRDS(disease_overall_string, "string_edges_new.rds")
+
+saveRDS(disease_overall, "biogrid_edges_new.rds")
+```
+
+
+```{r}
+#Generating 20 random networks with 100 genes each
+
+#disease_counts = disease_overall %>% group_by(Disease) %>% summarise(counts = n())
+
+set.seed(123)
+
+rand_nets = list()
+for (i in 1:20) {
+rand_nets[[i]] = GeneSample(1000, links, directed = FALSE)
+}
+
+# index = 1
+# rand_nets = list()
+# for (i in disease_counts$counts) {
+#   rand_nets[[index]] = GeneSample(i, links, directed = FALSE)
+#   index = index+1
+# }
+
+#Getting a dataframe of internal/external connectivity
+
+rand_length = 1:length(rand_nets)
+
+rand_frame = lapply(rand_length, function(y) {
+  
+  #Read through random list of gene networks
+  
+  x = rand_nets[[y]]
+  
+  #Place internal and external edges into data frame
+  
+  sub_frame = bind_rows(x$internal_connectivity, x$external_connectivity)
+  sub_frame = cbind.data.frame(colnames(sub_frame), t(sub_frame[1,]), t(sub_frame[2,]))
+  colnames(sub_frame) = c("Genes", "Internal", "External")
+  
+  #Add category and "disease" name
+  
+  sub_frame %>% mutate(Disease = paste0("Run ", y), Category = "Random")
+  })
+
+#Bind list into data frame
+
+rand_frame = bind_rows(rand_frame)
+
+disease_overall = bind_rows(disease_overall, rand_frame)
+
+```
+
+```{r}
+#Repeat for string
+
+# disease_counts_string = disease_overall_string %>% group_by(Disease) %>% summarise(counts = n())
+
+set.seed(123)
+
+rand_nets = list()
+for (i in 1:20) {
+rand_nets[[i]] = GeneSample(1000, string, directed = FALSE)
+}
+
+#index = 1
+# rand_nets = list()
+# for (i in disease_counts_string$counts) {
+#   rand_nets[[index]] = GeneSample(i, links, directed = FALSE)
+#   index = index+1
+# }
+
+
+#Getting a dataframe of internal/external connectivity
+
+rand_length = 1:length(rand_nets)
+
+rand_frame_string = lapply(rand_length, function(y) {
+  
+  #Read through random list of gene networks
+  
+  x = rand_nets[[y]]
+  
+  #Place internal and external edges into data frame
+  
+  sub_frame = bind_rows(x$internal_connectivity, x$external_connectivity)
+  sub_frame = cbind.data.frame(colnames(sub_frame), t(sub_frame[1,]), t(sub_frame[2,]))
+  colnames(sub_frame) = c("Genes", "Internal", "External")
+  
+  #Add category and "disease" name
+  
+  sub_frame %>% mutate(Disease = paste0("Run ", y), Category = "Random")
+  })
+
+#Bind list into data frame
+
+rand_frame_string = bind_rows(rand_frame_string)
+
+disease_overall_string = bind_rows(disease_overall_string, rand_frame_string)
+
+```
+
+```{r}
+#Repeating for KEGG pathways
+
+kegg_directory = "./data/Disease_Genes/KEGG/"
+
+kegg_names = list.files(kegg_directory)
+
+kegg_list = paste0("./data/Disease_Genes/KEGG/", kegg_names)
+
+kegg_length = length(kegg_list)
+
+kegg_frames = lapply(1:kegg_length, function(x) {
+  diseases = diseases2frame(kegg_list[x], links = links)
+  per_no_ppi = 1- (nrow(diseases)/nrow(read.table(kegg_list[x])))
+  return(list(diseases = diseases, lengths = per_no_ppi))
+  })
+
+kegg_overall = lapply(kegg_frames, function(x) x$diseases %>% mutate(Category = "KEGG"))
+
+disease_overall = bind_rows(disease_overall, kegg_overall) %>% distinct()
+```
+
+```{r}
+#Repeating for string
+
+kegg_frames_string = lapply(1:kegg_length, function(x) {
+  diseases = diseases2frame(kegg_list[x], links = string)
+  per_no_ppi = 1- (nrow(diseases)/nrow(read.table(kegg_list[x])))
+  return(list(diseases = diseases, lengths = per_no_ppi))
+  })
+
+kegg_overall_string = lapply(kegg_frames_string, function(x) x$diseases %>% mutate(Category = "KEGG"))
+
+disease_overall_string = bind_rows(disease_overall_string, kegg_overall_string) %>% distinct()
+```
+
+```{r}
+#Load in normalization regression
+
+pred_edges = readRDS("pred_edges.rds")
+pred_edges_biogrid= readRDS("pred_edges_biogrid.rds")
+
+```
+
+```{r}
+# #Permutation test for slope difference
+# 
+# source("./functions/perm_slopes.R")
+# 
+# set.seed(123)
+# 
+# #Run permutation test on each category for differences in slope
+# 
+# perm_cat_slope = disease_overall%>% group_by(Category) %>% mutate(Disease = Category) %>% do(tidy(slope_perm(disease_overall_string, Disease[1], pred_edges, 1000)))
+# 
+# perm_cat_slope_string = disease_overall_string %>% group_by(Category) %>% mutate(Disease = Category) %>% do(tidy(slope_perm(disease_overall_string, Disease[1], pred_edges, 1000)))
+# 
+# perm_slope = disease_overall%>% group_by(Category) %>% mutate(Disease = Category) %>% do(tidy(slope_perm(disease_overall_string, Disease[1], pred_edges, 1000)))
+
+```
+
+```{r}
+#Normalizing by number of genes
+
+#disease_zeros = disease_overall %>% group_by(Category) %>% summarise(Per_Zero = sum(Internal==0)/length(Internal))
+
+#Remove edges with less than 5 total counts, square root internal edges and correct by predicted
+
+disease_overall = disease_overall  %>% mutate(External = External-Internal) %>% group_by(Disease)  %>%  mutate(Pred_Edges = predict(pred_edges_biogrid, data.frame(num_genes = n())), Internal = sqrt(Internal/Pred_Edges), External = sqrt(External)) %>% ungroup() %>% mutate(Disease = ifelse(Category == "Random", "Random", Disease)) %>% filter(Internal != 0) %>% group_by(Disease) %>% filter(n() > 4) %>% filter(length(unique(Internal))>1)
+
+#Make names more informative
+
+disease_overall = disease_overall %>% ungroup() %>%  mutate(Disease = gsub("Run ", "Random ", Disease), Disease = gsub("hsa", "KEGG hsa", Disease))
+
+
+#Repeat for string
+
+disease_overall_string = disease_overall_string %>% mutate(External = External-Internal) %>% group_by(Disease)  %>%  mutate(Pred_Edges = predict(pred_edges, data.frame(num_genes = n())), Internal = sqrt(Internal/Pred_Edges), External = sqrt(External)) %>% ungroup() %>% mutate(Disease = ifelse(Category == "Random", "Random", Disease))  %>% filter(Internal != 0) %>% group_by(Disease) %>% filter(n() > 4)
+
+disease_overall_string = disease_overall_string %>% group_by(Disease) %>% filter(length(unique(Internal))>1)
+
+disease_overall_string =  disease_overall_string %>% ungroup() %>%  mutate(Disease = gsub("Run ", "Random ", Disease), Disease = gsub("hsa", "KEGG hsa", Disease))
+
+```
+
+```{r}
+disease_overall = readRDS("disease_overall_biogrid.rds")
+disease_overall_string = readRDS("disease_overall_string.rds")
+
+```
+
+```{r}
+require(msigdbr)
+dis_slopes_string_count = disease_overall_string %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>% filter(Internal != 0) %>% 
+    group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope) %>% filter(Count>4)
+
+msig = readRDS("KEGG_String.rds")
+#msig =msig %>% filter(Category == "KEGG")
+coherence_tab = bind_rows()
+for (i in unique(dis_slopes_string_count$Disease)) {
+  print(i)
+  dis = dis_slopes_string_count %>% filter(Disease == i)
+  msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
+  msigs = msigs[1:10,]
+  
+  diseases = bind_rows()
+  j = 1
+    while(j<11) {
+    diseases_curr = GeneSample(dis$Count, string, directed = FALSE)
+    diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
+    if (any(diseases_curr$Internal !=0)) {
+      j = j+1
+      diseases = bind_rows(diseases, diseases_curr)
+
+    }
+    }
+  
+      mod_rand = lm(External ~ Internal-1, data = diseases)
+      rand_slope = coef(mod_rand)[[1]]
+      
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
+      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Rand_Norm = rand_slope, Msig_Norm = median(msigs$Slope))
+      
+      coherence_tab = bind_rows(coherence, coherence_tab)
+      saveRDS(coherence_tab, "coherence_string.rds")
+}
+  
+  
+
+```
+
+```{r}
+
+coherence_string_filt = readRDS("coherence_string_filt.rds") %>% dplyr::select(Disease, Coherence)
+coherence_string = readRDS("coherence_string.rds") %>% dplyr::select(Disease, Coherence)
+coherence_biogrid = readRDS("coherence_biogrid.rds") %>% dplyr::select(Disease, Coherence)
+
+coherence_full = full_join(coherence_string_filt, coherence_string, by = "Disease")
+
+coherence_full = full_join(coherence_full, coherence_biogrid, by = "Disease")
+
+coherence_full = coherence_full[,c(1,4,3,2)]
+
+colnames(coherence_full) = c("Disease", "Biogrid_Coherence", "String_Coherence", "String_Filt_Coherence")
+
+old_res = read.csv("./manuscript/supplementary_table_S1.csv") %>% dplyr::select(-Coherence.Biogrid, -Coherence.String.full, -Coherence.String.filt)
+
+old_coh = read.csv("./manuscript/supplementary_table_S1.csv") %>% dplyr::select(Disease = Trait, Coherence.Biogrid, Coherence.String.full, Coherence.String.filt)
+
+test_coherence = test = left_join(coherence_full, old_coh)
+
+colnames(old_res)[1] = "Disease"
+
+coherence_full = left_join(coherence_full, old_res) %>% filter(!is.na(Total.number.of.SNPs))
+
+coherence_full = coherence_full[,c(1,5, 6:7, 2:4,8:10)]
+
+colnames(coherence_full) = gsub("\\.", " ", colnames(coherence_full))
+
+colnames(coherence_full) = gsub("\\_", " ", colnames(coherence_full))
+
+colnames(coherence_full)[1] = "Trait"
+
+coherence_full[,5:7] = apply(coherence_full[,5:7], 2, function(x) ifelse(x<0, 0, ifelse (
+  x>1, 1, x
+)))
+
+write.table(coherence_full, "supplementary_table_S1_New.txt", sep = "\t", row.names = FALSE)
+
+#Read in old table I sent
+
+old_tab = read_tsv("C:\\Users\\cresswellkg\\Downloads\\supplementary_table_S1_New.txt", col_names = TRUE)
+
+old_tab_comb = left_join(old_tab, old_coh, "Disease")
+
+cor(old_tab_comb$`Coherence String`, old_tab_comb$Coherence.String.filt, "complete")
+```
+
+#Plot of all diseases
+
+```{r}
+
+#Calculate the slopes for diseases and categories
+
+#Slope for categories
+
+slopes = disease_overall %>% filter(Internal != 0) %>% 
+    group_by(Category) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+#Slope for diseases
+
+dis_slopes = disease_overall %>% filter(Internal != 0) %>% 
+    group_by(Disease, Category) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+#Permutation test
+
+# dis_pvals = disease_overall %>% filter(Internal != 0) %>% filter(Category != "Random") %>%
+#     group_by(Disease, Category) %>% 
+#     do({
+#       perm = slope_perm(disease_overall, .$Disease[1], database = links, Norm_Reg = NULL, permutations = 1000)
+#       data.frame(P_val= perm)
+#     }) %>% arrange(P_val)
+
+#Slopes for Biogrid categories
+
+# cat_pvals = disease_overall %>% filter(Internal != 0) %>% filter(Category != "Random") %>%
+#     group_by(Category) %>%
+#     do({
+#       perm = slope_perm(disease_overall, .$Category[1], Norm_Reg =NULL, database = links, permutations = 1000, Disease = FALSE)
+#       data.frame(P_val= perm)
+#     }) %>% arrange(P_val)
+
+#Slopes for categories string
+
+slopes_string = disease_overall_string %>% filter(Internal != 0) %>% 
+    group_by(Category) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+#Slopes for diseases
+
+dis_slopes_string = disease_overall_string %>% filter(Internal != 0) %>% 
+    group_by(Disease, Category) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+# #Add p-values
+# 
+# dis_pvals_string = disease_overall_string %>% filter(Internal != 0) %>% filter(Category != "Random") %>%
+#     group_by(Disease, Category) %>% 
+#     do({
+#       perm = slope_perm(disease_overall_string, .$Disease[1], database = string, Norm_Reg =NULL, permutations = 1000)
+#       data.frame(P_val= perm)
+#     }) %>% arrange(P_val)
+# 
+# #Category p-values
+# 
+# cat_pvals_string = disease_overall_string %>% filter(Internal != 0) %>% filter(Category != "Random") %>%
+#     group_by(Category) %>%
+#     do({
+#       perm = slope_perm(disease_overall_string, .$Category[1], database = Norm_Reg =NULL, permutations = 1000, Disease = FALSE)
+#       data.frame(P_val= perm)
+#     }) %>% arrange(P_val)
+
+#Add slopes to the overall dataset
+
+disease_overall = left_join(disease_overall, slopes, "Category")
+colnames(disease_overall)[7] = "Category_Slope"
+
+disease_overall = left_join(disease_overall, dis_slopes[,c(1,3)], "Disease")
+colnames(disease_overall)[8] = "Disease_Slope"
+
+# disease_overall = left_join(disease_overall, dis_pvals[,c(1,3)], "Disease")
+# colnames(disease_overall)[9] = "Slope_Pval"
+
+
+disease_overall_string = left_join(disease_overall_string, slopes_string, "Category")
+colnames(disease_overall_string)[7] = "Category_Slope"
+
+disease_overall_string = left_join(disease_overall_string, dis_slopes_string[,c(1,3)], "Disease")
+colnames(disease_overall_string)[8] = "Disease_Slope"
+# 
+# disease_overall_string = left_join(disease_overall_string, dis_pvals_string[,c(1,3)], "Disease")
+# colnames(disease_overall_string)[9] = "Slope_Pval"
+
+#KEGG and random should be same color on all plots
+#Order by slope
+
+library(RColorBrewer)
+
+#Make levels into factors
+
+disease_overall = disease_overall %>% arrange(-Category_Slope) %>% mutate(Category = factor(Category, levels =unique(Category)))
+
+disease_overall_string = disease_overall_string %>% arrange(-Category_Slope) %>% mutate(Category = factor(Category, levels =unique(Category)))
+
+#Filter out KEGG categories with worse coherence than fasting glucose
+
+disease_overall = disease_overall %>% mutate(Genes = ifelse( (Category == "KEGG") & (Disease_Slope > min(  (disease_overall %>% filter(Category != "KEGG"))$Disease_Slope)), "Incoherent", Genes )) %>% filter(Genes != "Incoherent")
+
+disease_overall_string = disease_overall_string %>% mutate(Genes = ifelse( (Category == "KEGG") & (Disease_Slope > min(  (disease_overall_string %>% filter(Category != "KEGG"))$Disease_Slope)), "Incoherent", Genes )) %>% filter(Genes != "Incoherent")
+
+#Set a custom color palette for both string and biogrid
+
+library(randomcoloR)
+
+#Set permanent colors for random and KEGG
+
+col =  c("Red", "#999999", distinctColorPalette(12))
+names(col) = c("Random", "KEGG", as.character(unique(disease_overall_string$Category))[!(unique(disease_overall_string$Category) %in% c("KEGG", "Random"))])
+
+col_full = scale_color_manual(values = col)
+
+category_plot = ggplot(disease_overall, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + col_full + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm"))
+
+category_plot_string = ggplot(disease_overall_string, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2)  + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm")) + col_full
+
+ggsave("./figures/category_plot_biogrid.png", category_plot, height=5, width=7, units="in", dpi = 300)
+
+ggsave("./figures/category_plot_string.png", category_plot_string, height=5, width=7, units="in", dpi = 300)
+
+```
+
+```{r}
+#Table of category coherence
+
+#Get gene counts
+
+gene_count_cat = disease_overall %>% group_by(Category) %>% summarise(gene_count_biogrid = n())
+gene_count_cat_string = disease_overall_string %>% group_by(Category) %>% summarise(gene_count_string = n())
+
+coherence_frame =full_join(gene_count_cat, gene_count_cat_string, "Category")
+
+#Get coherence
+
+coherence_cat = slopes %>%  ungroup() %>% mutate(Min_Max = ((Slope - max(Slope))/(min(Slope) - max(Slope)))) %>% dplyr::select(Category, Min_Max) %>% distinct()
+
+coherence_cat_string = slopes_string %>%  ungroup() %>% mutate(Min_Max = ((Slope - max(Slope))/(min(Slope) - max(Slope)))) %>% dplyr::select(Category, Min_Max) %>% distinct()
+
+coherence_frame = full_join(coherence_frame,coherence_cat, "Category") 
+
+coherence_frame = full_join(coherence_frame,coherence_cat_string, "Category") 
+
+biogrid_cat_p = readRDS("biogrid_p_cat.rds") %>% as.data.frame(.) %>% dplyr::select( Category = i, `Biogrid Perm P-value` = perm )
+
+string_cat_p = readRDS("string_p_cat.rds") %>% as.data.frame(.) %>% dplyr::select( Category = i, `String Perm P-value` = perm )
+
+coherence_frame = left_join(coherence_frame, biogrid_cat_p, by = "Category")
+coherence_frame = full_join(coherence_frame, string_cat_p, by = "Category")
+
+# coherence_frame = full_join(coherence_frame, cat_pvals, "Category")
+# 
+# coherence_frame = full_join(coherence_frame, cat_pvals_string, "Category") %>% filter(!(Category %in% c("KEGG", "Random")))
+
+#coherence_frame = coherence_frame %>% mutate(cat_pvals = NA, cat_pvals_string = NA)
+
+colnames(coherence_frame)[4:7] = c("Coherence Biogrid", "Coherence String",  "Biogrid Perm P-val", "String Perm P-val")
+
+coherence_frame = coherence_frame %>% filter(!is.na(`String Perm P-val`)) %>% arrange(Category)
+
+write.csv(coherence_frame, "./tables/supplementary_table_categories.csv", row.names = FALSE)
+
+```
+
+# Plot of all categories (Biogrid)
+
+```{r}
+category_plot
+```
+
+# Plot of all categories (String)
+
+```{r}
+category_plot_string
+```
+
+```{r}
+category = disease_overall %>% filter((!grepl("trait", Category) & !grepl("Intelligence", Category)) | Category == "KEGG" | Category == "Random") %>% arrange(-Category_Slope)
+
+category_string = disease_overall_string %>% filter((!grepl("trait", Category) & !grepl("Intelligence", Category)) | Category == "KEGG" | Category == "Random") %>% arrange(-Category_Slope)
+
+col_sub = col[names(col) %in% category$Category]
+
+cat_plot = ggplot(category, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + scale_color_manual(values = col_sub) + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm"))
+
+ggsave("./figures/category_disease_plot_biogrid.png", cat_plot, height=5, width=7, units="in", dpi = 300)
+
+cat_plot_string = ggplot(category_string, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + scale_color_manual(values = col_sub) + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm"))
+
+ggsave("./figures/category_disease_plot_string.png", cat_plot_string, height=5, width=7, units="in", dpi = 300)
+
+```
+
+# Plot of non-trait categories (Biogrid)
+
+```{r}
+cat_plot
+```
+
+# Plot of non-trait categories (String)
+
+```{r}
+cat_plot_string
+```
+
+
+```{r}
+traits = disease_overall %>% filter((grepl("trait", Category) | grepl("Intelligence", Category)) | Category == "KEGG" | Category == "Random")
+
+traits_string = disease_overall_string %>% filter((grepl("trait", Category) | grepl("Intelligence", Category)) | Category == "KEGG" | Category == "Random")
+
+col_sub = col[names(col) %in% traits$Category]
+
+trait_plot = ggplot(traits, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + scale_color_manual(values = col_sub) + theme_light(base_size = 24) + theme(legend.position=c(.25,.78), legend.key.height = unit(.2, "cm")) + labs(color = "Category") +
+   theme(axis.line = element_line(colour = "black"), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(), legend.text = element_text(size = 16)) 
+
+ggsave("./manuscript/Fig_S5B_category_trait_plot_biogrid.png",trait_plot, height=5, width=7, units="in", dpi = 300)
+
+col_sub_string = col[names(col) %in% traits_string$Category]
+
+
+trait_plot_string = ggplot(traits_string, aes(x = Internal, y = External, color = Category)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + scale_color_manual(values = col_sub_string)  + theme_light(base_size = 24) + theme(legend.position=c(.25,.78), legend.key.height = unit(.2, "cm")) + labs(color = "Category") +
+   theme(axis.line = element_line(colour = "black"), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(), legend.text = element_text(size = 16)) 
+
+ggsave("./manuscript/Fig_S5A_category_trait_plot_string.png",trait_plot_string, height=5, width=7, units="in", dpi = 300)
+
+```
+
+# Plot of traits (Biogrid)
+
+```{r}
+trait_plot
+```
+
+# Plot of traits (String)
+
+```{r}
+trait_plot_string
+```
+
+# Plot of anthropometric measures
+
+```{r}
+#Subsetting to include anthro traits
+
+disease_anthro = disease_overall  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Anthropometric trait" | Disease == "KEGG" | Disease == "Random"))
+
+#Repeat for string
+
+disease_anthro_string = disease_overall_string  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Anthropometric trait" | Disease == "KEGG" | Disease == "Random"))
+
+#Plotting anthropometric traits
+
+col_dis_bio = c(col[names(col) %in% disease_anthro$Disease], distinctColorPalette(length(unique(disease_anthro$Disease))))
+
+#Giving unique colors for each disease
+
+names(col_dis_bio)[-c(1,2)] = as.character(unique(disease_anthro$Disease))
+
+anthro_plot = ggplot(disease_anthro , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = col_dis_bio) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+ggsave("./figures/anthro_plot_biogrid.png",anthro_plot, height=5, width=7, units="in", dpi = 300)
+
+#Repeating for string
+
+#Giving unique colors for each disease
+
+col_dis_string = c(col[names(col) %in% disease_anthro_string$Disease], distinctColorPalette(length(unique(disease_anthro_string$Disease))))
+
+names(col_dis_string)[-c(1,2)] = as.character(unique(disease_anthro_string$Disease))
+
+anthro_plot_string = ggplot(disease_anthro_string , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = col_dis_string) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+ggsave("./figures/anthro_plot_string.png",anthro_plot_string, height=5, width=7, units="in", dpi = 300)
+
+
+```
+
+```{r}
+#Order and keep random and KEGG consistent from other plot
+
+disease_psych = disease_overall  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Psychiatric" | Disease == "KEGG" | Disease == "Random")) %>% group_by(Disease) %>% filter(n()>4)
+
+disease_psych_string = disease_overall_string  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Psychiatric" | Disease == "KEGG" | Disease == "Random")) %>% group_by(Disease) 
+
+col_dis = c(col[names(col) %in% disease_psych$Disease], distinctColorPalette(length(unique(disease_psych$Disease))))
+
+names(col_dis)[-c(1,2)] = as.character(unique(disease_psych$Disease))
+
+
+psych_plot = ggplot(disease_psych , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = c(col_dis)) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+#Redo colors for string
+
+col_dis = c(col[names(col) %in% disease_psych_string$Disease], distinctColorPalette(length(unique(disease_psych_string$Disease))))
+
+names(col_dis)[-c(1,2)] = as.character(unique(disease_psych_string$Disease))
+
+psych_plot_string = ggplot(disease_psych_string , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = c(col_dis)) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+
+ggsave("./figures/psych_plot_biogrid.png",psych_plot, height=5, width=7, units="in", dpi = 300)
+
+ggsave("./figures/psych_plot_string.png",psych_plot_string, height=5, width=7, units="in", dpi = 300)
+
+```
+
+# Plot of psychiatric diseases (Biogrid)
+
+```{r}
+psych_plot
+```
+
+# Plot of psychiatric diseases (String)
+
+```{r}
+psych_plot_string
+```
+
+# Plot of Neuorologic diseases
+
+```{r}
+#Subset to include neurological disorders
+
+disease_neuro = disease_overall  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Neurologic" | Disease == "KEGG" | Disease == "Random"))
+
+disease_neuro_string = disease_overall_string  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope)) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == "Neurologic" | Disease == "KEGG" | Disease == "Random"))
+
+
+#Setting the colors for neurologic diseases
+
+col_neuro = c(col[names(col) %in% disease_neuro$Disease], distinctColorPalette(length(unique(disease_neuro$Disease))))
+
+names(col_neuro)[-c(1,2)] = as.character(unique(disease_neuro$Disease))
+
+#Biogrid 
+
+neuro_plot = ggplot(disease_neuro , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = col_neuro) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+ggsave("./figures/neuro_plot_biogrid.png", neuro_plot, height=5, width=7, units="in", dpi = 300)
+
+#Repeating for STRING
+
+#Names for 10 diseases
+
+col_neuro = c(col[names(col) %in% disease_neuro_string$Disease], distinctColorPalette(length(unique(disease_neuro_string$Disease))))
+
+names(col_neuro)[-c(1,2)] = as.character(unique(disease_neuro_string$Disease))
+
+neuro_plot_string = ggplot(disease_neuro_string , aes(x = Internal, y = External, color = Disease)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = col_neuro) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+
+ggsave("./figures/neuro_plot_string.png", neuro_plot_string, height=5, width=7, units="in", dpi = 300)
+```
+
+```{r}
+#Function to create all other plots
+
+dir.create("./figures/Category")
+
+plot_coherence = function(Cat, dataset, protein_database, filtered = FALSE) {
+  
+  all_plots = list()
+  #Subset based on category
+  
+sub_frame = dataset  %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% group_by(Disease) %>% mutate(Disease_Slope = ifelse(Category %in% c("Random", "KEGG"), Category_Slope, Disease_Slope))  %>% mutate(Disease_Slope = ifelse(Category == "KEGG", 0, Disease_Slope)) %>%
+ arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease))) %>% filter( (Category == Cat | Disease == "KEGG" | Disease == "Random"))
+print(sub_frame)
+
+print(head(sub_frame))
+  
+  #Get colors
+  
+  color = c(col[names(col) %in% sub_frame$Disease], distinctColorPalette(length(unique(sub_frame$Disease))))
+
+names(color)[-c(1,2)] = as.character(unique(sub_frame$Disease))
+
+#Make plot
+
+
+dis_plot = ggplot(sub_frame , aes(x = Internal, y = External, color =Disease, -Disease_Slope)) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = color) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+  
+all_plots[[i]] = dis_plot
+
+if (filtered) {
+ggsave(paste0("./figures/Category/", Cat, "_plot_", protein_database, "_filtered", ".png"), height=5, width=7, units="in", dpi = 300) 
+} else {
+  ggsave(paste0("./figures/Category/", Cat, "_plot_", protein_database, ".png"), height=5, width=7, units="in", dpi = 300) 
+}
+ 
+return(all_plots)
+}
+
+#Making plots for each category
+
+disease_overall = disease_overall %>% ungroup() %>% arrange(as.character(Category))
+
+cat_plots = lapply(unique(disease_overall$Category), function(x) {
+  plot_coherence(x, dataset = disease_overall %>% ungroup() , protein_database = "biogrid", filtered = FALSE)
+})
+
+saveRDS(cat_plots, "biogrid.rds")
+
+disease_overall_string = disease_overall_string %>% ungroup() %>% arrange(as.character(Category))
+
+
+cat_plots_string = lapply(unique(disease_overall_string$Category), function(x) {
+  plot_coherence(x, dataset = disease_overall_string %>% ungroup() , protein_database = "string", filtered = FALSE)
+})
+
+saveRDS(cat_plots_string, "string.rds")
+
+```
+# Plot of select diseases
+
+```{r}
+
+# #Add all of KEGG and random
+# 
+# select_disease= disease_overall %>% mutate(Category = as.character(Category), Disease = ifelse(Category %in% c("Random", "KEGG"), Category, Disease)) %>% filter(Disease %in% c("Height", "Asthma", "Breast cancer", "Coronary Heart Disease", 
+# "Blood pressure", "Glaucoma", "Intelligence",
+# "Type 2 diabetes", "LDL cholesterol", "Alzheimer's disease", "Schizophrenia", "KEGG", "Random")) %>% arrange(-Disease_Slope) %>% ungroup() %>% mutate(Disease = factor(Disease, levels = unique(Disease)))
+# 
+# names(col_sub) = unique(select_disease$Disease)[-c(1,8)]
+# 
+# select_disease_plot = ggplot(select_disease, aes(x = Internal, y = External, color = Disease))  + geom_point(alpha = .1)+ geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + theme_light(base_size = 18) + theme(legend.position=c(.2,.73)) + scale_color_manual(values = c(Random =  "#6F8273" , KEGG = "#999999", col_sub)) + theme_light(base_size = 16) + theme(legend.position=c(.28,.7), legend.key.height = unit(.02, "cm"))
+# 
+# ggsave("C:\\Users\\cresswellkg\\Documents\\disease-coherence\\manuscript\\figures\\disease_plot_inbio.png", select_disease_plot, height=5, width=7, units="in", dpi = 300)
+```
+
+```{r}
+# disease_summary_biogrid = disease_overall %>% group_by(Disease) %>% summarise(Mean_Internal = mean(Internal), Median_Internal = median(Internal), Min_Internal = min(Internal), Max_Internal = max(Internal), Mean_External = mean(External), Median_External = median(External), Min_External = min(External), Max_External = max(External), Percent_Zero = sum(Internal == 0)/n(), Num_Non_Zero = sum(Internal !=0), Highest_Gene = Genes[which.max(Internal/External)])
+```
+
+
+```{r}
+#3 Figures
+
+#KEGG, Random and Diseases
+
+#KEGG, Random and Traits
+
+#Disease specifically from highest number but manually choose relevant ones too
+```
+
+```{r}
+#Find number of SNPs with no connections
+
+# disease_summary_string = disease_overall_string %>% group_by(Disease) %>% summarise(Mean_Internal = mean(Internal), Median_Internal = median(Internal), Min_Internal = min(Internal), Max_Internal = max(Internal), Mean_External = mean(External), Median_External = median(External), Min_External = min(External), Max_External = max(External), Percent_Zero = sum(Internal == 0)/n(), Num_Non_Zero = sum(Internal!=0), Highest_Gene = Genes[which.max(Internal/External)])
+
+
+# disease_summary_combined = left_join(disease_summary_biogrid, disease_summary_string, "Disease")
+# 
+# colnames(disease_summary_combined) = gsub("\\.x", "_biogrid", colnames(disease_summary_combined))
+# colnames(disease_summary_combined) = gsub("\\.y", "_string", colnames(disease_summary_combined))
+# 
+# disease_summary_combined = disease_summary_combined[,c(1,2,13,3,14,4,15,5,16,6,17,7,18,8,19,9,20,10,21,11,22,12,23)]
+# 
+# disease_summary_combined = disease_summary_combined %>% filter(!is.na(Mean_Internal_string))
+```
+
+```{r}
+
+# #Calculating coherence
+# 
+dis_diff = disease_overall %>% mutate(Min_Max = ((Disease_Slope - max(Disease_Slope))/(min(Disease_Slope) - max(Disease_Slope)))) %>% dplyr::select(Disease, Min_Max) %>% distinct()
+
+dis_diff_string = disease_overall_string %>% mutate(Min_Max = ((Disease_Slope - max(Disease_Slope))/(min(Disease_Slope) - max(Disease_Slope)))) %>% dplyr::select(Disease, Min_Max) %>% distinct()
+
+disease_select = left_join(disease_select, dis_diff, by = "Disease")
+disease_select = left_join(disease_select, dis_diff_string, by = "Disease")
+
+colnames(disease_select)[9:10] = c("Biogrid Coherence", "String Coherence")
+
+#Removing duplicates
+
+row.names(disease_select) = NULL
+disease_select = disease_select %>% arrange(-`String Coherence`) %>% filter(!duplicated(disease_select$Disease))
+
+#Adding slope p-values
+
+# disease_select = left_join(disease_select, dis_pvals %>% ungroup() %>% dplyr::select(-Category), by = "Disease") %>% ungroup()
+# 
+# disease_select = left_join(disease_select, dis_pvals_string %>% ungroup() %>% dplyr::select(-Category), by = "Disease") %>% ungroup()
+
+# colnames(disease_select)[11:12] = c("Biogrid Perm P-value", "String Perm P-value")
+
+# disease_select = disease_select %>% mutate(`Biogrid Perm P-value` = NA, `String Perm P-value` = NA)
+
+#Read in p-values from cluster
+
+biogrid_p = readRDS("biogrid_p.rds")
+biogrid_p_neuro = readRDS("biogrid_p_neuro.rds")
+biogrid_p_psych = readRDS("biogrid_p_psych.rds")
+
+bio_over = rbind(biogrid_p, biogrid_p_neuro, biogrid_p_psych) %>% as.data.frame(.) %>% dplyr::select( Disease = i, `Biogrid Perm P-value` = perm ) %>% filter(!duplicated(Disease))
+
+disease_select = full_join(disease_select, bio_over, by = "Disease")
+
+string_p = readRDS("string_p.rds")
+string_p_neuro = readRDS("string_p_neuro.rds")
+string_p_psych = readRDS("string_p_psych.rds")
+
+string_over = rbind(string_p, string_p_neuro, string_p_psych) %>% as.data.frame(.) %>% dplyr::select( Disease = i, `String Perm P-value` = perm ) %>% filter(!duplicated(Disease))
+
+disease_select = full_join(disease_select, string_over, by = "Disease")
+
+write.csv(disease_select, "./tables/supplementary_table_diseases.csv", row.names = FALSE)
+```
+
+```{r}
+dir.create("./data/Disease_Genes/Categories_STRING")
+dir.create("./data/Disease_Genes/Categories_Biogrid")
+
+disease_cats_string = unique(disease_overall_string$Category)
+disease_cats_biogrid = unique(disease_overall$Category)
+
+
+for (i in disease_cats_string) {
+  gene_list = disease_overall_string %>% filter(Category == i) %>% dplyr::select(Genes) %>% dplyr::distinct()
+  
+  write.table(gene_list$Genes, paste0("./data/Disease_Genes/Categories_STRING/", i, ".txt"), row.names = FALSE, col.names = FALSE)
+}
+
+for (i in disease_cats_biogrid) {
+  gene_list = disease_overall %>% filter(Category == i) %>% dplyr::select(Genes) %>% dplyr::distinct()
+  
+  write.table(gene_list$Genes, paste0("./data/Disease_Genes/Categories_Biogrid/", i, ".txt"), row.names = FALSE, col.names = FALSE)
+}
+
+string_files = paste0("./data/Disease_Genes/Categories_STRING/", list.files("./data/Disease_Genes/Categories_STRING/"))
+
+biogrid_files = paste0("./data/Disease_Genes/Categories_Biogrid/", list.files("./data/Disease_Genes/Categories_Biogrid/"))
+
+```
+
+```{r}
+
+cat_frames_biogrid = lapply(biogrid_files, function(x) {
+
+  #Run function to find internal and external connectivity 
+  cats = diseases2frame(x, links = links)
+  
+  #Record ppi missing
+  cats
+  })
+
+cat_frames_string = lapply(string_files, function(x) {
+
+  #Run function to find internal and external connectivity 
+  cats = diseases2frame(x, links = string)
+  
+  #Record ppi missing
+  cats
+  })
+
+cat_frames_biogrid = bind_rows(cat_frames_biogrid)
+cat_frames_string = bind_rows(cat_frames_string)
+
+
+```
+
+```{r}
+cat_overall = cat_frames_biogrid  %>% group_by(Disease)  %>%  mutate(Pred_Edges = predict(pred_edges_biogrid, data.frame(num_genes = n())), Internal = sqrt(Internal/Pred_Edges), External = sqrt(External)) %>%  ungroup()  %>% distinct()
+
+cat_overall_string = cat_frames_string  %>% group_by(Disease)  %>%  mutate(Pred_Edges = predict(pred_edges, data.frame(num_genes = n())), Internal = sqrt(Internal/Pred_Edges), External = sqrt(External)) %>% ungroup()  %>% distinct()
+
+
+cat_slopes = cat_overall %>% filter(Internal != 0) %>% 
+    group_by(Disease) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+cat_slopes_string = cat_overall_string %>% filter(Internal != 0) %>% 
+    group_by(Disease) %>% 
+    do({
+      mod = lm(External ~ Internal-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope)
+
+cat_overall = left_join(cat_overall, cat_slopes, by = "Disease")
+cat_overall_string = left_join(cat_overall_string, cat_slopes, by = "Disease")
+
+
+category_plot_comb = ggplot(cat_overall, aes(x = Internal, y = External, color = reorder(Disease, -Slope))) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + col_full + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm"))
+
+category_plot_comb_string = ggplot(cat_overall_string, aes(x = Internal, y = External, color = reorder(Disease, -Slope))) + geom_point(alpha = .1) + geom_smooth( method = 'lm', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2) + col_full + theme_light(base_size = 16) + theme(legend.position=c(.21,.7), legend.key.height = unit(.2, "cm"))
+
+ggsave("./figures/category_plot_biogrid_combined.png", category_plot_comb, height=5, width=7, units="in", dpi = 300)
+
+ggsave("./figures/category_plot_string_Combined.png", category_plot_comb_string, height=5, width=7, units="in", dpi = 300)
+
+```
+
+```{r}
+#Manually set max and min for STRING and biogrid
+
+min_bio = min(dis_slopes$Slope)
+max_bio = max(dis_slopes$Slope)
+
+min_string = min(dis_slopes_string$Slope)
+max_string = max(dis_slopes_string$Slope) 
+
+#Independent analysis of KEGG pathways
+
+kegg_slopes_string = dis_slopes_string %>% filter(Category == "KEGG")
+kegg_slopes_bio = dis_slopes %>% filter(Category == "KEGG")
+
+#Gsubing out KEGG prefix
+
+kegg_slopes_string = kegg_slopes_string %>% ungroup() %>% mutate(Disease = gsub("KEGG ", "", Disease))
+kegg_slopes_bio = kegg_slopes_bio %>% ungroup() %>% mutate(Disease = gsub("KEGG ", "", Disease))
+
+#Get names of KEGG pathways
+
+xx = data.frame(path_name = names(as.list(KEGGPATHNAME2ID)), kegg_code = unlist(as.list(KEGGPATHNAME2ID)))
+
+#Match name with code
+
+kegg_slopes_string = kegg_slopes_string %>% mutate(kegg_code = gsub("hsa", "", Disease))
+kegg_slopes_bio = kegg_slopes_bio %>% mutate(kegg_code = gsub("hsa", "", Disease))
+
+#Create table
+
+kegg_slopes_string = left_join(kegg_slopes_string, xx, "kegg_code" )
+kegg_slopes_bio = left_join(kegg_slopes_bio, xx, "kegg_code" )
+
+kegg_frame_string = kegg_slopes_string %>% dplyr::select(hsa_code = Disease, Pathway = path_name, Slope) %>% mutate(Coherence = ((Slope - max_string))/(min_string - max_string))
+
+kegg_frame_bio = kegg_slopes_bio %>% dplyr::select(hsa_code = Disease, Pathway = path_name, Slope) %>%  mutate(Coherence = ((Slope - max_bio))/(min_bio - max_bio))
+
+#Strip biogrid to merge
+
+kegg_frame_bio = kegg_frame_bio %>% dplyr::select(hsa_code, Bio_Slope = Slope, Bio_Coherence = Coherence)
+
+colnames(kegg_frame_string)[3:4] = c("String_Slope", "String_Coherence")
+
+kegg_frame = left_join(kegg_frame_string, kegg_frame_bio, "hsa_code")
+
+#Get counts for each KEGG frame
+
+kegg_counts_string = bind_rows(kegg_overall_string) %>% group_by(Disease) %>% summarise(String_Count = n()) %>% rename(hsa_code = Disease)
+
+kegg_counts_biogrid = bind_rows(kegg_overall) %>% group_by(Disease) %>% summarise(Biogrid_Count = n()) %>% rename(hsa_code = Disease)
+
+kegg_frame = left_join(kegg_frame, kegg_counts_string, "hsa_code")
+
+kegg_frame = left_join(kegg_frame, kegg_counts_biogrid, "hsa_code")
+
+write.csv(kegg_frame, "KEGG_Summary.csv", row.names = FALSE)
+```
+
+```{r}
+
+```
