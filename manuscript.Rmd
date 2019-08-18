@@ -1,10 +1,10 @@
 ---
-bibliography: [/Users/mdozmorov/Documents/Work/VCU_grants/1_Dozmorov/networks.bib,/Users/mdozmorov/Documents/Work/VCU_grants/1_Dozmorov/brain.bib,/Users/mdozmorov/Documents/Work/VCU_grants/1_Dozmorov/enrichment.bib,/Users/mdozmorov/Documents/Work/VCU_grants/1_Dozmorov/3D_refs.bib]
-csl: /Users/mdozmorov/Documents/Work/presentations/Templates/grant_template/styles.ref/genomebiology.csl
+bibliography: [refs/networks.bib,refs/brain.bib,refs/enrichment.bib,refs/3D_refs.bib]
+csl: styles.ref/genomebiology.csl
 output:
   pdf_document: default
   word_document:
-    reference_docx: /Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/styles.doc/Arial_11_single_space_normal_margins.docx
+    reference_docx: styles.doc/Arial_11_single_space_normal_margins.docx
   html_document: default
 editor_options: 
   chunk_output_type: console
