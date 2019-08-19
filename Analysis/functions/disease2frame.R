@@ -1,13 +1,13 @@
-diseases2mod = function(disease_dis, links) {
+diseases2frame = function(disease_dis, links) {
   
-  source('functions/genes2graph.R')
+  source('functions/genes2interactions.R')
 
   
   #Get internal vs. external connectivity
   
   disease_nets = lapply(disease_dis, function(x) {
     gene_list = read.table(x)$V1
-    genes2graph(gene_list, links, directed = FALSE)
+    genes2interactions(gene_list, links, directed = FALSE)
   })
   
   
@@ -32,4 +32,3 @@ diseases2mod = function(disease_dis, links) {
   disease_frame = bind_rows(disease_frame)
   return(disease_frame)
 }
-
