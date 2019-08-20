@@ -1,0 +1,28 @@
+---
+title: "Generate_KEGG"
+author: "Kellen Cresswell"
+date: "August 19, 2019"
+output: pdf_document
+---
+
+```{r}
+require(msigdbr)
+source("./functions/disease2frame_raw.R")
+```
+
+```{r}
+#Read in msig data
+msig_full = msigdbr()
+
+sig_sub = msig_full %>% filter(gs_subcat %in% c("CP:REACTOME", "CP:KEGG", "CC")) %>% 
+    group_by(gs_name, gs_subcat) %>% mutate(Count = n()) %>% group_by(gs_name, gs_subcat, Count) %>%
+    do({
+      sub = diseases2frame_raw(.$gene_symbol, string, .$gs_name[1])
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = sub)
+      data.frame(Slope= coef(mod)[1])
+    })
+```
+
+```{r}
+
+```
