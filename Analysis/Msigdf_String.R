@@ -42,7 +42,7 @@ for (j in unique(msig$gs_name)) {
   mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = diseases_curr)
   mod_slope = coef(mod)[[1]]
   mod_sum = data.frame(Disease = j, Count =nrow(diseases_curr), Slope = mod_slope,
-                       Category = msig$gs_subcat[1])
+                       Category = curr_msig$gs_subcat[1])
   mod_over = bind_rows(mod_over, mod_sum)
   saveRDS(mod_over,"KEGG_String.rds")
 }
