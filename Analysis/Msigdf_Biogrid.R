@@ -26,6 +26,7 @@ links = links %>% mutate(protein1 =protein1,
                          protein2 = protein2) %>% dplyr::select(protein1, protein2)
 
 links = links %>% dplyr::select(hgnc_symbol_a = protein1,hgnc_symbol_b = protein2)
+
 #Getting msigs 
 
 msig = msigdbr()
@@ -36,7 +37,7 @@ mod_over = bind_rows()
 for (j in unique(msig$gs_name)) {
   curr_msig = msig %>% filter(gs_name == j)
   write.table(curr_msig$gene_symbol, file = "temp_rea_bio.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
-  diseases_curr = diseases2frame("temp_rea_bio.txt", links = string)
+  diseases_curr = diseases2frame("temp_rea_bio.txt", links = links)
   mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = diseases_curr)
   mod_slope = coef(mod)[[1]]
   mod_sum = data.frame(Disease = j, Count =nrow(diseases_curr), Slope = mod_slope,
