@@ -46,7 +46,7 @@ string = string %>% dplyr::rename(hgnc_symbol_a = hgnc_symbol)
 
 string = left_join(string, genes, by = c("protein2" = "ensembl_peptide_id"))
 
-string = string %>% dpyr::rename(hgnc_symbol_b = hgnc_symbol)
+string = string %>% dplyr::rename(hgnc_symbol_b = hgnc_symbol)
 
 string_filt = string %>% filter(combined_score>=500)
 
@@ -645,6 +645,10 @@ colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 #Writing to a tables
 
 write_xlsx(coherence_disease, "./tables/supplementary_table_S1.xlsx")
+
+```
+
+```{r}
 
 ```
 
