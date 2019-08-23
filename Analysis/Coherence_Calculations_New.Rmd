@@ -122,8 +122,7 @@ msig =msig %>% filter(Category == "CP:KEGG")
 coherence_tab = bind_rows()
 for (i in unique(dis_slopes_string_count$Disease)) {
   #Filter to only include specific disease coherence
-  dis = dis_slopes_string_count %>% filter(Disease == i)
-  
+  dis = dis_slopes_string_count %>% ungroup() %>% filter(Disease == i)
   #Get closest KEGG pathways in term of gene counts
   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
   #Take top 10 KEGG pathways
@@ -150,8 +149,8 @@ for (i in unique(dis_slopes_string_count$Disease)) {
       rand_slope = coef(mod_rand)[[1]]
       
       #Normalize based on random slope and the median of kegg slopes (More robust)
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope), Rand_Norm = rand_slope )      
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )      
       coherence_tab = bind_rows(coherence, coherence_tab)
       saveRDS(coherence_tab, "coherence_string.rds")
 }
@@ -185,8 +184,8 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
-    coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope), Rand_Norm = rand_slope )      
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+    coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )      
       coherence_tab = bind_rows(coherence, coherence_tab)
       saveRDS(coherence_tab, "coherence_string_filt.rds")
 }
@@ -219,8 +218,8 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope), Rand_Norm = rand_slope )      
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )      
       coherence_tab = bind_rows(coherence, coherence_tab)
       saveRDS(coherence_tab, "coherence_biogrid.rds")
 }
@@ -255,8 +254,8 @@ for (i in unique(dis_slopes_string_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope), Rand_Norm = rand_slope )
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
       
       coherence_tab = bind_rows(coherence, coherence_tab)
       saveRDS(coherence_tab, "coherence_string_react.rds")
@@ -290,7 +289,7 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
       
       coherence_tab = bind_rows(coherence, coherence_tab)
@@ -325,7 +324,7 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
       
       coherence_tab = bind_rows(coherence, coherence_tab)
@@ -362,8 +361,8 @@ for (i in unique(dis_slopes_string_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope), Rand_Norm = rand_slope )
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+      coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
       
       coherence_tab = bind_rows(coherence, coherence_tab)
       saveRDS(coherence_tab, "coherence_string_CC.rds")
@@ -397,7 +396,7 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
       
       coherence_tab = bind_rows(coherence, coherence_tab)
@@ -432,7 +431,7 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
       mod_rand = lm(External ~ Internal-1, data = diseases)
       rand_slope = coef(mod_rand)[[1]]
       
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope)-rand_slope)
+      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
       
       coherence_tab = bind_rows(coherence, coherence_tab)
@@ -475,65 +474,6 @@ colnames(coherence_full) = c("Disease", "Biogrid_Coherence", "String_Coherence",
 #Save coherence full in this state for later manipulation
 coherence_disease = coherence_full
 
-#Read in old diseases/categories
-# old_res = read.csv("./manuscript/supplementary_table_S1.csv") %>% dplyr::select(-Coherence.Biogrid, -Coherence.String.full, -Coherence.String.filt)
-
-# #Read in old coherences
-# old_coh = read.csv("./manuscript/supplementary_table_S1.csv") %>% dplyr::select(Disease = Trait, Coherence.Biogrid, Coherence.String.full, Coherence.String.filt)
-
-#Bind old coherence to new for analysis
-#test_coherence = left_join(coherence_full, old_coh)
-
-#Replace trait with diseases for ease of combination
-#colnames(old_res)[1] = "Disease"
-
-#Join new and old results filtering NA SNPs (Non-shared traits)
-#coherence_full = left_join(coherence_full, old_res) %>% filter(!is.na(Total.number.of.SNPs))
-
-#Match original order
-#coherence_full = coherence_full %>% dplyr::select(Disease, Category, Total.number.of.SNPs, Total.number.of.genes, Biogrid_Coherence, String_Coherence, String_Filt_Coherence, P.value.Biogrid, P.value.String.full, P.value.String.filt)
-
-#Filter out forced . from read.csv
-#colnames(coherence_full) = gsub("\\.", " ", #colnames(coherence_full))
-
-#Replace _ with spaces for style
-#colnames(coherence_full) = gsub("\\_", " ", #colnames(coherence_full))
-
-#Rename to old first column name
-#coherence_full = coherence_full %>% dpyr::rename(Trait = Disease)
-
-#coherence_full[,5:7] = apply(coherence_full[,5:7], 2, function(x) ifelse(x<0, 0, ifelse (
-  #x>1, 1, x
-#)))
-
-#Add reactome data
-
-#coherence_full = left_join(coherence_full, coherence_biogrid_cc, by= c("Trait"= "Disease"))
-
-#coherence_full = left_join(coherence_full, coherence_string_cc, by= c("Trait"= "Disease"))
-
-#coherence_full = left_join(coherence_full, coherence_string_filt_cc, by= c("Trait"= "Disease"))
-
-#coherence_full = left_join(coherence_full, coherence_biogrid_react, by= c("Trait"= "Disease"))
-
-#coherence_full = left_join(coherence_full, coherence_string_react, by= c("Trait"= "Disease"))
-
-#coherence_full = left_join(coherence_full, coherence_string_filt_react, by= c("Trait"= "Disease"))
-
-#coherence_full = coherence_full %>% dpyr::rename(`Biogrid Coherence Reactome` = Coherence.x, `String Coherence Reactome` = Coherence.y, `String Filt Coherence Reactome` = Coherence.x.x, `Biogrid Coherence CC` = Coherence.y.y, `String Coherence CC` = Coherence.x.x.x, `String Filt Coherence CC` = Coherence.y.y.y)
-
-#Move p-values to end
-#coherence_full = coherence_full %>% dplyr::select(Trait:`String Filt Coherence`,`Biogrid Coherence Reactome`:`String Filt Coherence CC`)
-
-#Commented out old results for final version
-
-# coherence_full = left_join(coherence_full, old_coh, by = c("Trait" = "Disease"))
-# 
-# colnames(coherence_full)[14:16] = c("Biogrid Coherence Old", "String Coherence Old", "String Filt Coherence Old")
-# 
-# coherence_full = coherence_full[, c(1:10, 14,16,15, 11:13)]
-# 
-# coherence_no_big = coherence_full %>% filter(Trait != "Height") %>% filter(Trait != "Obesity-related traits")
 
 ```
 
@@ -585,20 +525,6 @@ coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Numb
 ```
 
 ```{r}
-write.csv(coherence_full %>% arrange(`Category`, `Trait`), "Coherence_New.csv", row.names = FALSE)
-
-
-```
-
-```{r}
-msig_sum = readRDS("KEGG_String.rds") %>% distinct() %>% filter(!grepl("_1", Category))
-
-msig_slopes =msig_sum %>% group_by(Category) %>% summarise(`Mean Slope` = mean(Slope, na.rm = TRUE))
-
-write.csv(msig_slopes, "./tables/Category_Slopes.csv", row.names = FALSE, col.names = TRUE, quote = FALSE)
-```
-
-```{r}
 #Reading in data from cluster and binding
 
 biogrid_p = bind_rows(readRDS("./data/Permutation_Results/biogrid_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/biogrid_p_psych_1k.rds") %>% as.data.frame(.))
@@ -644,11 +570,7 @@ colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 
 #Writing to a tables
 
+require(writexl)
 write_xlsx(coherence_disease, "./tables/supplementary_table_S1.xlsx")
 
 ```
-
-```{r}
-
-```
-
