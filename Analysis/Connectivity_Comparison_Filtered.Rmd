@@ -14,16 +14,14 @@ source("./functions/perm_slopes.R")
 source("./functions/GeneSample.R")
 source("./functions/genes2interactions.R")
 source("./functions/disease2frame.R")
-require(KEGGREST)
-require(KEGG.db)
 require(readr)
 require(dplyr)
 require(biomaRt)
-require(ggplot2)
 require(broom)
 require(stringr)
 require(dplyr)
 require(tidyr)
+require(igraph)
 ```
 
 ```{r}
@@ -57,6 +55,43 @@ string = string %>% filter(combined_score>=500)
 ```
 
 ```{r}
+
+#Get directory with diseases
+
+disease_directory = "./data/Disease_Genes/"
+
+disease_names = list.files(disease_directory)
+
+disease_list = paste0("./data/Disease_Genes/", disease_names, "/")
+
+#Read in manually selected diseases
+
+disease_select = read_csv("./data/supplementary_table_diseases_selected.csv")
+
+disease_traits = disease_select %>% dplyr::select(`Disease name`, Category)
+
+#Pull out disease and category information from select diseases
+
+#Change first column to make more clear
+
+colnames(disease_select)[1] = "Disease"
+
+#Filtering out NA in last row
+
+disease_select = disease_select %>% filter(!is.na(Disease))
+
+#Creating a vector of file names from disease select
+
+disease_files =  unique(paste0(disease_select$Disease, ".txt"))
+
+#Make full path
+
+disease_selected = paste0("./data/Disease_Genes/", disease_files)
+
+```
+```
+
+```{r}
 #Diseases
 
 disease_length = 1:length(disease_selected)
@@ -74,14 +109,6 @@ disease_frames_string = lapply(disease_length, function(x) {
   return(list(diseases = diseases, lengths = per_no_ppi))
   })
 
-# disease_mod_string_filt = lapply(disease_length, function(x) {
-# 
-#   #Run function to find internal and external connectivity 
-#   mod = diseases2mod(disease_selected[x], links = string)
-#   
-# })
-# 
-# saveRDS(disease_mod_string_filt, "Modularity_String_Filt.rds")
 
 #Pull out network information for overall data frame
 
