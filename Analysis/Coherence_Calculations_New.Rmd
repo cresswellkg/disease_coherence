@@ -14,7 +14,7 @@ require(biomaRt)
 
 ```
 
-# ```{r}
+```{r}
 # #Repeating for string
 # 
 # data_dir = "./data/"
@@ -51,9 +51,11 @@ require(biomaRt)
 # string_filt = string %>% filter(combined_score>=500)
 # 
 # dim(string)
-# ```
 # 
-# ```{r}
+```
+
+
+```{r}
 # #Reading in biogrid data
 # 
 # links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
@@ -79,9 +81,10 @@ require(biomaRt)
 # 
 # 
 # dim(links)
-# ```
 # 
-# ```{r}
+```
+ 
+```{r}
 # #Read in edges generated from Connectivity_Comparison_*.Rmd
 # 
 # disease_overall_string = readRDS("string_edges_new.rds")
@@ -191,9 +194,10 @@ require(biomaRt)
 # }
 #   
 #   
-# ```
 # 
-# ```{r}
+```
+
+```{r}
 # msig = readRDS("KEGG_Biogrid.rds")
 # msig =msig %>% filter(Category == "CP:KEGG")
 # coherence_tab = bind_rows()
@@ -225,11 +229,12 @@ require(biomaRt)
 # }
 #   
 #   
-# ```
-# 
-# # Reactome
-# 
-# ```{r}
+#
+```
+ 
+# Reactome
+
+```{r}
 # msig = readRDS("KEGG_String.rds")
 # msig =msig %>% filter(Category == "CP:REACTOME") %>% filter(!is.na(Slope))
 # coherence_tab = bind_rows()
@@ -262,9 +267,10 @@ require(biomaRt)
 # }
 #   
 # 
-# ```
-# 
-# ```{r}
+#
+```
+
+```{r}
 # msig = readRDS("KEGG_String_Filt.rds")
 # msig =msig %>% filter(Category == "CP:REACTOME") %>% filter(!is.na(Slope))
 # coherence_tab = bind_rows()
@@ -297,9 +303,9 @@ require(biomaRt)
 # }
 #   
 #   
-# ```
 # 
-# ```{r}
+```
+```{r}
 # msig = readRDS("KEGG_Biogrid.rds")
 # msig =msig %>% filter(Category == "CP:REACTOME") %>% filter(!is.na(Slope))
 # coherence_tab = bind_rows()
@@ -439,7 +445,8 @@ require(biomaRt)
 # }
 #   
 #   
-# ```
+# 
+```
 
 ```{r}
 #Read in results generated above
@@ -515,7 +522,7 @@ coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Biog
 
 #Adding gene counts
 
-disease_select = read_csv("supplementary_table_diseases_selected.csv") %>% dplyr::select(Disease =`Disease name`, `Number of SNPs`, `Number of genes`)
+disease_select = read_csv("./data/supplementary_table_diseases_selected.csv") %>% dplyr::select(Disease =`Disease name`, `Number of SNPs`, `Number of genes`)
 
 #Join gene counts
 
@@ -570,7 +577,8 @@ colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 
 #Writing to a tables
 
-require(writexl)
-write_xlsx(coherence_disease, "./tables/supplementary_table_S1.xlsx")
+dir.create("../manuscript/tables")
+write.csv(coherence_disease, ".././manuscript/tables/supplementary_table_S1.csv", 
+          row.names = FALSE)
 
 ```
