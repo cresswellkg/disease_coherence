@@ -1,0 +1,139 @@
+﻿Disease name,Category,Number of genes,Number of SNPs,EFO Name,MAPPED TRAIT URI
+Birth weight,Anthropometric trait,11,11,birth weight,EFO_0004344
+Body mass index,Anthropometric trait,107,154,body mass index,EFO_0004340
+Breast size,Anthropometric trait,31,31,breast size,EFO_0004884
+Eye color,Anthropometric trait,11,13,eye color,EFO_0003949
+Hair color,Anthropometric trait,13,13,hair color,EFO_0003924
+Height,Anthropometric trait,418,597,body height,EFO_0004339
+Hip geometry,Anthropometric trait,16,16,hip geometry,EFO_0004685
+Hippocampal volume,Anthropometric trait,24,24,hippocampal volume,EFO_0005035
+Infant length,Anthropometric trait,15,15,infant body height,EFO_0006785
+Longevity,Anthropometric trait,42,43,longevity,EFO_0004300
+Menarche (age at onset),Anthropometric trait,142,172,age at menarche,EFO_0004703
+Menopause (age at onset),Anthropometric trait,35,36,age at menopause,EFO_0004704
+Obesity-related traits,Anthropometric trait,779,833,body weight,EFO_0004338
+Subcutaneous adipose tissue,Anthropometric trait,36,37,subcutaneous adipose tissue measurement,EFO_0004766
+Telomere length,Anthropometric trait,27,30,telomere length,EFO_0004505
+Visceral fat,Anthropometric trait,39,39,visceral adipose tissue measurement,EFO_0004765
+Waist circumference,Anthropometric trait,24,24,waist circumference,EFO_0004342
+Waist-hip ratio,Anthropometric trait,21,22,waist-hip ratio,EFO_0004343
+Weight,Anthropometric trait,31,33,body weight,EFO_0004338
+Allergic rhinitis,Autoimmune,22,22,allergic rhinitis,EFO_0005854
+Ankylosing spondylitis,Autoimmune,22,25,ankylosing spondylitis,EFO_0003898
+Asthma,Autoimmune,47,53,asthma,EFO_0000270
+Atopic dermatitis,Autoimmune,34,39,atopic eczema,EFO_0000274
+Behcet's disease,Autoimmune,11,15,Behcet's syndrome,EFO_0003780
+Celiac disease,Autoimmune,64,65,celiac disease,EFO_0001060
+Crohn's disease,Autoimmune,143,193,Crohn's disease,EFO_0000384
+Graves' disease,Autoimmune,23,23,Graves disease,EFO_0004237
+Inflammatory bowel disease,Autoimmune,111,114,inflammatory bowel disease,EFO_0003767
+Inflammatory skin disease,Autoimmune,84,88,inflammatory skin disease,EFO_1000636
+Kawasaki disease,Autoimmune,18,19,mucocutaneous lymph node syndrome,EFO_0004246
+Lupus nephritis in systemic lupus erythematosus,Autoimmune,17,17,lupus nephritis,EFO_0005761
+Multiple sclerosis,Autoimmune,141,162,multiple sclerosis,EFO_0003885
+Psoriasis,Autoimmune,39,47,psoriasis,EFO_0000676
+Rheumatoid arthritis,Autoimmune,136,183,rheumatoid arthritis,EFO_0000685
+Systemic lupus erythematosus,Autoimmune,71,90,systemic lupus erythematosus,EFO_0002690
+Systemic sclerosis,Autoimmune,16,18,systemic scleroderma,EFO_0000717
+Type 1 diabetes,Autoimmune,72,78,type I diabetes mellitus,EFO_0001359
+Ulcerative colitis,Autoimmune,106,127,ulcerative colitis,EFO_0000729
+Vitiligo,Autoimmune,35,37,Vitiligo,EFO_0004208
+Acute lymphoblastic leukemia (childhood),Cancer,40,46,acute lymphoblastic leukemia,EFO_0000220
+Basal cell carcinoma,Cancer,17,17,basal cell carcinoma,EFO_0004193
+Bladder cancer,Cancer,18,21,bladder carcinoma,EFO_0000292
+Breast cancer,Cancer,109,149,breast carcinoma,EFO_0000305
+Cervical cancer,Cancer,16,16,cervical carcinoma,EFO_0001061
+Chronic lymphocytic leukemia,Cancer,35,40,chronic lymphocytic leukemia,EFO_0000095
+Colorectal cancer,Cancer,59,69,colorectal cancer,EFO_0005842
+Epithelial ovarian cancer,Cancer,22,22,Malignant epithelial tumor of ovary,Orphanet_398934
+Esophageal cancer,Cancer,12,13,esophageal carcinoma,EFO_0002916
+Follicular lymphoma,Cancer,12,13,neoplasm of mature B-cells,EFO_0000096
+Hodgkin's lymphoma,Cancer,14,16,Hodgkins lymphoma,EFO_0000183
+Lung cancer,Cancer,24,27,lung carcinoma,EFO_0001071
+Melanoma,Cancer,21,23,melanoma,EFO_0000756
+Multiple myeloma (IgH translocation),Cancer,21,23,multiple myeloma,EFO_0001378
+Non-small cell lung cancer,Cancer,17,17,non-small cell lung carcinoma,EFO_0003060
+Ovarian cancer,Cancer,12,14,ovarian carcinoma,EFO_0001075
+Pancreatic cancer,Cancer,44,48,pancreatic carcinoma,EFO_0002618
+Prostate cancer,Cancer,109,131,prostate carcinoma,EFO_0001663
+Testicular germ cell tumor,Cancer,20,21,testicular carcinoma,EFO_0005088
+Atrial fibrillation,Cardiovascular disease,15,20,atrial fibrillation,EFO_0000275
+Coronary artery disease,Cardiovascular disease,26,26,coronary heart disease,EFO_0001645
+Coronary heart disease,Cardiovascular disease,83,100,coronary heart disease,EFO_0001645
+Heart failure,Cardiovascular disease,17,17,heart failure,EFO_0003144
+Hypertension,Cardiovascular disease,51,62,hypertension,EFO_0000537
+Intracranial aneurysm,Cardiovascular disease,12,17,brain aneurysm,EFO_0003870
+Preeclampsia,Cardiovascular disease,18,18,preeclampsia,EFO_0000668
+Sudden cardiac arrest,Cardiovascular disease,50,50,sudden cardiac arrest,EFO_0004278
+Venous thromboembolism,Cardiovascular disease,17,26,venous thromboembolism,EFO_0004286
+Blood pressure,Cardiovascular trait,83,90,blood pressure,EFO_0004325
+Diastolic blood pressure,Cardiovascular trait,37,44,diastolic blood pressure,EFO_0006336
+Electrocardiographic traits,Cardiovascular trait,23,27,electrocardiography,EFO_0004327
+Heart rate,Cardiovascular trait,37,37,heart rate,EFO_0004326
+Mean corpuscular hemoglobin,Cardiovascular trait,22,30,mean corpuscular hemoglobin,EFO_0004527
+Mean corpuscular volume,Cardiovascular trait,29,38,mean corpuscular volume,EFO_0004526
+Mean platelet volume,Cardiovascular trait,43,53,mean platelet volume,EFO_0004584
+Neutrophil count,Cardiovascular trait,25,26,neutrophil count,EFO_0004833
+Platelet counts,Cardiovascular trait,68,77,platelet count,EFO_0004309
+PR interval,Cardiovascular trait,21,34,PR interval,EFO_0004462
+QT interval,Cardiovascular trait,103,145,QT interval,EFO_0004682
+Red blood cell traits,Cardiovascular trait,45,45,erythrocyte measurement,EFO_0005047
+Resting heart rate,Cardiovascular trait,12,13,resting heart rate,EFO_0004351
+Systolic blood pressure,Cardiovascular trait,37,44,systolic blood pressure,EFO_0006335
+White blood cell count,Cardiovascular trait,19,25,leukocyte count,EFO_0004308
+Age-related macular degeneration,Eye disease,48,66,age-related macular degeneration,EFO_0001365
+Age-related nuclear cataracts,Eye disease,15,15,age-related nuclear cataract,HP_0011142
+Corneal astigmatism,Eye disease,30,30,Astigmatism,HP_0000483
+Glaucoma,Eye disease,10,11,glaucoma,EFO_0000516
+Myopia (pathological),Eye disease,73,78,pathological myopia,EFO_0004207
+Refractive astigmatism,Eye disease,15,15,Astigmatism,HP_0000483
+Refractive error,Eye disease,27,29,Abnormality of refraction,HP_0000539
+Vertical cup-disc ratio,Eye disease,24,26,optic disc size measurement,EFO_0004832
+Axial length,Eye trait,21,21,axial length measurement,EFO_0005318
+Corneal curvature,Eye trait,17,18,corneal topography,EFO_0004345
+Corneal structure,Eye trait,26,26,corneal topography,EFO_0004345
+Intraocular pressure,Eye trait,22,69,intraocular pressure measurement,EFO_0004695
+Optic cup area,Eye trait,23,24,optic cup area measurement,EFO_0006940
+Cognitive function,Intelligence,59,59,cognition,EFO_0003925
+Educational attainment,Intelligence,68,70,self reported educational attainment,EFO_0004784
+Intelligence,Intelligence,21,55,intelligence,EFO_0004337
+Personality dimensions,Intelligence,21,21,personality trait,EFO_0004365
+Reading and spelling,Intelligence,10,10,reading and spelling ability,EFO_0005301
+Verbal declarative memory,Intelligence,29,31,memory performance,EFO_0004874
+Diabetic retinopathy,Metabolic disease,27,28,diabetic retinopathy,EFO_0003770
+Gout,Metabolic disease,11,14,gout,EFO_0004274
+Metabolic syndrome,Metabolic disease,42,47,metabolic syndrome,EFO_0000195
+Obesity,Metabolic disease,26,28,obesity,EFO_0001073
+Type 2 diabetes,Metabolic disease,174,228,type II diabetes mellitus,EFO_0001360
+Blood metabolite levels,Metabolic trait,152,183,blood metabolite measurement,EFO_0005664
+Cardiovascular disease risk factors,Metabolic trait,20,21,triglyceride measurement,EFO_0004530
+"Cholesterol, total",Metabolic trait,82,91,total cholesterol measurement,EFO_0004574
+Fasting glucose-related traits,Metabolic trait,17,17,fasting blood glucose measurement,EFO_0004465
+Fasting plasma glucose,Metabolic trait,24,26,fasting blood glucose measurement,EFO_0004465
+HDL cholesterol,Metabolic trait,114,152,high density lipoprotein cholesterol measurement,EFO_0004612
+LDL cholesterol,Metabolic trait,94,113,low density lipoprotein cholesterol measurement,EFO_0004611
+Metabolite levels (Pyroglutamine),Metabolic trait,23,23,pyroglutamine measurement,EFO_0005408
+Phospholipid levels (plasma),Metabolic trait,52,61,phospholipid measurement,EFO_0004639
+Triglycerides,Metabolic trait,68,103,triglyceride measurement,EFO_0004530
+Alzheimer's disease,Neurologic,49,56,Alzheimer's disease,EFO_0000249
+Amyotrophic lateral sclerosis,Neurologic,55,59,amyotrophic lateral sclerosis,EFO_0000253
+Epilepsy,Neurologic,10,10,epilepsy,EFO_0000474
+Hippocampal atrophy,Neurologic,34,34,hippocampal atrophy,EFO_0005039
+Migraine,Neurologic,67,70,migraine disorder,EFO_0003821
+Migraine with aura,Neurologic,23,23,migraine with aura,EFO_0005295
+Migraine without aura,Neurologic,31,32,migraine without aura,EFO_0005296
+Parkinson's disease,Neurologic,74,98,Parkinson's disease,EFO_0002508
+Alcohol dependence,Psychiatric,28,29,alcohol dependence,EFO_0003829
+Anorexia nervosa,Psychiatric,15,15,eating disorder,EFO_0005203
+Anxiety disorder,Psychiatric,14,15,anxiety disorder,EFO_0006788
+Attention deficit hyperactivity disorder,Psychiatric,75,75,attention deficit hyperactivity disorder,EFO_0003888
+Autism,Psychiatric,18,25,autism,EFO_0003758
+Bipolar disorder,Psychiatric,106,127,bipolar disorder,EFO_0000289
+Bulimia nervosa,Psychiatric,23,23,bulimia nervosa,EFO_0005204
+Major depressive disorder,Psychiatric,76,77,unipolar depression,EFO_0003761
+Panic disorder,Psychiatric,17,17,panic disorder,EFO_0004262
+Post-traumatic stress disorder,Psychiatric,24,24,post-traumatic stress disorder,EFO_0001358
+Schizophrenia,Psychiatric,199,233,schizophrenia,EFO_0000692
+Smoking behavior,Psychiatric,39,41,smoking behavior,EFO_0004318
+Tourette's syndrome or obsessive-compulsive disorder,Psychiatric,15,15,obsessive-compulsive disorder,EFO_0004242
+,,,,,
