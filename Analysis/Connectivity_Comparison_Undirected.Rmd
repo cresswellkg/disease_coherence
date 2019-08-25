@@ -32,7 +32,7 @@ require(igraph)
 ```{r}
 #Reading in biogrid data
 
-links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
+links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
 
 links = links %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
@@ -225,5 +225,39 @@ saveRDS(disease_overall_string, "string_edges_new.rds")
 ```
 
 ```{r}
+string = string %>% filter(combined_score>=500)
+```
 
+```{r}
+#Diseases
+
+disease_length = 1:length(disease_selected)
+
+#Loop through diseases and pull out internal and external edges
+
+disease_frames_string = lapply(disease_length, function(x) {
+
+  #Run function to find internal and external connectivity 
+  diseases = diseases2frame(disease_selected[x], links = string)
+  
+  #Record ppi missing
+  
+  per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
+  return(list(diseases = diseases, lengths = per_no_ppi))
+  })
+
+
+#Pull out network information for overall data frame
+
+disease_protein_string = lapply(disease_frames_string, function(x) x$diseases)
+
+#Convert to data frame
+
+disease_overall_string = bind_rows(disease_protein_string)
+
+disease_overall_string = left_join(disease_overall_string, disease_select %>% dplyr::select(Disease, Category), "Disease")
+
+#disease_overall_string = #readRDS("disease_overall_string.rds")
+
+saveRDS(disease_overall_string, "string_filt_edges_new.rds")
 ```
