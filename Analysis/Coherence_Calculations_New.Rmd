@@ -85,38 +85,38 @@ require(biomaRt)
 ```
  
 ```{r}
-# #Read in edges generated from Connectivity_Comparison_*.Rmd
-# 
-# disease_overall_string = readRDS("string_edges_new.rds")
-# 
-# disease_overall_string_filt = readRDS("string_filt_edges_new.rds")
-# 
-# disease_overall_biogrid = readRDS("biogrid_edges_new.rds")
-# 
-# #Calculate slopes for all diseases under each category
-# 
-# dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>% 
-#     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
-#     do({
-#       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
-#       data.frame(Slope= coef(mod)[1])
-#     }) %>% arrange(Slope) %>% filter(Count>4)
-# 
-# dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>% 
-#     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
-#     do({
-#       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
-#       data.frame(Slope= coef(mod)[1])
-#     }) %>% arrange(Slope) %>% filter(Count>4)
-# 
-# dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>% 
-#     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
-#     do({
-#       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
-#       data.frame(Slope= coef(mod)[1])
-#     }) %>% arrange(Slope) %>% filter(Count>4)
-# 
-# 
+#Read in edges generated from Connectivity_Comparison_*.Rmd
+
+disease_overall_string = readRDS("string_edges_new.rds")
+
+disease_overall_string_filt = readRDS("string_filt_edges_new.rds")
+
+disease_overall_biogrid = readRDS("biogrid_edges_new.rds")
+
+#Calculate slopes for all diseases under each category
+
+dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+    group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope) %>% filter(Count>4)
+
+dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+    group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope) %>% filter(Count>4)
+
+dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+    group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Slope= coef(mod)[1])
+    }) %>% arrange(Slope) %>% filter(Count>4)
+
+
 # #Running coherence for string
 # 
 # #Read in KEGG pathways for coherence
