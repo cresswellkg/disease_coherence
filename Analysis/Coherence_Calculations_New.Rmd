@@ -74,14 +74,14 @@ require(biomaRt)
 # 
 # #Place into matrix in form that disease2frame works on
 # 
-# links = links %>% mutate(protein1 =protein1, 
+# links = links %>% mutate(protein1 =protein1,
 #                              protein2 = protein2) %>% dplyr::select(protein1, protein2)
 # 
 # links = links %>% dplyr::select(hgnc_symbol_a = protein1,hgnc_symbol_b = protein2)
 # 
 # 
 # dim(links)
-# 
+
 ```
  
 ```{r}
@@ -206,11 +206,11 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
 #   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
 #   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-#   
+# 
 #   diseases = bind_rows()
 #   j = 1
 #     while(j<11) {
-#     diseases_curr = GeneSample(dis$Count, string, directed = FALSE)
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
 #     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
 #     if (any(diseases_curr$Internal !=0)) {
 #       j = j+1
@@ -218,18 +218,19 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 # 
 #     }
 #     }
-#   
+# 
 #       mod_rand = lm(External ~ Internal-1, data = diseases)
 #       rand_slope = coef(mod_rand)[[1]]
-#       
+# 
 #       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
-#       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )      
+#       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
 #       coherence_tab = bind_rows(coherence, coherence_tab)
+#       print(coherence_tab)
 #       saveRDS(coherence_tab, "coherence_biogrid.rds")
 # }
-#   
-#   
-#
+
+
+
 ```
  
 # Reactome
@@ -305,6 +306,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #   
 # 
 ```
+
 ```{r}
 # msig = readRDS("KEGG_Biogrid.rds")
 # msig =msig %>% filter(Category == "CP:REACTOME") %>% filter(!is.na(Slope))
@@ -314,11 +316,11 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
 #   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
 #   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-#   
+# 
 #   diseases = bind_rows()
 #   j = 1
 #     while(j<11) {
-#     diseases_curr = GeneSample(dis$Count, string, directed = FALSE)
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
 #     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
 #     if (any(diseases_curr$Internal !=0)) {
 #       j = j+1
@@ -326,23 +328,23 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 # 
 #     }
 #     }
-#   
+# 
 #       mod_rand = lm(External ~ Internal-1, data = diseases)
 #       rand_slope = coef(mod_rand)[[1]]
-#       
+# 
 #       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
-#       
+# 
 #       coherence_tab = bind_rows(coherence, coherence_tab)
 #       saveRDS(coherence_tab, "coherence_biogrid_react.rds")
 # }
-#   
-#   
-# ```
 # 
-# # CC
 # 
-# ```{r}
+```
+
+# CC
+ 
+```{r}
 # msig = readRDS("KEGG_String.rds")
 # msig =msig %>% filter(Category == "CC") %>% filter(!is.na(Slope))
 # coherence_tab = bind_rows()
@@ -410,9 +412,10 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 # }
 #   
 #   
-# ```
-# 
-# ```{r}
+```
+ 
+
+```{r}
 # msig = readRDS("KEGG_Biogrid.rds")
 # msig =msig %>% filter(Category == "CC") %>% filter(!is.na(Slope))
 # coherence_tab = bind_rows()
@@ -421,11 +424,11 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
 #   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
 #   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-#   
+# 
 #   diseases = bind_rows()
 #   j = 1
 #     while(j<11) {
-#     diseases_curr = GeneSample(dis$Count, string, directed = FALSE)
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
 #     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
 #     if (any(diseases_curr$Internal !=0)) {
 #       j = j+1
@@ -433,19 +436,16 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 # 
 #     }
 #     }
-#   
+# 
 #       mod_rand = lm(External ~ Internal-1, data = diseases)
 #       rand_slope = coef(mod_rand)[[1]]
-#       
+# 
 #       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
-#       
+# 
 #       coherence_tab = bind_rows(coherence, coherence_tab)
 #       saveRDS(coherence_tab, "coherence_biogrid_CC.rds")
 # }
-#   
-#   
-# 
 ```
 
 ```{r}
