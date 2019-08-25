@@ -59,9 +59,6 @@ ebi_dat$MAPPED_GENE = gsub(" ", "", ebi_dat$MAPPED_GENE)
 
 init_sum = ebi_dat %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, SNPS)  %>% distinct() %>% group_by(DISEASE.TRAIT) %>% summarise(snp_count_total = length(unique(SNPS)), snp_count_no_gene = sum(MAPPED_GENE == ""), snp_prop_nogene = snp_count_no_gene/snp_count_total,gene_count_total = length(unique(MAPPED_GENE)) - sum(unique(MAPPED_GENE =="")))
 
-write.csv(init_sum, "supplementary_table_diseases_raw.csv", row.names = FALSE)
-
-
 ```
 
 ```{r }
