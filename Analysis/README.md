@@ -1,12 +1,21 @@
 # README
 
-- To get final results run the scripts in the following order: `GWAS_Prep.Rmd` -> `Connectivity_Comparison_Undirected.Rmd` -> `Connectivity_Comparison_Filtered.Rmd` -> `Coherence_Calculations_New.Rmd`s
+## Instructions to reproduce the results
 
-- `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. 
-- `Connectivity_Comparison_Undirected.Rmd` - Calculation of  degree distributions and unnormalized coherence for disease related data. Includes old analyisis of random networks and KEGG pathways. Results are produced for Biogrid and STRING without filtering. Relies on `GWAS_Prep.Rmd` 
-- `Connectivity_Comparison_Filtered.Rmd` - Similar to comparison but calculates unnormalized coherence for STRING but with scores below 500 filtered. Includes old analyisis of random networks and KEGG pathways. Relies on `GWAS_Prep.Rmd` 
+- Download the data 
+````
+cd Analysis/data
+chmod +x get_data.sh
+./get_data.sh
+cd ..
+````
+
+- In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`) and run the scripts in the following order:
+    - `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. Creates `data/Disease_Genes` folder. 
+    - `Connectivity_Comparison.Rmd` - Calculation of  degree distributions and unnormalized coherence for disease related data. Includes old analyisis of random networks and KEGG pathways. Results are produced for Biogrid and STRING.
+    -`Coherence_Calculations_New.Rmd` - Calculates normalized coherence using Msigdf and random networks. Relies on KEGG_*.rds files from Msigdf_*.R, Connectivity_Comparison_Filtered.Rmd, Connectivity_Comparison_Undirected.Rmd and supplementary_table_diseases_selected.csv. Outputs "./tables/supplementary_table_S1.xlsx"."
+
 - `Msigdf_*.R` - Scripts for creating slopes for KEGG, REACTOME and CC networks. Each one outputs a dataset containing slopes, counts, pathway name and category for STRING, STRING Filtered and Biogrid. Produce KEGG_*.rds files that are used in Coherence_Calculations_New.Rmd
--`Coherence_Calculations_New.Rmd` - Calculates normalized coherence using Msigdf and random networks. Relies on KEGG_*.rds files from Msigdf_*.R, Connectivity_Comparison_Filtered.Rmd, Connectivity_Comparison_Undirected.Rmd and supplementary_table_diseases_selected.csv. Outputs "./tables/supplementary_table_S1.xlsx"."
 
 # Folders
 
