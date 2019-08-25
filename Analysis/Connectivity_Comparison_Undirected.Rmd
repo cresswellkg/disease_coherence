@@ -87,7 +87,6 @@ dim(string)
 
 ```
 
-
 ```{r}
 
 #Get directory with diseases
@@ -100,7 +99,7 @@ disease_list = paste0("./data/Disease_Genes/", disease_names, "/")
 
 #Read in manually selected diseases
 
-disease_select = read_csv("./supplementary_table_diseases_selected.csv")
+disease_select = read_csv("./data/supplementary_table_diseases_selected.csv")
 
 disease_traits = disease_select %>% dplyr::select(`Disease name`, Category)
 
@@ -225,3 +224,6 @@ saveRDS(disease_overall_string, "string_edges_new.rds")
 
 ```
 
+```{r}
+
+```
