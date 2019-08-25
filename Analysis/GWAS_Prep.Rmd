@@ -186,25 +186,26 @@ main_inf = ebi_dat %>% dplyr::select(MAPPED_GENE, SNPS, CHR_ID, CHR_POS, INITIAL
 # 
 # #Collapse genes and disease names for simplifcation purposes and then get unique combinations
 # 
-# names_genes = main_inf %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% distinct()
-# 
-# #Loop through disease traits and print a gene list for each
-# 
-# dir.create('./data/Disease_Genes')
-# 
-# dis_dir = "./data/Disease_Genes/"
-# 
-# 
-# for (i in unique(names_genes$DISEASE.TRAIT)) {
-# genes_curr = names_genes %>% filter(DISEASE.TRAIT == i & MAPPED_GENE != "") %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% mutate(DISEASE.TRAIT = gsub("\\/", "-", DISEASE.TRAIT), DISEASE.TRAIT = gsub("\\*", "-", DISEASE.TRAIT), File_Path =  DISEASE.TRAIT[1]) %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, File_Path) %>% distinct()
-# 
-# genes_disease = genes_curr %>% ungroup() %>% dplyr::select(MAPPED_GENE) %>% distinct()
-# 
-# genes_curr = unique(genes_curr)
-# 
-# write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
-# }
-# 
+
+names_genes = main_inf %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% distinct()
+
+#Loop through disease traits and print a gene list for each
+
+dir.create('./data/Disease_Genes')
+
+dis_dir = "./data/Disease_Genes/"
+
+
+for (i in unique(names_genes$DISEASE.TRAIT)) {
+genes_curr = names_genes %>% filter(DISEASE.TRAIT == i & MAPPED_GENE != "") %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% mutate(DISEASE.TRAIT = gsub("\\/", "-", DISEASE.TRAIT), DISEASE.TRAIT = gsub("\\*", "-", DISEASE.TRAIT), File_Path =  DISEASE.TRAIT[1]) %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, File_Path) %>% distinct()
+
+genes_disease = genes_curr %>% ungroup() %>% dplyr::select(MAPPED_GENE) %>% distinct()
+
+genes_curr = unique(genes_curr)
+
+write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
+}
+
 # 
 # #Create map of EFO ids to terms
 # 
