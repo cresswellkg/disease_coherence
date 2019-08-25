@@ -1,5 +1,7 @@
 # README
 
+- To get final results run the scripts in the following order: `GWAS_Prep.Rmd` -> `Connectivity_Comparison_Undirected.Rmd` -> `Connectivity_Comparison_Filtered.Rmd` -> `Coherence_Calculations_New.Rmd`s
+
 - `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. 
 - `Connectivity_Comparison_Undirected.Rmd` - Calculation of  degree distributions and unnormalized coherence for disease related data. Includes old analyisis of random networks and KEGG pathways. Results are produced for Biogrid and STRING without filtering. Relies on `GWAS_Prep.Rmd` 
 - `Connectivity_Comparison_Filtered.Rmd` - Similar to comparison but calculates unnormalized coherence for STRING but with scores below 500 filtered. Includes old analyisis of random networks and KEGG pathways. Relies on `GWAS_Prep.Rmd` 
