@@ -578,7 +578,7 @@ colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 #Writing to a tables
 
 dir.create("../manuscript/tables")
-write.xlsx(coherence_disease, ".././manuscript/tables/supplementary_table_S3.csv", 
+write.csv(coherence_disease, ".././manuscript/tables/supplementary_table_S3.csv", 
           row.names = FALSE)
 
 ```
