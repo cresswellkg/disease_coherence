@@ -1,0 +1,71 @@
+---
+title: "Category_Tables"
+author: "Kellen Cresswell"
+date: "July 19, 2019"
+output: pdf_document
+---
+
+```{r}
+require(dplyr)
+```
+
+```{r}
+#Creating the category table
+
+Disease_Sum = read.csv("../manuscript/tables/supplementary_table_S1.csv")
+
+#Summarizinig Categories
+
+Disease_String_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Coherence.KEGG) %>% filter(!is.na(String.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence)
+
+Disease_String_Filt_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Filt.Coherence.KEGG) %>% filter(!is.na(String.Filt.Coherence.KEGG))   %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Filt.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Filt.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Filt.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Filt.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence)
+
+Disease_Biogrid_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, Biogrid.Coherence.KEGG) %>% filter(!is.na(Biogrid.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(Biogrid.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(Biogrid.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(Biogrid.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(Biogrid.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence) %>% filter(Total_Networks != 0)
+
+#Formatting
+
+#String
+
+Disease_String_Sum = Disease_String_Sum %>% rename(`Minimum Coherence` = Min_Coherence, `Maximum Coherence` = Max_Coherence, `Mean Coherence` = Mean_Coherence, `Median Coherence` =  Median_Coherence, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Total Networks` = Total_Networks) 
+
+Disease_String_Sum = Disease_String_Sum %>% mutate(`Minimum Coherence` = format(`Minimum Coherence`, digits = 3)) %>% mutate(`Maximum Coherence` = format(`Maximum Coherence`, digits = 3)) %>% mutate(`Mean Coherence` = format(`Mean Coherence`, digits = 3)) %>% mutate(`Median Coherence` = format(`Median Coherence`, digits = 3)) %>% mutate(`Mean # Genes` = format(`Mean # Genes`, digits = 4)) %>% mutate(`Mean # SNPs` = format(`Mean # SNPs`, digits = 4))
+
+#String Filtered
+
+Disease_String_Filt_Sum = Disease_String_Filt_Sum %>% rename(`Minimum Coherence` = Min_Coherence, `Maximum Coherence` = Max_Coherence, `Mean Coherence` = Mean_Coherence, `Median Coherence` =  Median_Coherence, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Total Networks` = Total_Networks) 
+
+Disease_String_Filt_Sum = Disease_String_Filt_Sum %>% mutate(`Minimum Coherence` = format(`Minimum Coherence`, digits = 3)) %>% mutate(`Maximum Coherence` = format(`Maximum Coherence`, digits = 3)) %>% mutate(`Mean Coherence` = format(`Mean Coherence`, digits = 3)) %>% mutate(`Median Coherence` = format(`Median Coherence`, digits = 3)) %>% mutate(`Mean # Genes` = format(`Mean # Genes`, digits = 4)) %>% mutate(`Mean # SNPs` = format(`Mean # SNPs`, digits = 4))
+
+#Biogrid
+
+Disease_Biogrid_Sum = Disease_Biogrid_Sum %>% rename(`Minimum Coherence` = Min_Coherence, `Maximum Coherence` = Max_Coherence, `Mean Coherence` = Mean_Coherence, `Median Coherence` =  Median_Coherence, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Minimum # SNPs` = Min_SNPs, `Maximum # SNPs` = Max_SNPs, `Mean # SNPs` = Mean_SNPs, `Median # SNPs` = Median_SNPs, `Total Networks` = Total_Networks) 
+
+Disease_Biogrid_Sum = Disease_Biogrid_Sum %>% mutate(`Minimum Coherence` = format(`Minimum Coherence`, digits = 3)) %>% mutate(`Maximum Coherence` = format(`Maximum Coherence`, digits = 3)) %>% mutate(`Mean Coherence` = format(`Mean Coherence`, digits = 3)) %>% mutate(`Median Coherence` = format(`Median Coherence`, digits = 3)) %>% mutate(`Mean # Genes` = format(`Mean # Genes`, digits = 4)) %>% mutate(`Mean # SNPs` = format(`Mean # SNPs`, digits = 4))
+
+#Writing to workbook
+
+row.names(Disease_String_Filt_Sum) = NULL
+row.names(Disease_String_Sum) = NULL
+row.names(Disease_Biogrid_Sum) = NULL
+
+require(xlsx)
+wb = createWorkbook()
+sheet  = createSheet(wb, sheetName="STRING")
+addDataFrame(Disease_String_Sum, sheet)
+sheet  = createSheet(wb, sheetName="STRING Filtered")
+addDataFrame(Disease_String_Filt_Sum, sheet)
+sheet  = createSheet(wb, sheetName="Biogrid")
+addDataFrame(Disease_Biogrid_Sum, sheet)
+
+saveWorkbook(wb, "../manuscript/tables/Supplementary_Table_S1.xlsx")
+
+```
+
+```{r}
+#In text version
+
+Cat_Within = Disease_Sum %>% group_by(Category) %>% summarise(`Number of SNPs`= sum(`Number.of.SNPs`), `Number of Genes` = sum(Number.of.genes), `Total Diseases` = n(),  `Mean Biogrid Coherence` =mean(Biogrid.Coherence.KEGG, na.rm = TRUE), `Mean String Coherence` = mean(String.Coherence.KEGG, na.rm = TRUE), `Mean String Filtered Coherence` = mean(String.Filt.Coherence.KEGG, na.rm = TRUE)) %>% arrange(Category)
+
+write.csv(Cat_Within, "../manuscript/tables/Table_1.csv", row.names = FALSE)
+```
+
