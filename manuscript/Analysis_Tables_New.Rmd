@@ -36,8 +36,8 @@ library(cowplot)
 ```{r}
 max_genes <- 200 # Maximum number of genes for a network to be included
 
-fileNameIn0  <- "tables/supplementary_table_S1.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
-# iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S1.csv > tmp.csv
+fileNameIn0  <- "tables/supplementary_table_S3.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
+# iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S3.csv > tmp.csv
 mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
 rownames(mtx0) <- mtx0$Disease
 ```
