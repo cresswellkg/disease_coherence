@@ -1,7 +1,7 @@
 ---
 title: "Connectivity Comparison Undirected"
 author: "Kellen Cresswell"
-date: "June 30, 2018"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
@@ -16,128 +16,94 @@ source("./functions/genes2interactions.R")
 source("./functions/disease2frame.R")
 source("./functions/diseases2mod.R")
 
-require(KEGGREST)
-require(KEGG.db)
-require(readr)
-require(dplyr)
-require(biomaRt)
-require(ggplot2)
-require(broom)
-require(stringr)
-require(dplyr)
-require(tidyr)
-require(igraph)
+# install.packages("png")
+# Download https://bioconductor.org/packages/release/bioc/src/contrib/KEGGREST_1.24.0.tar.gz
+# Manually install "KEGGREST" from the file
+library(KEGGREST) # BiocManager::install("KEGGREST")
+library(KEGG.db)  # BiocManager::install("KEGG.db")
+library(biomaRt)  # BiocManager::install("biomaRt")
+library(readr)    # install.packages("readr")
+library(dplyr)    # install.packages("dplyr")
+library(ggplot2)  # install.packages("ggplot2")
+library(broom)    # install.packages("broom")
+library(stringr)  # install.packages("stringr")
+library(tidyr)    # install.packages("tidyr")
+library(igraph)   # install.packages("igraph")
 ```
 
 ```{r}
 #Reading in biogrid data
-
 links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
-
 links = links %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
 #Split based on Biogrid ID system then pull out gene names
-
 protein1 = lapply(strsplit(links$`Alt IDs Interactor A`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
 protein2 = lapply(strsplit(links$`Alt IDs Interactor B`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
-
 protein1 = unlist(protein1)
 protein2 = unlist(protein2)
 
 #Place into matrix in form that disease2frame works on
-
-links = links %>% mutate(protein1 =protein1, 
-                             protein2 = protein2) %>% dplyr::select(protein1, protein2)
-
+links = links %>% mutate(protein1 =protein1, protein2 = protein2) %>% dplyr::select(protein1, protein2)
 links = links %>% dplyr::select(hgnc_symbol_a = protein1,hgnc_symbol_b = protein2)
-
 
 dim(links)
 ```
 
 ```{r}
 #Repeating for string
-
 data_dir = "./data/"
-
 string = read_table2(paste0(data_dir,"9606.protein.links.v11.0.txt.gz"))
-
-string= string %>% mutate(protein1 = gsub("9606.", "", protein1), 
-                             protein2 = gsub("9606.", "", protein2))
+string= string %>% mutate(protein1 = gsub("9606.", "", protein1), protein2 = gsub("9606.", "", protein2))
 
 #Read in ensemble protein ID
-
 ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "www")
-
 genes = biomaRt::getBM(attributes=c('ensembl_peptide_id','hgnc_symbol'), mart = ensembl)
 
-
 #Join gene names with string
-
 string = left_join(string, genes, by = c("protein1" = "ensembl_peptide_id", "protein2" = "ensembl_peptide_id"))
-
 colnames(string)[4] ="hgnc_symbol_a"
-
 string = left_join(string, genes, by = c("protein2" = "ensembl_peptide_id"))
-
 colnames(string)[5] ="hgnc_symbol_b"
-
 dim(string)
-
-
 ```
 
 ```{r}
-
 #Get directory with diseases
-
 disease_directory = "./data/Disease_Genes/"
-
 disease_names = list.files(disease_directory)
-
 disease_list = paste0("./data/Disease_Genes/", disease_names, "/")
 
 #Read in manually selected diseases
-
 disease_select = read_csv("./data/supplementary_table_diseases_selected.csv")
-
 disease_traits = disease_select %>% dplyr::select(`Disease name`, Category)
 
 #Pull out disease and category information from select diseases
 
 #Change first column to make more clear
-
 colnames(disease_select)[1] = "Disease"
 
 #Filtering out NA in last row
-
 disease_select = disease_select %>% filter(!is.na(Disease))
 
 #Creating a vector of file names from disease select
-
 disease_files =  unique(paste0(disease_select$Disease, ".txt"))
 
 #Make full path
-
 disease_selected = paste0("./data/Disease_Genes/", disease_files)
-
 ```
 
 ```{r}
 #Loop through diseases and pull out internal and external edges
-
 disease_length = 1:length(disease_selected)
-
 disease_frames = lapply(disease_length, function(x) {
 
   #Run function to find internal and external connectivity 
   diseases = diseases2frame(disease_selected[x], links = links)
   
   #Record ppi missing
-  
   per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
   return(list(diseases = diseases, lengths = per_no_ppi))
-  })
+})
 
 # #Calculate modularity
 # 
@@ -149,17 +115,13 @@ disease_frames = lapply(disease_length, function(x) {
 # })
 # 
 # saveRDS(disease_mod, "Modularity_Biogrid.rds")
-# 
+ 
 #Pull out network information for overall data frame
-
 disease_protein = lapply(disease_frames, function(x) x$diseases)
 
 #Convert to data frame
-
 disease_overall = bind_rows(disease_protein)
-
 disease_overall = left_join(disease_overall, disease_select %>% dplyr::select(Disease, Category), "Disease")
-
 saveRDS(disease_overall, "biogrid_edges_new.rds")
 
 # #Add number of snps with no connection to original data frame
@@ -169,25 +131,21 @@ saveRDS(disease_overall, "biogrid_edges_new.rds")
 # per_no_ppi_frame = data.frame(Disease = unique(disease_select$Disease), per_no_ppi_bio = per_no_ppi_bio)
 # 
 # disease_select = left_join(disease_select, per_no_ppi_frame, "Disease")
-
-
 ```
 
 ```{r}
 #Repeat for string
 
 #Loop through diseases and pull out internal and external edges
-
 disease_frames_string = lapply(disease_length, function(x) {
 
   #Run function to find internal and external connectivity 
   diseases = diseases2frame(disease_selected[x], links = string)
   
   #Record ppi missing
-  
   per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
   return(list(diseases = diseases, lengths = per_no_ppi))
-  })
+})
 
 #String
 
@@ -201,13 +159,10 @@ disease_frames_string = lapply(disease_length, function(x) {
 # saveRDS(disease_mod_string, "Modularity_String.rds")
 
 #Pull out network information for overall data frame
-
 disease_protein_string = lapply(disease_frames_string, function(x) x$diseases)
 
 #Convert to data frame
-
 disease_overall_string = bind_rows(disease_protein_string)
-
 disease_overall_string = left_join(disease_overall_string, disease_select %>% dplyr::select(Disease, Category), "Disease")
 
 #Add number of snps with no connection to original data frame
@@ -221,43 +176,33 @@ disease_overall_string = left_join(disease_overall_string, disease_select %>% dp
 # disease_select = left_join(disease_select, per_no_ppi_frame, "Disease")
 
 saveRDS(disease_overall_string, "string_edges_new.rds")
-
 ```
 
 ```{r}
+#Repeat for string filtered
 string = string %>% filter(combined_score>=500)
-```
 
-```{r}
 #Diseases
-
 disease_length = 1:length(disease_selected)
 
 #Loop through diseases and pull out internal and external edges
-
 disease_frames_string = lapply(disease_length, function(x) {
 
   #Run function to find internal and external connectivity 
   diseases = diseases2frame(disease_selected[x], links = string)
   
   #Record ppi missing
-  
   per_no_ppi = 1- (nrow(diseases)/nrow(read.table(disease_selected[x])))
   return(list(diseases = diseases, lengths = per_no_ppi))
-  })
-
+})
 
 #Pull out network information for overall data frame
-
 disease_protein_string = lapply(disease_frames_string, function(x) x$diseases)
 
 #Convert to data frame
-
 disease_overall_string = bind_rows(disease_protein_string)
-
 disease_overall_string = left_join(disease_overall_string, disease_select %>% dplyr::select(Disease, Category), "Disease")
 
 #disease_overall_string = #readRDS("disease_overall_string.rds")
-
 saveRDS(disease_overall_string, "string_filt_edges_new.rds")
 ```
