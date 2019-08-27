@@ -105,6 +105,30 @@ require(writexl)
 
 write_xlsx(msig_sum, "../manuscript/tables/supplementary_table_S2.xlsx")
 
-
 ```
+
+```{r}
+#Creating plot of slopes from tables
+
+#Read in counts
+
+kegg_string  = msig %>% filter(Category == "CP:KEGG") %>% dplyr::select(Count, Slope)
+
+Slope_Sum = bind_rows(rand_string %>% mutate(Method = "Random"), kegg_string %>% dplyr::select(Count, Slope) %>% mutate(Method = "KEGG"))
+```
+
+```{r}
+require(ggplot2)
+
+#Plotting
+
+slope_plot = ggplot(Slope_Sum, aes(x = Count, y = Slope, color = Method)) + geom_point(size = 2) + theme_bw() + labs(y = "Slope", x = "Network Size") + geom_smooth( method = 'loess', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2)  + theme_light(base_size = 18) + 
+   theme(axis.line = element_line(colour = "black"), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(), legend.position = c(.75, .75))
+
+ggsave("../Figures/Size_Slope_Plot.png", slope_plot, height=5, width=7, units="in", dpi = 600)
+```
+
 
