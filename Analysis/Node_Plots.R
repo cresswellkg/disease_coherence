@@ -1,4 +1,4 @@
-remotes::install_github("schochastics/graphlayouts")
+# remotes::install_github("schochastics/graphlayouts")
 require(graphlayouts)
 require(igraph)
 require(ggraph)
@@ -10,37 +10,37 @@ ring1 = make_ring(10)
 ring2 = make_ring(20)
 
 #Plotting each relationship
-
+set.seed(1)
 #To change line color change the "colour" parameter in geom_edge_link
 #To change edge color change value in scale_fill_manual
-ring1_plot = ggraph(ring1) +
-  geom_edge_link(width=.5,colour="red")+
+ring1_plot = ggraph(ring1, layout = "stress") +
+  geom_edge_link(width=.5,colour="dodgerblue", alpha = 0.5)+
   geom_node_point(shape=21,size=3, aes(fill = "green")) +
   theme_graph() + 
-  scale_fill_manual(values = "forestgreen") + 
+  scale_fill_manual(values = "darkorange") + 
   guides(fill = FALSE)
 
-ring2_plot = ggraph(ring2) +
-  geom_edge_link(width=.5,colour="red")+
+ring2_plot = ggraph(ring2, layout = "stress") +
+  geom_edge_link(width=.5,colour="dodgerblue", alpha = 0.5)+
   geom_node_point(shape=21,size=3, aes(fill = "green")) +
   theme_graph() + 
-  scale_fill_manual(values = "forestgreen") + 
+  scale_fill_manual(values = "darkorange") + 
   guides(fill = FALSE)
 
 #Full graphs
 
-full1_plot = ggraph(make_full_graph(10)) +
-  geom_edge_link(width=.5,colour="red")+
-  geom_node_point(shape=21,size=3, aes(fill = "green")) +
-  theme_graph() +
-  scale_fill_manual(values = "forestgreen") + 
-  guides(fill = FALSE)
-
-full2_plot = ggraph(make_full_graph(20)) +
-  geom_edge_link(width=.5,colour="yellow3")+
+full1_plot = ggraph(make_full_graph(10), layout = "stress") +
+  geom_edge_link(width=.5,colour="dodgerblue", alpha = 0.5)+
   geom_node_point(shape=21,size=3, aes(fill = "green")) +
   theme_graph() + 
-  scale_fill_manual(values = "forestgreen") + 
+  scale_fill_manual(values = "darkorange") + 
+  guides(fill = FALSE)
+
+full2_plot = ggraph(make_full_graph(20), layout = "gem") +
+  geom_edge_link(width=.5,colour="dodgerblue", alpha = 0.5)+
+  geom_node_point(shape=21,size=3, aes(fill = "green")) +
+  theme_graph() + 
+  scale_fill_manual(values = "darkorange") + 
   guides(fill = FALSE)
 
 #Saving plots
