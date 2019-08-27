@@ -155,7 +155,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )      
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string.rds")
 # }
 #   
 # 
@@ -176,7 +176,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #   mod_sum = data.frame(Disease = j, Count =nrow(diseases_curr), Slope = mod_slope,
 #                        Category = curr_msig$gs_subcat[1])
 #   mod_over = bind_rows(mod_over, mod_sum)
-#   saveRDS(mod_over,"All_Msig_String.rds")
+#   saveRDS(mod_over,"./data/Coherence_Results/All_Msig_String.rds")
 # }
 # ```
 
@@ -209,7 +209,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
 #     coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string_filt.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt.rds")
 # }
 
 
@@ -245,7 +245,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
 #       coherence_tab = bind_rows(coherence, coherence_tab)
 #       print(coherence_tab)
-#       saveRDS(coherence_tab, "coherence_biogrid.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid.rds")
 # }
 
 
@@ -283,7 +283,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
 #       
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string_react.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_react.rds")
 # }
 #   
 # 
@@ -319,7 +319,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
 #       
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string_filt_react.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_react.rds")
 # }
 #   
 #   
@@ -355,7 +355,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
 # 
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_biogrid_react.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid_react.rds")
 # }
 # 
 # 
@@ -392,7 +392,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
 #       
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string_CC.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_CC.rds")
 # }
 #   
 # 
@@ -427,7 +427,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
 # 
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_string_filt_CC.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_CC.rds")
 # }
 # 
 
@@ -463,7 +463,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
 # 
 #       coherence_tab = bind_rows(coherence, coherence_tab)
-#       saveRDS(coherence_tab, "coherence_biogrid_CC.rds")
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid_CC.rds")
 # }
 ```
 
@@ -491,7 +491,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #       diseases_curr = data.frame(Count = i, Slope = coef(mod_rand)[1])
 #       string_random = bind_rows(string_random, diseases_curr)
 #       print(string_random)
-#       saveRDS(string_random, "string_random_edges.rds")
+#       saveRDS(string_random, "./data/Coherence_Results/string_random_edges.rds")
 # }
 
 
