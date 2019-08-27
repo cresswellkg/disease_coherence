@@ -24,86 +24,67 @@ options(stringsAsFactors = FALSE)
 ```
 
 ```{r}
-#Read in data and packages
-
-library(gwascat)
-library(limma)
-library(dplyr)
-library(DO.db)
-library(DBI)
-library(MDmisc)
-library(ontoCAT)
-library(rowr)
-require(readr)
-
-data(ebicat37)
+# Read in data and packages
+# install.packages("Biocmanager")
+library(gwascat) # BiocManager::install("gwascat")
+library(limma)   # BiocManager::install("limma")
+library(dplyr)   # install.packages("dplyr")
+library(DO.db)   # BiocManager::install("DO.db")
+library(DBI)     # BiocManager::install("DBI")
+source("https://raw.githubusercontent.com/mdozmorov/MDmisc/master/R/unembed.R") # library(MDmisc)  
+# install.packages("rJava")
+# Download https://www.bioconductor.org/packages/2.10/bioc/src/contrib/ontoCAT_1.8.0.tar.gz
+# Install "ontoCAT" manually from the file
+library(ontoCAT) # BiocManager::install("ontoCAT")
+library(rowr)    # install.packages("rowr")
+library(readr)   # install.packages("readr")
 ```
 
 ```{r}
 #Initial summary
+data(ebicat37)
 
 #Convert to data frame
-
 ebi_dat = as.data.frame(mcols(ebicat37))
 
 #Put comma seperated genes on different lines
-
 ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = ",")
 ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = " - ")
 
 #Remove extra whitespace from unmebed
-
 ebi_dat$MAPPED_GENE = gsub(" ", "", ebi_dat$MAPPED_GENE)
 
 #Summarise
-
 init_sum = ebi_dat %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, SNPS)  %>% distinct() %>% group_by(DISEASE.TRAIT) %>% summarise(snp_count_total = length(unique(SNPS)), snp_count_no_gene = sum(MAPPED_GENE == ""), snp_prop_nogene = snp_count_no_gene/snp_count_total,gene_count_total = length(unique(MAPPED_GENE)) - sum(unique(MAPPED_GENE =="")))
-
 ```
 
 ```{r }
 #Converting aliases to gene names
-
 alias2SymbolEbicat = function(ebicat37) {
   
   ebi_dat = as.data.frame(mcols(ebicat37))
   
   #Unembed comma and - seperated values
-  
   ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = ",")
   ebi_dat = unembed(ebi_dat, "MAPPED_GENE", sep = " - ")
   
   #Remove extra spaces
-  
   ebi_dat$MAPPED_GENE = gsub(" ", "", ebi_dat$MAPPED_GENE)
 
   #Summarise the results
-  
   #Keeping track of changes (sapply necessary to keep placeholders for unmapped genes)
-  
   recomb_genes = sapply(ebi_dat$MAPPED_GENE, function(x) alias2Symbol(x, species = "Hs"))
-  
   recomb_genes = unlist(lapply(recomb_genes, function(x) paste0(x,collapse=' ')))
-  
   change = (ebi_dat$MAPPED_GENE == recomb_genes)
-  
   sum_vec = ifelse(change == TRUE, "Same", ifelse(change == FALSE & recomb_genes == "", "No Match", "Converted"))
-
   ebi_dat$MAPPED_GENE = recomb_genes
-  
   return(ebi_dat)
 }
 
 ebi_dat = alias2SymbolEbicat(ebicat37)
-```
 
-```{r}
 #Pulling out useful info
-
 main_inf = ebi_dat %>% dplyr::select(MAPPED_GENE, SNPS, CHR_ID, CHR_POS, INITIAL.SAMPLE.DESCRIPTION, MAPPED_TRAIT, MAPPED_TRAIT_URI, DISEASE.TRAIT)
-
-#Updated EFO table
-
 
 ```
 
@@ -181,29 +162,25 @@ main_inf = ebi_dat %>% dplyr::select(MAPPED_GENE, SNPS, CHR_ID, CHR_POS, INITIAL
 # 
 # main_inf = main_inf %>% group_by(MAPPED_TRAIT_URI) %>% mutate(Category = paste0(unique(Category), collapse = "|")) %>% distinct()
 # 
-# #Collapse genes and disease names for simplifcation purposes and then get unique combinations
-# 
+```
 
+```{r}
+#Collapse genes and disease names for simplifcation purposes and then get unique combinations
 names_genes = main_inf %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% distinct()
 
 #Loop through disease traits and print a gene list for each
-
 dir.create('./data/Disease_Genes')
-
 dis_dir = "./data/Disease_Genes/"
 
-
 for (i in unique(names_genes$DISEASE.TRAIT)) {
-genes_curr = names_genes %>% filter(DISEASE.TRAIT == i & MAPPED_GENE != "") %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% mutate(DISEASE.TRAIT = gsub("\\/", "-", DISEASE.TRAIT), DISEASE.TRAIT = gsub("\\*", "-", DISEASE.TRAIT), File_Path =  DISEASE.TRAIT[1]) %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, File_Path) %>% distinct()
-
-genes_disease = genes_curr %>% ungroup() %>% dplyr::select(MAPPED_GENE) %>% distinct()
-
-genes_curr = unique(genes_curr)
-
-write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
+  genes_curr = names_genes %>% filter(DISEASE.TRAIT == i & MAPPED_GENE != "") %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% mutate(DISEASE.TRAIT = gsub("\\/", "-", DISEASE.TRAIT), DISEASE.TRAIT = gsub("\\*", "-", DISEASE.TRAIT), File_Path =  DISEASE.TRAIT[1]) %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE, File_Path) %>% distinct()
+  genes_disease = genes_curr %>% ungroup() %>% dplyr::select(MAPPED_GENE) %>% distinct()
+  genes_curr = unique(genes_curr)
+  write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
 }
+```
 
-# 
+```{r}
 # #Create map of EFO ids to terms
 # 
 # EFO_list = lapply(unique(main_inf$MAPPED_TRAIT_URI), function(x) {
