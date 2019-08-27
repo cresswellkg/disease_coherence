@@ -14,13 +14,13 @@ require(dplyr)
 
 Disease_Sum = read.csv("../manuscript/tables/supplementary_table_S3.csv")
 
-#Summarizinig Categories
+#Summarizing Categories
 
-Disease_String_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Coherence.KEGG) %>% filter(!is.na(String.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence)
+Disease_String_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Coherence.KEGG) %>% filter(!is.na(String.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes, na.rm = TRUE), Max_Genes = max(Number.of.genes, na.rm = TRUE), Mean_Genes = mean(Number.of.genes, na.rm = TRUE), Median_Genes = median(Number.of.genes, na.rm = TRUE) , Min_SNPs = min(Number.of.SNPs, na.rm = TRUE), Max_SNPs = max(Number.of.SNPs, na.rm = TRUE), Mean_SNPs = mean(Number.of.SNPs, na.rm = TRUE), Median_SNPs = median(Number.of.SNPs, na.rm = TRUE), Total_Networks = n()) %>% arrange(-Median_Coherence)
 
-Disease_String_Filt_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Filt.Coherence.KEGG) %>% filter(!is.na(String.Filt.Coherence.KEGG))   %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Filt.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Filt.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Filt.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Filt.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence)
+Disease_String_Filt_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, String.Filt.Coherence.KEGG) %>% filter(!is.na(String.Filt.Coherence.KEGG))   %>% group_by(Category) %>% summarise(Min_Coherence = min(String.Filt.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(String.Filt.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(String.Filt.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(String.Filt.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes, na.rm = TRUE), Max_Genes = max(Number.of.genes, na.rm = TRUE), Mean_Genes = mean(Number.of.genes, na.rm = TRUE), Median_Genes = median(Number.of.genes, na.rm = TRUE) , Min_SNPs = min(Number.of.SNPs, na.rm = TRUE), Max_SNPs = max(Number.of.SNPs, na.rm = TRUE), Mean_SNPs = mean(Number.of.SNPs, na.rm = TRUE), Median_SNPs = median(Number.of.SNPs, na.rm = TRUE), Total_Networks = n()) %>% arrange(-Median_Coherence)
 
-Disease_Biogrid_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, Biogrid.Coherence.KEGG) %>% filter(!is.na(Biogrid.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(Biogrid.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(Biogrid.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(Biogrid.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(Biogrid.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes), Max_Genes = max(Number.of.genes), Mean_Genes = mean(Number.of.genes), Median_Genes = median(Number.of.genes) , Min_SNPs = min(Number.of.SNPs), Max_SNPs = max(Number.of.SNPs), Mean_SNPs = mean(Number.of.SNPs), Median_SNPs = median(Number.of.SNPs), Total_Networks = n()) %>% arrange(-Median_Coherence) %>% filter(Total_Networks != 0)
+Disease_Biogrid_Sum = Disease_Sum %>% dplyr::select(Disease, Category, Number.of.SNPs, Number.of.genes, Biogrid.Coherence.KEGG) %>% filter(!is.na(Biogrid.Coherence.KEGG)) %>% group_by(Category) %>% summarise(Min_Coherence = min(Biogrid.Coherence.KEGG, na.rm = TRUE), Max_Coherence = max(Biogrid.Coherence.KEGG, na.rm = TRUE), Mean_Coherence = mean(Biogrid.Coherence.KEGG, na.rm = TRUE), Median_Coherence =median(Biogrid.Coherence.KEGG, na.rm = TRUE), Min_Genes = min(Number.of.genes, na.rm = TRUE), Max_Genes = max(Number.of.genes, na.rm = TRUE), Mean_Genes = mean(Number.of.genes, na.rm = TRUE), Median_Genes = median(Number.of.genes, na.rm = TRUE) , Min_SNPs = min(Number.of.SNPs, na.rm = TRUE), Max_SNPs = max(Number.of.SNPs, na.rm = TRUE), Mean_SNPs = mean(Number.of.SNPs, na.rm = TRUE), Median_SNPs = median(Number.of.SNPs, na.rm = TRUE), Total_Networks = n()) %>% arrange(-Median_Coherence)
 
 #Formatting
 
@@ -68,4 +68,67 @@ Cat_Within = Disease_Sum %>% group_by(Category) %>% summarise(`Number of SNPs`= 
 
 write.csv(Cat_Within, "../manuscript/tables/table_1.csv", row.names = FALSE)
 ```
+
+```{r}
+msig = readRDS("./data/Coherence_Results/All_Msig_String.rds")
+
+#Correlation betweeen categories and size
+
+msig_cor = msig %>% group_by(Category) %>% summarise(Slope_Cor = cor(Count, Slope, "complete")) %>% arrange(Slope_Cor)
+
+colnames(msig_cor)[2] = "Size Correlation"
+
+```
+
+```{r}
+options(scipen = 2)
+
+msig_sum = msig %>% group_by(Category) %>% summarise(Min_Slope = min(Slope, na.rm = TRUE), Max_Slope = max(Slope, na.rm = TRUE), Mean_Slope = mean(Slope, na.rm = TRUE), Median_Slope = median(Slope, na.rm = TRUE), Min_Genes = min(Count), Max_Genes = max(Count), Mean_Genes = mean(Count), Median_Genes = median(Count), Total_Sets = n()) %>% arrange(Mean_Slope)
+
+msig_sum = left_join(msig_sum, msig_cor)
+
+#Adding in random slope
+
+rand_string = readRDS("./data/Coherence_Results/string_random_edges.rds") %>% mutate(Category = "Random") %>% dplyr::select(Category, Count, Slope)
+
+rand_sum = rand_string %>% group_by(Category) %>% summarise(Min_Slope = min(Slope, na.rm = TRUE), Max_Slope = max(Slope, na.rm = TRUE), Mean_Slope = mean(Slope, na.rm = TRUE), Median_Slope = median(Slope, na.rm = TRUE), Min_Genes = min(Count), Max_Genes = max(Count), Mean_Genes = mean(Count), Median_Genes = median(Count), Total_Sets = n(),) %>% arrange(Mean_Slope)
+
+rand_sum = rand_sum %>% mutate(`Size Correlation` = cor(rand_string$Count, rand_string$Slope))
+
+msig_sum = bind_rows(msig_sum, rand_sum)
+
+msig_sum = msig_sum %>% rename(`Minimum Slope` = Min_Slope, `Maximum Slope` = Max_Slope, `Mean Slope` = Mean_Slope, `Median Slope` =  Median_Slope, `Minimum # Genes` = Min_Genes, `Maximum # Genes` = Max_Genes, `Mean # Genes` = Mean_Genes, `Median # Genes` = Median_Genes, `Total Networks` = Total_Sets) 
+
+msig_sum = msig_sum %>% mutate(`Minimum Slope` = format(`Minimum Slope`, digits = 3)) %>% mutate(`Maximum Slope` = format(`Maximum Slope`, digits = 3)) %>% mutate(`Mean Slope` = format(`Mean Slope`, digits = 3)) %>% mutate(`Median Slope` = format(`Median Slope`, digits = 3)) %>% mutate(`Mean # Genes` = format(`Mean # Genes`, digits = 4)) %>% mutate(`Size Correlation` = format(`Size Correlation`, digits = 2))
+
+require(writexl)
+
+write_xlsx(msig_sum, "../manuscript/tables/supplementary_table_S2.xlsx")
+
+```
+
+```{r}
+#Creating plot of slopes from tables
+
+#Read in counts
+
+kegg_string  = msig %>% filter(Category == "CP:KEGG") %>% dplyr::select(Count, Slope)
+
+Slope_Sum = bind_rows(rand_string %>% mutate(Method = "Random"), kegg_string %>% dplyr::select(Count, Slope) %>% mutate(Method = "KEGG"))
+```
+
+```{r}
+require(ggplot2)
+
+#Plotting
+
+slope_plot = ggplot(Slope_Sum, aes(x = Count, y = Slope, color = Method)) + geom_point(size = 2) + theme_bw() + labs(y = "Slope", x = "Network Size") + geom_smooth( method = 'loess', se = FALSE, formula=y~x-1, fullrange = TRUE, size = 2)  + theme_light(base_size = 18) + 
+   theme(axis.line = element_line(colour = "black"), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(), legend.position = c(.75, .75))
+
+ggsave("../Figures/Size_Slope_Plot.png", slope_plot, height=5, width=7, units="in", dpi = 600)
+```
+
 
