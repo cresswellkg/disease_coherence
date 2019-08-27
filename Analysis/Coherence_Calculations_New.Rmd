@@ -575,14 +575,18 @@ coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Numb
 ```
 
 ```{r}
-#Reading in data from cluster and binding
 
+#Adding p-values from permutation test
+#Biogrid
 biogrid_p = bind_rows(readRDS("./data/Permutation_Results/biogrid_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/biogrid_p_psych_1k.rds") %>% as.data.frame(.))
 
+#String
 string_p = bind_rows(readRDS("./data/Permutation_Results/string_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_p_psych_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_p_neuro_1k.rds") %>% as.data.frame(.))
 
+#String Filtered
 string_filt_p = bind_rows(readRDS("./data/Permutation_Results/string_filt_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_filt_p_psych_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_filt_p_neuro_1k.rds") %>% as.data.frame(.))
 
+#Give appropriate name
 colnames(biogrid_p) = c("Disease", "Biogrid P-value", "Ave")
 colnames(string_p) = c("Disease", "String P-value", "Ave")
 colnames(string_filt_p) = c("Disease", "String Filt P-value", "Ave") 
@@ -596,26 +600,27 @@ coherence_full = left_join(coherence_full,string_p%>% dplyr::select(-Ave))
 
 coherence_full = left_join(coherence_full,string_filt_p%>% dplyr::select(-Ave))
 
-#Complete Disease dataset
+#Complete Disease dataset by adding p-values
 
 coherence_disease = left_join(coherence_disease,biogrid_p %>% dplyr::select(-Ave), by = c("Disease" = "Disease"))
 
 coherence_disease = left_join(coherence_disease,string_p %>% dplyr::select(-Ave), by = c("Disease" = "Disease"))
 
-
 coherence_disease = left_join(coherence_disease,string_filt_p  %>% dplyr::select(-Ave), by = c("Disease" = "Disease"))
 
+#Rounding data for table
 coherence_disease = coherence_disease %>% mutate_if(is.numeric, round, digits = 2)
 
 coherence_disease = coherence_disease %>% mutate(`Biogrid P-value` = round( as.numeric(as.character(`Biogrid P-value`)),4)) %>% mutate(`String P-value` = round( as.numeric(as.character(`String P-value`)),4)) %>% mutate(`String Filt P-value` = round( as.numeric(as.character(`String Filt P-value`)),4))
 
-
-coherence_disease =coherence_disease %>% arrange(-`String Coherence`)
+#Arranging by disease and category
+coherence_disease =coherence_disease %>% arrange(`Category`, `Disease`)
 
 #Rename KEGG pathways when necessary
 
 coherence_disease = coherence_disease %>% dplyr::rename(`String Coherence KEGG` = `String Coherence`, `String Filt Coherence KEGG` = `String Filt Coherence`, `Biogrid Coherence KEGG` = `Biogrid Coherence`)
 
+#Rename CC to GOCC to better reflect source
 colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 
 #Writing to a tables
