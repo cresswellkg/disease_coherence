@@ -63,3 +63,104 @@ for (j in unique(msig$gs_name)) {
   mod_over = bind_rows(mod_over, mod_sum)
   saveRDS(mod_over,"All_Msig_Biogrid.rds")
 }
+
+# #Calculating normalized coherence
+
+# #KEGG
+# msig = readRDS("KEGG_Biogrid.rds")
+# msig =msig %>% filter(Category == "CP:KEGG")
+# coherence_tab = bind_rows()
+# for (i in unique(dis_slopes_biogrid_count$Disease)) {
+#   print(i)
+#   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
+#   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
+#   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
+# 
+#   diseases = bind_rows()
+#   j = 1
+#     while(j<11) {
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
+#     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
+#     if (any(diseases_curr$Internal !=0)) {
+#       j = j+1
+#       diseases = bind_rows(diseases, diseases_curr)
+# 
+#     }
+#     }
+# 
+#       mod_rand = lm(External ~ Internal-1, data = diseases)
+#       rand_slope = coef(mod_rand)[[1]]
+# 
+#       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+#       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
+#       coherence_tab = bind_rows(coherence, coherence_tab)
+#       print(coherence_tab)
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid.rds")
+# }
+
+# #GOCC
+# msig = readRDS("KEGG_Biogrid.rds")
+# msig =msig %>% filter(Category == "CC") %>% filter(!is.na(Slope))
+# coherence_tab = bind_rows()
+# for (i in unique(dis_slopes_biogrid_count$Disease)) {
+#   print(i)
+#   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
+#   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
+#   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
+# 
+#   diseases = bind_rows()
+#   j = 1
+#     while(j<11) {
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
+#     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
+#     if (any(diseases_curr$Internal !=0)) {
+#       j = j+1
+#       diseases = bind_rows(diseases, diseases_curr)
+# 
+#     }
+#     }
+# 
+#       mod_rand = lm(External ~ Internal-1, data = diseases)
+#       rand_slope = coef(mod_rand)[[1]]
+# 
+#       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+#       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
+# 
+#       coherence_tab = bind_rows(coherence, coherence_tab)
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid_CC.rds")
+# }
+
+
+# #Reactome
+# msig = readRDS("KEGG_Biogrid.rds")
+# msig =msig %>% filter(Category == "CP:REACTOME") %>% filter(!is.na(Slope))
+# coherence_tab = bind_rows()
+# for (i in unique(dis_slopes_biogrid_count$Disease)) {
+#   print(i)
+#   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
+#   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
+#   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
+# 
+#   diseases = bind_rows()
+#   j = 1
+#     while(j<11) {
+#     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
+#     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
+#     if (any(diseases_curr$Internal !=0)) {
+#       j = j+1
+#       diseases = bind_rows(diseases, diseases_curr)
+# 
+#     }
+#     }
+# 
+#       mod_rand = lm(External ~ Internal-1, data = diseases)
+#       rand_slope = coef(mod_rand)[[1]]
+# 
+#       coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+#       coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
+# 
+#       coherence_tab = bind_rows(coherence, coherence_tab)
+#       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid_react.rds")
+# }
+# 
+#
