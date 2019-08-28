@@ -10,22 +10,16 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.height
 ```
 
 ```{r}
-source("./functions/perm_slopes.R")
-source("./functions/GeneSample.R")
-source("./functions/genes2interactions.R")
 source("./functions/disease2frame.R")
-source("./functions/diseases2mod.R")
 
 # install.packages("png")
 # Download https://bioconductor.org/packages/release/bioc/src/contrib/KEGGREST_1.24.0.tar.gz
 # Manually install "KEGGREST" from the file
-library(KEGGREST) # BiocManager::install("KEGGREST")
-library(KEGG.db)  # BiocManager::install("KEGG.db")
+# library(KEGGREST) # BiocManager::install("KEGGREST")
+# library(KEGG.db)  # BiocManager::install("KEGG.db")
 library(biomaRt)  # BiocManager::install("biomaRt")
 library(readr)    # install.packages("readr")
 library(dplyr)    # install.packages("dplyr")
-library(ggplot2)  # install.packages("ggplot2")
-library(broom)    # install.packages("broom")
 library(stringr)  # install.packages("stringr")
 library(tidyr)    # install.packages("tidyr")
 library(igraph)   # install.packages("igraph")

@@ -27,15 +27,9 @@ options(stringsAsFactors = FALSE)
 # Read in data and packages
 # install.packages("Biocmanager")
 library(gwascat) # BiocManager::install("gwascat")
-library(limma)   # BiocManager::install("limma")
 library(dplyr)   # install.packages("dplyr")
-library(DO.db)   # BiocManager::install("DO.db")
-library(DBI)     # BiocManager::install("DBI")
 source("https://raw.githubusercontent.com/mdozmorov/MDmisc/master/R/unembed.R") # library(MDmisc)  
 # install.packages("rJava")
-# Download https://www.bioconductor.org/packages/2.10/bioc/src/contrib/ontoCAT_1.8.0.tar.gz
-# Install "ontoCAT" manually from the file
-library(ontoCAT) # BiocManager::install("ontoCAT")
 library(rowr)    # install.packages("rowr")
 library(readr)   # install.packages("readr")
 ```
@@ -88,82 +82,6 @@ main_inf = ebi_dat %>% dplyr::select(MAPPED_GENE, SNPS, CHR_ID, CHR_POS, INITIAL
 
 ```
 
-
-```{r}
-#Using EFO IDs from ebicat to get a hierarchy 
-
-# efo_loc = "https://raw.githubusercontent.com/EBISPOT/efo/master/efo.owl"
-# 
-# 
-# #This needs direct path for some reason
-# efo = getOntology("C:\\Users\\cresswellkg\\Documents\\disease_coherence_new\\Analysis\\data\\efo.owl")
-# 
-# 
-# #Cleaning up efo data to remove urls and putting comma seperated values on new lines
-# 
-# main_inf = unembed(main_inf, "MAPPED_TRAIT_URI", sep = ",")
-# main_inf$MAPPED_TRAIT_URI = basename(main_inf$MAPPED_TRAIT_URI)
-# 
-# tree = c()
-# for (i in unique(main_inf$MAPPED_TRAIT_URI)) {
-#   
-#   #Get entire EFO tree
-#   
-#   parents = getAllTermParentsById(efo, i)
-#   
-#   #Pull out labels and make into vector
-#   
-#   parents = sapply(parents, getLabel)
-#   
-#   #Cbind and fill in non-matching entries with NA
-#   
-#   tree = rowr::cbind.fill(tree,parents, fill = NA)
-#   
-# }
-# 
-# #Remove original column
-# 
-# tree = tree[,-1]
-# 
-# colnames(tree) = unique(main_inf$MAPPED_TRAIT_URI)
-# 
-# #Pick out important disorder groups
-# 
-# imp_cats = c("Abnormality of refraction", "Abnormality of the eye", "age", "anthropometric measurement", "auditory system disease", "autoimmune disease", "body weights and measures", "bone measurement", "cancer", "carcinoma", "cardiovascular disease", "cardiovascular disease biomarker measurement", "cardiovascular measurement", "diabetes mellitus", "diabetes mellitus biomarker", "digestive system disease", "eye measurement", "glucose measurement", "head and neck disorder", "heart function measurement", "hematological measurement", "immune system disease", "infectious disease biomarker", "insulin measurement", "lipid measurement", "lipid or lipoprotein measurement", "lipoprotein measurement", "mental or behavioural disorder", "metabolic disease", "metabolite measurement", "neoplasm", "nervous system disease", "neurodegenerative disease", "pulmonary function measurement", "reproductive system disease", "respiratory disease biomarker", "skin disease", "sleep measurement", "temporal measurement")
-# 
-# #Output cats by pipe
-# 
-# #Get categories for each unique EFO ID
-# 
-# cat_ass = apply(tree, 2, function(x) c(na.omit(match(x, imp_cats))))
-# 
-# #Replace categoryless values with NA
-# 
-# cat_ass = lapply(cat_ass, function(x) {
-#   if (length(x)<1) {
-#     cat = NA 
-#   } else {
-#     cat = x
-#   }
-#   return(cat)
-# })
-# 
-# #Assign category names
-# 
-# mapped_groups = stack(cat_ass)
-# mapped_groups$values = imp_cats[mapped_groups$values]
-# colnames(mapped_groups) = c("Category", "MAPPED_TRAIT_URI")
-# 
-# #Add groups to original data frame
-# 
-# main_inf = left_join(main_inf,mapped_groups, by = "MAPPED_TRAIT_URI")
-# 
-# main_inf$Category = as.character(main_inf$Category)
-# 
-# main_inf = main_inf %>% group_by(MAPPED_TRAIT_URI) %>% mutate(Category = paste0(unique(Category), collapse = "|")) %>% distinct()
-# 
-```
-
 ```{r}
 #Collapse genes and disease names for simplifcation purposes and then get unique combinations
 names_genes = main_inf %>% ungroup() %>% dplyr::select(DISEASE.TRAIT, MAPPED_GENE) %>% distinct()
@@ -179,29 +97,6 @@ for (i in unique(names_genes$DISEASE.TRAIT)) {
   write.table(genes_disease, paste0(dis_dir, substr(genes_curr$File_Path[1],1,100), ".txt"), row.names = FALSE, col.names = FALSE)
 }
 ```
-
-```{r}
-# #Create map of EFO ids to terms
-# 
-# EFO_list = lapply(unique(main_inf$MAPPED_TRAIT_URI), function(x) {
-#   if (x == "GO_190252") {
-#     term = NA
-#   } else {
-#   term = getLabel(getTermById(efo, x))
-#   }
-#   return(term)
-#   })
-# 
-# names(EFO_list) = unique(main_inf$MAPPED_TRAIT_URI)
-# 
-# EFO_Frame = stack(EFO_list)
-# 
-# colnames(EFO_Frame) = c("EFO_Name", "MAPPED_TRAIT_URI")
-# 
-# main_inf = left_join(main_inf, EFO_Frame, "MAPPED_TRAIT_URI")
-
-```
-
 
 ```{r}
 # main_sum = main_inf %>% ungroup() %>%  dplyr::select(DISEASE.TRAIT, MAPPED_GENE, Category, SNPS)  %>% distinct() %>% group_by(DISEASE.TRAIT) %>% mutate(snp_count_total = length(unique(SNPS)), snp_count_no_gene = sum(MAPPED_GENE == ""), snp_prop_nogene = snp_count_no_gene/snp_count_total,gene_count_total = length(unique(MAPPED_GENE))) %>% dplyr::select(DISEASE.TRAIT, Category, snp_count_total, snp_count_no_gene, snp_prop_nogene, gene_count_total) %>% distinct()

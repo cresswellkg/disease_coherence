@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r}
-require(dplyr)
+library(dplyr) #install.packages("dplyr")
 ```
 
 ```{r}
