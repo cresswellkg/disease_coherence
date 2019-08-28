@@ -1,3 +1,5 @@
+#disease_dis is the path to gene sets (text file containing a gene on each line)
+#Links protein protein intraction network
 diseases2frame = function(disease_dis, links) {
   
   source('functions/genes2interactions.R')
@@ -13,14 +15,13 @@ diseases2frame = function(disease_dis, links) {
   
   disease_length = 1:length(disease_nets)
   
-  #Get diseases
+  #Get diseases by removing file extension
   
   disease_dis_name = gsub('.*/', '', disease_dis)
   
   disease_dis_name = gsub('.txt', '', disease_dis_name)
   
-  
-  
+  #Place into data frame
   disease_frame = lapply(disease_length, function(y) {
     x = disease_nets[[y]]
     sub_frame = bind_rows(x$internal_connectivity, x$external_connectivity)
