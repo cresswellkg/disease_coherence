@@ -1,10 +1,10 @@
 source("./functions/disease2frame.R")
 
-require(readr)
-require(dplyr)
-require(biomaRt)
-require(msigdbr)
-require(igraph)
+library(readr) #install.packages("readr")
+library(dplyr) #install.packages("dplyr")
+library(biomaRt) #BiocManager::install("biomaRt")
+library(msigdbr) #BiocManager::install("msigdbr")
+library(igraph) #install.packages("igraph")
 
 #Reading in biogrid data
 

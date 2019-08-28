@@ -1,7 +1,6 @@
-# remotes::install_github("schochastics/graphlayouts")
-require(graphlayouts)
-require(igraph)
-require(ggraph)
+library(graphlayouts) # remotes::install_github("schochastics/graphlayouts")
+require(igraph) #install.packages("igraph")
+require(ggraph) #install.packages("ggraph")
 
 #Creating ring networks
 #10 vertices
