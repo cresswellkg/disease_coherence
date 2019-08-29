@@ -28,8 +28,17 @@ string = string %>% dplyr::rename(hgnc_symbol_a = hgnc_symbol.x)
 
 string = string %>% dplyr::rename(hgnc_symbol_b = hgnc_symbol.y)
 
-string = string %>% filter(combined_score>=500)
+string_filt = string %>% filter(combined_score>=500)
 
+disease_overall_string_filt <- readRDS("string_filt_edges_new.rds")
+
+#STRING Filtered
+dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+  group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+  do({
+    mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+    data.frame(Slope= coef(mod)[1])
+  }) %>% arrange(Slope) %>% filter(Count>4)
 
 #Getting msigs 
 
@@ -64,26 +73,26 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
   dis = dis_slopes_string_filt_count %>% filter(Disease == i)
   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-
+  
   diseases = bind_rows()
   j = 1
-    while(j<11) {
+  while(j<11) {
     diseases_curr = GeneSample(dis$Count, string_filt, directed = FALSE)
     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
     if (any(diseases_curr$Internal !=0)) {
       j = j+1
       diseases = bind_rows(diseases, diseases_curr)
-
+      
     }
-    }
-
-      mod_rand = lm(External ~ Internal-1, data = diseases)
-      rand_slope = coef(mod_rand)[[1]]
-
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
-    coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
-      coherence_tab = bind_rows(coherence, coherence_tab)
-      saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt.rds")
+  }
+  
+  mod_rand = lm(External ~ Internal-1, data = diseases)
+  rand_slope = coef(mod_rand)[[1]]
+  
+  coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+  coherence = data.frame(Disease = dis$Disease, Coherence = coherence, Msig_Norm = median(msigs$Slope, na.rm = TRUE), Rand_Norm = rand_slope )
+  coherence_tab = bind_rows(coherence, coherence_tab)
+  saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt.rds")
 }
 
 #Reactome
@@ -95,27 +104,27 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
   dis = dis_slopes_string_filt_count %>% filter(Disease == i)
   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-
+  
   diseases = bind_rows()
   j = 1
-    while(j<11) {
+  while(j<11) {
     diseases_curr = GeneSample(dis$Count, string_filt, directed = FALSE)
     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
     if (any(diseases_curr$Internal !=0)) {
       j = j+1
       diseases = bind_rows(diseases, diseases_curr)
-
+      
     }
-    }
-
-      mod_rand = lm(External ~ Internal-1, data = diseases)
-      rand_slope = coef(mod_rand)[[1]]
-
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
-
-      coherence_tab = bind_rows(coherence, coherence_tab)
-      saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_react.rds")
+  }
+  
+  mod_rand = lm(External ~ Internal-1, data = diseases)
+  rand_slope = coef(mod_rand)[[1]]
+  
+  coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+  coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
+  
+  coherence_tab = bind_rows(coherence, coherence_tab)
+  saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_react.rds")
 }
 
 
@@ -131,27 +140,27 @@ for (i in unique(dis_slopes_string_filt_count$Disease)) {
   dis = dis_slopes_string_filt_count %>% filter(Disease == i)
   msigs = msig %>% mutate(Num_Genes = abs(Count-dis$Count)) %>% arrange(Num_Genes)
   msigs = msigs[msigs$Num_Genes %in% unique(msigs$Num_Genes)[1:10],]
-
+  
   diseases = bind_rows()
   j = 1
-    while(j<11) {
+  while(j<11) {
     diseases_curr = GeneSample(dis$Count, string_filt, directed = FALSE)
     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
     if (any(diseases_curr$Internal !=0)) {
       j = j+1
       diseases = bind_rows(diseases, diseases_curr)
-
+      
     }
-    }
-
-      mod_rand = lm(External ~ Internal-1, data = diseases)
-      rand_slope = coef(mod_rand)[[1]]
-
-      coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
-      coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
-
-      coherence_tab = bind_rows(coherence, coherence_tab)
-      saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_CC.rds")
+  }
+  
+  mod_rand = lm(External ~ Internal-1, data = diseases)
+  rand_slope = coef(mod_rand)[[1]]
+  
+  coherence = (dis$Slope - rand_slope)/(median(msigs$Slope, na.rm = TRUE)-rand_slope)
+  coherence = data.frame(Disease = dis$Disease, Coherence = coherence)
+  
+  coherence_tab = bind_rows(coherence, coherence_tab)
+  saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt_CC.rds")
 }
 
 
