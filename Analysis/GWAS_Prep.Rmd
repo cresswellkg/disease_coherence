@@ -67,7 +67,7 @@ alias2SymbolEbicat = function(ebicat37) {
 
   #Summarise the results
   #Keeping track of changes (sapply necessary to keep placeholders for unmapped genes)
-  recomb_genes = sapply(ebi_dat$MAPPED_GENE, function(x) alias2Symbol(x, species = "Hs"))
+  recomb_genes = sapply(ebi_dat$MAPPED_GENE, function(x) alias2SymbolEbicat(x, species = "Hs"))
   recomb_genes = unlist(lapply(recomb_genes, function(x) paste0(x,collapse=' ')))
   change = (ebi_dat$MAPPED_GENE == recomb_genes)
   sum_vec = ifelse(change == TRUE, "Same", ifelse(change == FALSE & recomb_genes == "", "No Match", "Converted"))
