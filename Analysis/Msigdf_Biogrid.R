@@ -8,7 +8,7 @@ library(igraph) #install.packages("igraph")
 
 #Reading in biogrid data
 
-links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
+links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
 
 links = links %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
