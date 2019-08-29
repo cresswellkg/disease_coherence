@@ -50,7 +50,7 @@ dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal !
 # for (j in rev(unique(msig$gs_name))) {
 #   curr_msig = msig %>% filter(gs_name == j)
 #   write.table(curr_msig$gene_symbol, file = "temp_rea.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
-#   diseases_curr = diseases2frame("temp_rea.txt", links = string)
+#   diseases_curr = diseases2frame("temp_rea.txt", links = string_filt)
 #   if (nrow(diseases_curr) == 0) {
 #     next
 #   }
