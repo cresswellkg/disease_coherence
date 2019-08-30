@@ -1,4 +1,5 @@
 source("./functions/disease2frame.R")
+source("./functions/GeneSample.R")
 
 library(readr) #install.packages("readr")
 library(dplyr) #install.packages("dplyr")
