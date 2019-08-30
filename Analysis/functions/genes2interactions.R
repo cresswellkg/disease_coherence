@@ -1,3 +1,4 @@
+#Function that takes a geneset and converts it to 
 genes2interactions = function(gene_list, actions, directed = TRUE) {
   
   if (directed ) {
