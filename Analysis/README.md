@@ -14,9 +14,13 @@ cd ..
     - `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. Creates `data/Disease_Genes` folder. 
     - `Connectivity_Comparison.Rmd` - Calculation of degree distributions for disease related data. Results are produced for Biogrid and STRING. Creates `biogrid_edges_new.rds`, `string_edges_new.rds`, `string_filt_edges_new.rds`.
     -`Coherence_Calculations_New.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. Relies on coherence_*.rds files from Msigdf_*.R, `Connectivity_Comparison.Rmd` and supplementary_table_diseases_selected.csv. Outputs "./manuscript/tables/supplementary_table_S3.csv".
-    -`Category_Tables.Rmd` - File that produces "./manuscript/tables/Table_1.csv" and "./manuscript/tables/supplementary_table_S1.xlsx"
+    -`Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases seperated by coherence. File produces "./manuscript/tables/Table_1.csv" and "./manuscript/tables/supplementary_table_S1.xlsx" and "Size_Slope_Plot.png". Relies on "./manuscript/tables/supplementary_table_S3.csv" from `Coherence_Calculations_New.Rmd`.
 
 - `Msigdf_*.R` - Scripts for calculating normalized coherence for KEGG, REACTOME and CC networks. Each one outputs a dataset containing slopes, counts, pathway name and category for STRING, STRING Filtered and Biogrid and three normalized coherence files for KEGG, Reactome and GOCC. `Msigdf_String.R` produces two additional files `All_Msig_String.rds` containing slopes for all Msigdf pathways and `string_random_edges.rds` containing slopes for randomly generated pathways. Produce coherence_*.rds files that are used in Coherence_Calculations_New.Rmd
+
+Scripts must be ran in the following order:
+
+`GWAS_Prep.Rmd` -> `Connectivity_Comparison.Rmd` -> `Msigdf_*.R` (Any order) -> `Coherence_Calculations_New.Rmd` -> `Category_Tables.Rmd`
 
 # Folders
 
