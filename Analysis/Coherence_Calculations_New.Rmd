@@ -8,6 +8,7 @@ output: pdf_document
 ```{r}
 library(dplyr)   # install.packages("dplyr")
 library(readr)   # install.packages("readr")
+options(stringsAsFactors = FALSE)
 ```
  
 ```{r}
