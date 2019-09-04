@@ -2,7 +2,7 @@
 
 ## Instructions to reproduce the results
 
-- Download the data 
+Download the data 
 ````
 cd Analysis/data
 chmod +x get_data.sh
@@ -10,54 +10,56 @@ chmod +x get_data.sh
 cd ..
 ````
 
-- In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`) and run the scripts in the following order:
-    - `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. Creates `data/Disease_Genes` folder. 
-    - `Connectivity_Comparison.Rmd` - Calculation of degree distributions for disease related data. Results are produced for Biogrid and STRING. Creates `biogrid_edges_new.rds`, `string_edges_new.rds`, `string_filt_edges_new.rds`.
-    - `Msigdf_*.R` - Scripts for calculating normalized coherence for KEGG, REACTOME and CC networks. Each one outputs a dataset containing slopes, counts, pathway name and category for STRING, STRING Filtered and Biogrid and three normalized coherence files for KEGG, Reactome and GOCC. `Msigdf_String.R` produces two additional files `All_Msig_String.rds` containing slopes for all Msigdf pathways and `string_random_edges.rds` containing slopes for randomly generated pathways. `KEGG_*.rds` files are also created in these scripts but due to long run times they are included in the repository and the code to create them is commented out. Produce coherence_*.rds files that are used in Coherence_Calculations_New.Rmd
-    -`Coherence_Calculations_New.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. Relies on coherence_*.rds files from Msigdf_*.R, `Connectivity_Comparison.Rmd`, supplementary_table_diseases_selected.csv and files in Analysis/Permutation_Results. Outputs "./manuscript/tables/supplementary_table_S3.csv".
-    -`Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases seperated by coherence. File produces "./manuscript/tables/Table_1.csv" and "./manuscript/tables/supplementary_table_S1.xlsx" and "Size_Slope_Plot.png". Relies on "./manuscript/tables/supplementary_table_S3.csv" from `Coherence_Calculations_New.Rmd`.
+In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`) and run the scripts in the following order: `GWAS_Prep.Rmd` -> `Connectivity_Comparison.Rmd` -> `Msigdf_*.R` (Any order) -> `Coherence_Calculations_New.Rmd` -> `Category_Tables.Rmd` -> `Analysis_Tables_New.Rmd`
 
+- `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. Creates `data/Disease_Genes` folder. 
 
-Scripts must be ran in the following order:
+- `Connectivity_Comparison.Rmd` - Calculation of degree distributions for disease related data. Results are produced for Biogrid and STRING. Creates `biogrid_edges_new.rds`, `string_edges_new.rds`, `string_filt_edges_new.rds`.
 
-`GWAS_Prep.Rmd` -> `Connectivity_Comparison.Rmd` -> `Msigdf_*.R` (Any order) -> `Coherence_Calculations_New.Rmd` -> `Category_Tables.Rmd`
+- `Msigdf_*.R` - Scripts for calculating normalized coherence for KEGG, REACTOME and CC networks. Each file outputs a dataset containing slopes, counts, pathway name and category for STRING, STRING Filtered and Biogrid and three normalized coherence files for KEGG, Reactome and GOCC. `Msigdf_String.R` produces two additional files `All_Msig_String.rds` containing slopes for all Msigdf pathways and `string_random_edges.rds` containing slopes for randomly generated pathways. `KEGG_*.rds` files are also created in these scripts but due to long run times they are included in the repository and the code to create them is commented out. Creates `data/CoherenceResults/coherence_*.rds` files
+
+-`Coherence_Calculations_New.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. Relies on `data/CoherenceResults/coherence_*.rds` files created by `Connectivity_Comparison.Rmd`, `supplementary_table_diseases_selected.csv`, and files in the `Analysis/Permutation_Results` folder. Creates `./manuscript/tables/supplementary_table_S3.csv`.
+
+-`Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases seperated by coherence.  Relies on `./manuscript/tables/supplementary_table_S3.csv` created by `Coherence_Calculations_New.Rmd`. Creates `./manuscript/tables/Table_1.csv`, `./manuscript/tables/supplementary_table_S1.xlsx`, `Size_Slope_Plot.png`.
+
+- `Analysis_Tables_New.Rmd` - Produces main and supplementary figures. Relies on `./manuscript/tables/supplementary_table_S3.csv`. Creates `./manuscript/Figures/*`
 
 # Folders
 
-## functions
+## `functions`
+
 Contains functions for conversion of gene networks to degree distributions
 
-## data
+## `data`
+
 Contains the data necessary to run the scripts in the folder
 
-- `get_data.sh` - Shell script for downloading Biogrid and STRING PPI data
-- 9606.protein.links.v11.0.txt.gz - STRING PPI database data. Needed for Connectivity_Comparison_*. Produced from get_data.sh
-- BIOGRID-ALL-3.5.174.mitab.txt - Biogrid PPI database data. Needed for Connectivity_Comparison_undirected. Produced from running get_data.sh and unzipping BIOGRID-ALL-3.5.174.mitab.zip
+- `get_data.sh` - Shell script for downloading Biogrid and STRING PPI data. Creates `9606.protein.links.v11.0.txt.gz` - STRING PPI database data needed for `Connectivity_Comparison_*`, `BIOGRID-ALL-3.5.174.mitab.txt.gz` - Biogrid PPI database data needed for   `Connectivity_Comparison`.
 
-### Coherence_Results
+### `Coherence_Results`
 
 Contains data frames with normalized coherence and gene counts for individual diseases (`coherence_*.rds`), all MSigDB pathways (`All_Msig_String.rds`) and random networks of equal sizes to KEGG pathways (`string_random_edges.rds`). All files are generated by one of the `Msigdf_*.R` files.
 
-### Disease_Genes
+### `Disease_Genes`
 
-- Contains individual files for all diseases in data(ebicat37) from the `gwascat` R package. Files are named according to the corresponding disease gene and each row is a gene symbol. Generated by `GWAS_Prep.Rmd` and directly used in `Connectivity_Comparison.Rmd` to generate degree distributions. Only diseases in `supplementary_table_diseases_selected.csv` are actually used in the analysis. 
+Contains individual files for all diseases in `data(ebicat37)` from the `gwascat` R package. Files are named according to the corresponding disease gene and each row is a gene symbol. Generated by `GWAS_Prep.Rmd` and directly used in `Connectivity_Comparison.Rmd` to generate degree distributions. Only diseases in `supplementary_table_diseases_selected.csv` are actually used in the analysis. 
 
-### Permutation_Results
+### `Permutation_Results`
 
-- Contains disease-specific permutation p-values generated from `biogrid_perm_cluster.R`, `string_perm_cluster.R` and `string_filt_perm_Cluster.R`. Due to long run times (multiple days) these scripts were run on the linux cluster and the .rds files output by them are incuded. To save time, certain categories are split up into different .rds files but altogether they contain all p-values from permutation tests. Files are used by `Coherence_Calculations_New.Rmd`.
+Contains disease-specific permutation p-values generated from `biogrid_perm_cluster.R`, `string_perm_cluster.R` and `string_filt_perm_Cluster.R`. Due to long run times (multiple days) these scripts were run on the Linux cluster and the `*.rds` files created by them are incuded. To save time, certain categories are split up into different `*.rds` files but altogether they contain all p-values from permutation tests. Files are used by `Coherence_Calculations_New.Rmd`.
 
-## manuscript
+## `manuscript`
 
-### Tables
+### `Tables`
 
-- supplementary_table_S1.xlsx - Contains a summary of coherence, SNP and gene counts on a category-by-category basis. For coherence, SNP and genes indivdually, columns are min, max, mean, median. Additionally, we include the total number of genes, SNPs and networks for each category. Results are seperated by PPI network. Generated by `Coherence_Calculations_New.Rmd`.
+- `supplementary_table_S1.xlsx` - Contains a summary of coherence, SNP and gene counts on a category-by-category basis. For coherence, SNP and genes indivdually, columns are min, max, mean, median. Additionally, we include the total number of genes, SNPs and networks for each category. Results are seperated by PPI network. Generated by `Coherence_Calculations_New.Rmd`.
 
-- supplementary_table_S2.xlsx - Contains a summary of slopes and genes for each MSigDB category. Columns are: minimum slope, maximum slope, mean slope, median slope, minimum genes, maximum genes, mean # genes, median # genes, total networks and correlation between slope and number of genes. Generated by `Coherence_Calculations_New.Rmd`. 
+- `supplementary_table_S2.xlsx` - Contains a summary of slopes and genes for each MSigDB category. Columns are: minimum slope, maximum slope, mean slope, median slope, minimum genes, maximum genes, mean # genes, median # genes, total networks and correlation between slope and number of genes. Generated by `Coherence_Calculations_New.Rmd`. 
 
-- supplementary_table_S3.csv - Contains SNP/Gene counts, coherence and permutation p-values for STRING, BioGrid and STRING Filtered disease networks.
+- `supplementary_table_S3.csv` - Contains SNP/Gene counts, coherence and permutation p-values for STRING, BioGrid and STRING Filtered disease networks.
 
-## Figures
+## `Figures`
 
-- Fig1_network_distributions.png - Depicts a set of network configurations. Generated seperately using `ggraph` and `graphlayouts` and put together manually.
+- `Fig1_network_distributions.png` - Depicts a set of network configurations. Generated by `Node_Plots.R`
 
-- Size_Slope_Plot.png - Plot comparing the correlation between slope and network size in KEGG pathways and random networks. Generated as part of `Category_Tables.Rmd`. Results are from "/data/Coherence_Results/string_random_edges.rds" and "/data/Coherence_Results/All_Msig_String.rds"
+- `Size_Slope_Plot.png` - Plot comparing the correlation between slope and network size in KEGG pathways and random networks. Generated as part of `Category_Tables.Rmd`. Relies on `/data/Coherence_Results/string_random_edges.rds` and `/data/Coherence_Results/All_Msig_String.rds`.
