@@ -121,7 +121,7 @@ slope_plot = ggplot(Slope_Sum, aes(x = Count, y = Slope, color = Method)) + geom
         panel.border = element_blank(),
         panel.background = element_blank(), legend.position = c(.75, .75))
 
-ggsave("../manuscript/Figures/Size_Slope_Plot.png", slope_plot, height=5, width=7, units="in", dpi = 600)
+ggsave("../manuscript/Figures/Fig2_Size_Slope_Plot.png", slope_plot, height=5, width=7, units="in", dpi = 600)
 ```
 
 
