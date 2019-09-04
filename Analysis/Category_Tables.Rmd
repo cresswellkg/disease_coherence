@@ -52,7 +52,7 @@ require(writexl)
 
 wb = list("STRING" = Disease_String_Sum %>% arrange(Category), "STRING Filtered" = Disease_String_Filt_Sum  %>% arrange(Category), "Biogrid" = Disease_Biogrid_Sum  %>% arrange(Category))
 
-write_xlsx(wb, "../manuscript/tables/supplementary_table_S1.xlsx")
+write_xlsx(wb, "../manuscript/Tables/supplementary_table_S1.xlsx")
 
 ```
 
@@ -61,7 +61,7 @@ write_xlsx(wb, "../manuscript/tables/supplementary_table_S1.xlsx")
 
 Cat_Within = Disease_Sum %>% group_by(Category) %>% summarise(`Number of SNPs`= sum(`Number.of.SNPs`), `Number of Genes` = sum(Number.of.genes), `Total Diseases` = n(),  `Mean Biogrid Coherence` =mean(Biogrid.Coherence.KEGG, na.rm = TRUE), `Mean String Coherence` = mean(String.Coherence.KEGG, na.rm = TRUE), `Mean String Filtered Coherence` = mean(String.Filt.Coherence.KEGG, na.rm = TRUE)) %>% arrange(Category)
 
-write.csv(Cat_Within, "../manuscript/tables/table_1.csv", row.names = FALSE)
+write.csv(Cat_Within, "../manuscript/Tables/table_1.csv", row.names = FALSE)
 ```
 
 ```{r}
@@ -96,7 +96,7 @@ msig_sum = msig_sum %>% rename(`Minimum Slope` = Min_Slope, `Maximum Slope` = Ma
 
 msig_sum = msig_sum %>% mutate(`Minimum Slope` = format(`Minimum Slope`, digits = 3)) %>% mutate(`Maximum Slope` = format(`Maximum Slope`, digits = 3)) %>% mutate(`Mean Slope` = format(`Mean Slope`, digits = 3)) %>% mutate(`Median Slope` = format(`Median Slope`, digits = 3)) %>% mutate(`Mean # Genes` = format(`Mean # Genes`, digits = 4)) %>% mutate(`Size Correlation` = format(`Size Correlation`, digits = 2))
 
-write_xlsx(msig_sum,"../manuscript/tables/supplementary_table_S2.xlsx")
+write_xlsx(msig_sum,"../manuscript/Tables/supplementary_table_S2.xlsx")
 
 ```
 
