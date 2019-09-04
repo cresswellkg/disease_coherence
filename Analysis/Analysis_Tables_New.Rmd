@@ -36,7 +36,7 @@ library(cowplot)
 ```{r}
 max_genes <- 200 # Maximum number of genes for a network to be included
 
-fileNameIn0  <- "tables/supplementary_table_S3.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
+fileNameIn0  <- "../manuscript/Tables/supplementary_table_S3.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
 # iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S3.csv > tmp.csv
 mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
 rownames(mtx0) <- mtx0$Disease
@@ -71,7 +71,7 @@ diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 # Selected correlations
-png(filename = "Figures/FigS1_corr_coherence.png", height = 2000, width = 2000, res = 300)
+png(filename = "../manuscript/Figures/FigS1_corr_coherence.png", height = 2000, width = 2000, res = 300)
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 dev.off()
@@ -100,7 +100,7 @@ paste0("Average Pearson: ", diff_cors[upper.tri(diff_cors)] %>% mean()) # Averag
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 # Selected correlations
-png(filename = "Figures/FigS2_corr_references.png", height = 2000, width = 2000, res = 300)
+png(filename = "../manuscript/Figures/FigS2_corr_references.png", height = 2000, width = 2000, res = 300)
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 dev.off()
@@ -178,7 +178,7 @@ p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular 
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
 p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
 
-png(filename = "Figures/Fig3_summary_traits.png", height = 2500, width = 5000, res = 300)
+png(filename = "../manuscript/Figures/Fig3_summary_traits.png", height = 2500, width = 5000, res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -196,7 +196,7 @@ p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular 
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "KEGG"))
 p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "KEGG"))
 
-png(filename = "Figures/FigS3_summary_traits_KEGG.png", height = 2500, width = 6000, res = 300)
+png(filename = "../manuscript/Figures/FigS3_summary_traits_KEGG.png", height = 2500, width = 6000, res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -214,7 +214,7 @@ p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular 
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "GOCC"))
 p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "GOCC"))
 
-png(filename = "Figures/FigS4_summary_traits_GOCC.png", height = 2500, width = 6000, res = 300)
+png(filename = "../manuscript/Figures/FigS4_summary_traits_GOCC.png", height = 2500, width = 6000, res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -232,7 +232,7 @@ p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular 
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, reference = "Reactome"))
 p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, reference = "Reactome"))
 
-png(filename = "Figures/FigS5_summary_traits_Reactome.png", height = 2500, width = 6000, res = 300)
+png(filename = "../manuscript/Figures/FigS5_summary_traits_Reactome.png", height = 2500, width = 6000, res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -255,7 +255,7 @@ p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", 
 p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG"))
 p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "STRING filtered", reference = "KEGG")) 
 
-png(filename = "Figures/Fig4_summary_diseases.png", height = 2500, width = 5000, res = 300)
+png(filename = "../manuscript/Figures/Fig4_summary_diseases.png", height = 2500, width = 5000, res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -275,7 +275,7 @@ p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", 
 p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "KEGG"))
 p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "KEGG"))
 
-png(filename = "Figures/FigS6_summary_diseases_KEGG.png", height = 3000, width = 8000, res = 300)
+png(filename = "../manuscript/Figures/FigS6_summary_diseases_KEGG.png", height = 3000, width = 8000, res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -295,7 +295,7 @@ p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", 
 p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "GOCC"))
 p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "GOCC"))
 
-png(filename = "Figures/FigS7_summary_diseases_GOCC.png", height = 3000, width = 8000, res = 300)
+png(filename = "../manuscript/Figures/FigS7_summary_diseases_GOCC.png", height = 3000, width = 8000, res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -315,7 +315,7 @@ p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", 
 p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, reference = "Reactome"))
 p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, reference = "Reactome"))
 
-png(filename = "Figures/FigS8_summary_diseases_Reactome.png", height = 3000, width = 8000, res = 300)
+png(filename = "../manuscript/Figures/FigS8_summary_diseases_Reactome.png", height = 3000, width = 8000, res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -326,16 +326,13 @@ dev.off()
 
 # Modularity investigation
 
-```{r}
+```{r eval=FALSE}
 fileNameIn0  <- "tables/Mod_Table.xlsx"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
 # iconv -f UTF-8 -t ISO-8859-1 -c Mod_Table.csv >tmp.txt
 fileNameIn0  <- "tables/tmp.txt"
 mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
 rownames(mtx0) <- mtx0$Disease
-```
 
-
-```{r}
 # Selected data for correlation
 # "Disease", "Category", "Number of SNPs", "Number of genes", "Biogrid Coherence", "String Coherence", "String Filt Coherence", "Biogrid Coherence Reactome", "String Coherence Reactome", "String Filt Coherence Reactome""Biogrid Coherence CC", "String Coherence CC", "String Filt Coherence CC", "Biogrid P-value", "String P-value", "String Filt P-value" 
 mtx0_cor <- mtx0 %>% dplyr::select(c("Number of SNPs", "Number of genes", "Biogrid Coherence KEGG", "String Coherence KEGG", "String Filt Coherence KEGG", "Modularity Biogrid", "Modularity String", "Modularity String Filt"))
