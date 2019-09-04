@@ -105,7 +105,7 @@ Direct comparison of degree distributions of the networks formed by phenotype-as
 To observe whether network properties affect coherence estimation in experimental settings, we investigated the effect of network size on the slopes of KEGG and random networks. We observed negative correlation of network size with the slopes of KEGG and random networks (-0.37/-0.85, respectively, Figure 2, Supplementary Table S2). These observations confirm the notion that coherence estimation using internal vs. external degree distributions should be controlled for network size.
 
 +-------+
-| ![](Figures/Size_Slope_Plot.png)      |
+| ![](Figures/Fig2_Size_Slope_Plot.png)      |
 | **Figure 2. Network size is inversely associated with coherence.** Slopes of internal vs. external degree distributions (aka coherence) for KEGG and random networks are plotted against network size.   |
 +-------+
 
