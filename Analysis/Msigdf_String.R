@@ -177,5 +177,5 @@ for (i in unique(dis_slopes_string_count$Disease)) {
                          Msig_Norm = mod_slope, Rand_Norm = rand_slope, Count = dis$Count)
   coherence_tab = bind_rows(coherence, coherence_tab)
   print(coherence_tab)
-  saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string_filt.rds")
+  saveRDS(coherence_tab, "./data/Coherence_Results/coherence_string.rds")
 }
