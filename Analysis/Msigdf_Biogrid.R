@@ -34,15 +34,18 @@ msig = msigdbr()
 
 msig = msig %>% filter(gs_subcat %in% c("CC", "CP:KEGG", "CP:REACTOME") )
 
-mod_over = bind_rows()
+mod_over = list()
+index = index+1
 for (j in unique(msig$gs_name)) {
   print(j)
   curr_msig = msig %>% filter(gs_name == j)
   write.table(curr_msig$gene_symbol, file = "temp_rea_bio.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
   diseases_curr = diseases2frame("temp_rea_bio.txt", links = links)
   diseases_curr = diseases_curr %>% mutate(Disease = j)
-  mod_over = bind_rows(mod_over,diseases_curr)
+  mod_over[[index]] = diseases_curr
 }
+
+mod_over = bind_rows(mod_over)
 
 #Applying categories
 
