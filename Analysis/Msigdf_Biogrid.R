@@ -12,7 +12,10 @@ library(broom) #install.packages("broom")
 #Option for number of msig pathways to take from each category
 num_msig = 10
 #Option for number of random networks to generate (Will generate num_rand-1 networks)
-num_rand = 11
+num_rand = 1001
+# Construct file name to save the results
+run <- 1 # Placeholder for the run ID
+fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", num_msig, "_rand_", num_rand, "_", run, ".csv"))
 
 
 #Reading in biogrid data
@@ -144,5 +147,5 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid.rds")
 }
 
-
+write_csv(coherence_tab, fileNameOut)
 
