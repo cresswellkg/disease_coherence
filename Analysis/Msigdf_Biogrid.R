@@ -6,6 +6,14 @@ library(dplyr) #install.packages("dplyr")
 library(biomaRt) #BiocManager::install("biomaRt")
 library(msigdbr) #BiocManager::install("msigdbr")
 library(igraph) #install.packages("igraph")
+library(tidyr) #install.packages("tidyr")
+library(broom) #install.packages("broom")
+
+#Option for number of msig pathways to take from each category
+num_msig = 10
+#Option for number of random networks to generate (Will generate num_rand-1 networks)
+num_rand = 11
+
 
 #Reading in biogrid data
 
@@ -35,7 +43,7 @@ msig = msigdbr()
 msig = msig %>% filter(gs_subcat %in% c("CC", "CP:KEGG", "CP:REACTOME") )
 
 mod_over = list()
-index = index+1
+index = 1
 for (j in unique(msig$gs_name)) {
   print(j)
   curr_msig = msig %>% filter(gs_name == j)
@@ -43,6 +51,7 @@ for (j in unique(msig$gs_name)) {
   diseases_curr = diseases2frame("temp_rea_bio.txt", links = links)
   diseases_curr = diseases_curr %>% mutate(Disease = j)
   mod_over[[index]] = diseases_curr
+  index =  index+1
 }
 
 mod_over = bind_rows(mod_over)
@@ -82,7 +91,9 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>%
 #Get msig pathway genes for KEGG, Reactome and GOCC
 msig = readRDS("KEGG_Biogrid.rds")
 #Get pathway specific counts
-Count_Sum = msig %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct()
+Count_Sum = msig %>% dplyr::filter(Internal>0) %>% 
+  group_by(Disease) %>%
+  mutate(Num_Genes = n()) %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct()
 #Splitting into list by categories
 Count_Sum = split(Count_Sum, Count_Sum$Category)
 coherence_tab = bind_rows()
@@ -91,27 +102,39 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
   dis = dis_slopes_biogrid_count %>% filter(Disease == i)
   #Get 30 closest msigdf networks taking 10 from each database and bind
   close_nets = bind_rows(lapply(Count_Sum,  function(x) x %>% mutate(Diff = abs(Num_Genes-dis$Count)) %>%
-    arrange(Diff) %>% head(.,10)))
+    arrange(Diff) %>% head(.,num_msig)))
   #Subsetting msig to only include close pathways
   msig_sub = msig %>% filter(Disease %in% close_nets$Disease)
-  #Square rooting because its not already square rooted
-  mod_msig = lm(I(sqrt(External)) ~ Internal-1, data = msig_sub)
-  #Pull out coefficient
-  mod_slope = coef(mod_msig)[[1]]
-  diseases = bind_rows()
+  #Taking slopes for each category
+  mod_msig = msig_sub %>% group_by(Disease) %>% do(tidy(
+    coef(lm(I(sqrt(External)) ~ I(sqrt(Internal))-1, data = .))[[1]]
+  ))
+  #Take median
+  mod_slope = median(mod_msig$x)
+  #Creating 10 random networks
   j = 1
-    while(j<100) {
+  slope_list = list()
+    while(j<num_rand) {
+    #Empty data frame for disease networks
+      diseases = bind_rows()
+      while(nrow(diseases)<dis$Count) {
+    #Generate random diseases network
     diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
-    diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = sqrt(diseases_curr$internal_connectivity), External = sqrt(diseases_curr$external_connectivity))
-    if (any(diseases_curr$Internal !=0)) {
+    #Save internal and external edges
+    diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = diseases_curr$internal_connectivity, External = diseases_curr$external_connectivity)
+    #Filter out zeros
+    diseases_curr = diseases_curr %>% filter(Internal !=0)
+    #Bind together non-zero internal/external edges
+    diseases = bind_rows(diseases, diseases_curr)
+      }
+      #Save slope of current network
+      slope_list[[j]] = coef(lm(I(sqrt(External)) ~ I(sqrt(Internal))-1, data = diseases))[[1]]
+      #Iterate
       j = j+1
-      diseases = bind_rows(diseases, diseases_curr)
 
     }
-    }
-
-      mod_rand = lm(External ~ Internal-1, data = diseases)
-      rand_slope = coef(mod_rand)[[1]]
+    
+      rand_slope = median(unlist(slope_list))
 
       coherence = (dis$Slope - rand_slope)/(mod_slope-rand_slope)
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, 
@@ -120,5 +143,6 @@ for (i in unique(dis_slopes_biogrid_count$Disease)) {
       print(coherence_tab)
       saveRDS(coherence_tab, "./data/Coherence_Results/coherence_biogrid.rds")
 }
+
 
 
