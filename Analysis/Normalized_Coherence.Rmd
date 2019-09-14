@@ -1,10 +1,21 @@
 ---
 title: "Normalized Coherence"
 author: "Kellen Cresswell"
-date: "September 13, 2019"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
   
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=T, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+set.seed(1)
+library(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
 # Read in functions
 
 ```{r}  
@@ -28,7 +39,7 @@ library(broom)   # install.packages("broom")
 # Option for number of msig pathways to take from each category
 num_msig = 10
 # Option for number of random networks to generate (Will generate num_rand-1 networks)
-num_rand = 1001
+num_rand = 11
 # Construct file name to save the results
 run <- 1 # Placeholder for the run ID
 fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", num_msig, "_rand_", num_rand, "_", run, ".csv"))
@@ -38,7 +49,7 @@ fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", 
 
 ```{r}
 # Reading in Biogrid data
-biogrid = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
+biogrid = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
 biogrid = biogrid %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
 #Split based on Biogrid ID system then pull out gene names
@@ -71,11 +82,9 @@ string = string %>% dplyr::rename(hgnc_symbol_b = hgnc_symbol.y)
 string_filt = string %>% filter(combined_score>=500)
 ```
 
-[??? Why do you read all data at once?]
-
 
 ```{r}
-[??? What this function does? Write roxygen help]
+# [??? What this function does? Write roxygen help]
 
 get_msig_slopes = function(sub_cats, database) {
   require(msigdbr)
@@ -148,7 +157,7 @@ saveRDS(msig_frame_string_filt, "String_Filt_Msig_Slopes.rds")
 # Define function for calculating slopes and counts from internal/external edges
 
 ```{r}
-[??? What this function does? Write roxygen help]
+# [??? What this function does? Write roxygen help]
 slopes_from_edges = function(edges) {
   edges %>% filter(Internal != 0)  %>%
   group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
@@ -183,7 +192,7 @@ dis_slopes_string_filt_count = slopes_from_edges(disease_overall_string_filt)
 # Define function for calculating normalized coherence and counts ignoring zero internal edges
 
 ```{r}
-[??? What this function does? Write roxygen help]
+# [??? What this function does? Write roxygen help]
 calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, num_rand = 10) {
   # Splitting into list by categories 
   Count_Sum = split(msig_frame %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct() , msig_frame$Category)
