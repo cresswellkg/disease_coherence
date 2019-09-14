@@ -233,9 +233,9 @@ calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, n
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, 
                              Msig_Norm = mod_slope, Rand_Norm = rand_slope, Count = dis$Count)
       coherence_tab = bind_rows(coherence, coherence_tab)
-      print(coherence_tab)
-      return(coherence_tab)
-}
+  }
+  return(coherence_tab)
+
 }
 ```
 
