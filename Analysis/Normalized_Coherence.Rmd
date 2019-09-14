@@ -11,7 +11,7 @@ output: pdf_document
 [??? What those functions do?]
 source("./functions/disease2frame.R") 
 source("./functions/GeneSample.R")
-source("./functions/get_msig_slopes.R")
+source("./functions/get_msig_slopes.R") [??? This does not exist!]
 
 library(readr)   # install.packages("readr")
 library(dplyr)   # install.packages("dplyr")
@@ -77,7 +77,7 @@ string_filt = string %>% filter(combined_score>=500)
 ```{r}
 [??? What this function does? Write roxygen help]
 
-get_msig_slopes = function(sub_cats, database) {
+get_msig_slopes = function(sub_cats, database) { [??? Calls to this function use "subcat", not "sub_cat" argument - correct]
   require(msigdbr)
   msig = msigdbr()
   
@@ -260,6 +260,8 @@ saveRDS(norm_coh_biogrid, "./data/Coherence_Results/coherence_biogrid.rds")
 saveRDS(norm_coh_string, "./data/Coherence_Results/coherence_string.rds")
 saveRDS(norm_coh_string_filt, "./data/Coherence_Results/coherence_string_filt.rds")
 ```
+
+[??? After hacking around, normalized coherence objects still contain data for ONE disease, not many. What is going on?]
 
 # Write general function for saving runs to .csv
 
