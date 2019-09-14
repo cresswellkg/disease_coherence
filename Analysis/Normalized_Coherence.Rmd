@@ -1,109 +1,94 @@
 ---
-title: "Msigdf Biogrid"
+title: "Msigdf Biogrid" [??? Is it the right title?]
 author: "Kellen Cresswell"
-date: "July 19, 2019"
+date: "July 19, 2019" [??? Is it the right date?]
 output: pdf_document
 ---
   
 # Read in functions
 
 ```{r}  
-source("./functions/disease2frame.R")
+[??? What those functions do?]
+source("./functions/disease2frame.R") 
 source("./functions/GeneSample.R")
 source("./functions/get_msig_slopes.R")
 
-
-library(readr) #install.packages("readr")
-library(dplyr) #install.packages("dplyr")
-library(biomaRt) #BiocManager::install("biomaRt")
-library(msigdbr) #BiocManager::install("msigdbr")
-library(igraph) #install.packages("igraph")
-library(tidyr) #install.packages("tidyr")
-library(broom) #install.packages("broom")
-
+library(readr)   # install.packages("readr")
+library(dplyr)   # install.packages("dplyr")
+library(biomaRt) # BiocManager::install("biomaRt")
+library(msigdbr) # BiocManager::install("msigdbr")
+library(igraph)  # install.packages("igraph")
+library(tidyr)   # install.packages("tidyr")
+library(broom)   # install.packages("broom")
 ```
 
 # Setting options
 
 ```{r}
-#Option for number of msig pathways to take from each category
+# Option for number of msig pathways to take from each category
 num_msig = 10
-#Option for number of random networks to generate (Will generate num_rand-1 networks)
+# Option for number of random networks to generate (Will generate num_rand-1 networks)
 num_rand = 1001
 # Construct file name to save the results
 run <- 1 # Placeholder for the run ID
 fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", num_msig, "_rand_", num_rand, "_", run, ".csv"))
 ```
 
-# Read in biogrid data
+# Read in Biogrid data
 
 ```{r}
-#Reading in biogrid data
-
+# Reading in Biogrid data
 links = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
-
 links = links %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
 #Split based on Biogrid ID system then pull out gene names
-
 protein1 = lapply(strsplit(links$`Alt IDs Interactor A`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
 protein2 = lapply(strsplit(links$`Alt IDs Interactor B`, "locuslink:"), function(x) strsplit(x[2], "\\|")[[1]][1])
-
 protein1 = unlist(protein1)
 protein2 = unlist(protein2)
 
 #Place into matrix in form that disease2frame works on
-
-links = links %>% mutate(protein1 =protein1, 
-                         protein2 = protein2) %>% dplyr::select(protein1, protein2)
-
+links = links %>% mutate(protein1 =protein1, protein2 = protein2) %>% dplyr::select(protein1, protein2)
 links = links %>% dplyr::select(hgnc_symbol_a = protein1,hgnc_symbol_b = protein2)
-
-
 ```
 
-# Read in string data and create the string filtered frame
+# Read in String data and create the String filtered dataset
 
 ```{r}
+# Reading in Biogrid data
 string = read_table2("./data/9606.protein.links.v11.0.txt.gz")
+string = string %>% mutate(protein1 = gsub("9606.", "", protein1), protein2 = gsub("9606.", "", protein2))
 
-string = string %>% mutate(protein1 = gsub("9606.", "", protein1), 
-                           protein2 = gsub("9606.", "", protein2))
-
-#Read in ensemble protein ID
-
+# Read in ensemble protein ID, convert them to gene symbols
 ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "www")
-
 genes = biomaRt::getBM(attributes=c('ensembl_peptide_id','hgnc_symbol'), mart = ensembl)
 
-
-#Join gene names with string
-
+# Join gene names with string
 string = left_join(string, genes, by = c("protein1" = "ensembl_peptide_id", "protein2" = "ensembl_peptide_id"))
-
 string = left_join(string, genes, by = c("protein2" = "ensembl_peptide_id"))
-
 string = string %>% dplyr::rename(hgnc_symbol_a = hgnc_symbol.x)
-
 string = string %>% dplyr::rename(hgnc_symbol_b = hgnc_symbol.y)
-
 string_filt = string %>% filter(combined_score>=500)
 ```
 
+[??? Why do you read all data at once?]
+
+
 ```{r}
+[??? What this function does? Write roxygen help]
 
 get_msig_slopes = function(sub_cats, database) {
   require(msigdbr)
   msig = msigdbr()
   
-  #Subset to include msig
+  # Subset to include msig
   msig = msig %>% filter(gs_subcat %in% sub_cats)
   
-  #Create empty list
+  # Create empty list
   mod_over = list()
-  #Set index for list entries
+  # Set index for list entries
   index = 1
-  #Loop through each pathway
+  # Loop through each pathway
   for (j in unique(msig$gs_name)) {
     #Subset to only include current pathway
     curr_msig = msig %>% filter(gs_name == j)
@@ -116,152 +101,138 @@ get_msig_slopes = function(sub_cats, database) {
     mod_over[[index]] = diseases_curr
     index =  index+1
   } 
-  #Bind together list
   
+  # Bind together list
   mod_over = bind_rows(mod_over)
   
-  #Applying categories
-  
+  # Applying categories
   msig_cats  = msig %>% 
     dplyr::select(Disease = gs_name, Category = gs_subcat) %>% 
     distinct() #Get categories in order
   
-  #Joining categories
-  
+  # Joining categories
   mod_over = left_join(mod_over, msig_cats)
   
   #Getting gene counts
-  
   mod_over = mod_over %>% group_by(Disease) %>% mutate(Num_Genes = n())
   return(mod_over)
 }
-
 ```
 
-```{r}
-#Setting the three categories we want
+[??? What the following chunk does?]
 
+```{r}
+# Setting the three categories we want
 subcats = c("CC", "CP:KEGG", "CP:REACTOME")
 
-#Getting biogrid msig slopes
+# Getting biogrid msig slopes [??? Do not understand, elaborate in text outside the chunk]
+mod_over_biogrid = get_msig_slopes(subcats = subcats, database = links) [??? Could you refactor "links" variable]
 
-mod_over_biogrid = get_msig_slopes(subcats = subcats, database = links)
-
-#Getting string msig slopes
-
+# Getting string msig slopes
 mod_over_string= get_msig_slopes(subcats = subcats, database = string)
 
-#Getting string filtered msig slopes
-
+# Getting string filtered msig slopes
 mod_over_string_filt = get_msig_slopes(subcats = subcats, database = string_filt)
 
-#Saving the files
-
+# Saving the files
 saveRDS(mod_over_biogrid, "Biogrid_Msig_Slopes.rds")
 saveRDS(mod_over_string, "String_Msig_Slopes.rds")
 saveRDS(mod_over_string_filt, "String_Filt_Msig_Slopes.rds")
 ```
 
+# Define function for calculating slopes and counts from internal/external edges
 
-#Define function for calculating slopes and counts from internal/external edges
 ```{r}
+[??? What this function does? Write roxygen help]
 slopes_from_edges = function(edges) {
-  
+  [??? What is "KEGG" category?]
   edges %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
   group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
   do({
     mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
     data.frame(Slope= coef(mod)[1])
   }) %>% arrange(Slope) %>% filter(Count>4)
-  
+  [??? Do not understand, elaborate in text outside the chunk]
 }
 ```
 
 # Get edges for diseases from Biogrid (Connectivity_Comparison.Rmd)
 
-
 ```{r}
-#Biogrid
-
+# Biogrid
 disease_overall_biogrid     <- readRDS("biogrid_edges_new.rds")
-
-#Get Biogrid slopes and edge counts
-
+# Get Biogrid slopes and edge counts
 dis_slopes_biogrid_count = slopes_from_edges(disease_overall_biogrid)
 
-#String
-
+# String
 disease_overall_string     <- readRDS("string_edges_new.rds")
-
-#Get string slopes and edge counts
-
+# Get string slopes and edge counts
 dis_slopes_string_count = slopes_from_edges(disease_overall_string)
 
-#String Filtered
-
+# String Filtered
 disease_overall_string_filt     <- readRDS("string_filt_edges_new.rds")
-
-#Get string filtered slopes and edge counts
-
+# Get string filtered slopes and edge counts
 dis_slopes_string_filt_count = slopes_from_edges(disease_overall_string_filt)
-
-
 ```
 
 # Define function for calculating normalized coherence and counts ignoring zero internal edges
 
 ```{r}
+[??? What this function does? Write roxygen help]
+[??? Fix indentations]
 calc_norm_coherence = function(msig_frame, dis_frame, num_msig = 10, num_rand = 10) {
   Count_Sum = msig_frame %>% dplyr::filter(Internal>0) %>% 
   group_by(Disease) %>%
-  mutate(Num_Genes = n()) %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct()
-#Splitting into list by categories
+  mutate(Num_Genes = n()) %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct() [??? What is that?]
+# Splitting into list by categories [??? Fix indentation]
 Count_Sum = split(Count_Sum, Count_Sum$Category)
 coherence_tab = bind_rows()
+[??? What this loop does?]
 for (i in unique(dis_frame$Disease)) {
-  #Get disease specific genes
+  # Get disease specific genes
   dis = dis_frame %>% filter(Disease == i)
-  #Get 30 closest msigdf networks taking 10 from each database and bind
+  # Get 30 closest msigdf networks taking 10 from each database and bind
   close_nets = bind_rows(lapply(Count_Sum,  function(x) x %>% mutate(Diff = abs(Num_Genes-dis$Count)) %>%
-    arrange(Diff) %>% head(.,num_msig)))
-  #Subsetting msig to only include close pathways
+    arrange(Diff) %>% head(.,num_msig))) [??? Where is 30? Should be a setting to tweak. Describe better what 30 means]
+  # Subsetting msig to only include close pathways
   msig_sub = msig_frame %>% filter(Disease %in% close_nets$Disease)
-  #Taking slopes for each category
+  # Taking slopes for each category
   mod_msig = msig_sub %>% group_by(Disease) %>% do(tidy(
     coef(lm(I(sqrt(External)) ~ I(sqrt(Internal))-1, data = .))[[1]]
   ))
-  #Take median
+  # Take median
   mod_slope = median(mod_msig$x)
-  #Creating 10 random networks
+  # Creating num_rand random networks
   j = 1
   slope_list = list()
-    while(j<num_rand) {
-    #Empty data frame for disease networks
+    while(j < num_rand) {
+    # Empty data frame for disease networks
       diseases = bind_rows()
-      #Generate random networks until there as many internal edges as current diseases
+      # Generate random networks until there as many internal edges as current diseases
       while(nrow(diseases)<dis$Count) {
-    #Generate random diseases network
-    diseases_curr = GeneSample(dis$Count, links, directed = FALSE)
-    #Save internal and external edges
+    # Generate random diseases network [??? Fix indentation]
+    diseases_curr = GeneSample(dis$Count, links, directed = FALSE) [??? What this function does?]
+    # Save internal and external edges
     diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = diseases_curr$internal_connectivity, External = diseases_curr$external_connectivity)
-    #Filter out zeros
-    diseases_curr = diseases_curr %>% filter(Internal !=0)
-    #Bind together non-zero internal/external edges
+    # Filter out zeros
+    diseases_curr = diseases_curr %>% filter(Internal !=0) [??? What happens if, after filtering zeros, the network will be removed? Detail]
+    # Bind together non-zero internal/external edges
     diseases = bind_rows(diseases, diseases_curr)
       }
-      #Save slope of current network
+      # Save slope of current network
       slope_list[[j]] = coef(lm(I(sqrt(External)) ~ I(sqrt(Internal))-1, data = diseases))[[1]]
-      #Iterate
+      # Iterate
       j = j+1
 
     }
     
-      #Get median of all slopes
+      # Get median of all slopes
       rand_slope = median(unlist(slope_list))
 
-      #Calculate coherence
+      # Calculate coherence
       coherence = (dis$Slope - rand_slope)/(mod_slope-rand_slope)
-      #Place into data frame with disease, coherence, msig normalization value and random slope normalization value
+      
+      # Place into data frame with disease, coherence, msig normalization value and random slope normalization value
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, 
                              Msig_Norm = mod_slope, Rand_Norm = rand_slope, Count = dis$Count)
       coherence_tab = bind_rows(coherence, coherence_tab)
@@ -273,12 +244,13 @@ for (i in unique(dis_frame$Disease)) {
 # Calculating normalized coherence
 
 ```{r}
-#Get read in msig pathway genes for KEGG, Reactome and GOCC
+# Get read in msig pathway genes for KEGG, Reactome and GOCC
+[??? Why read them if they are created above? Rename variables above. It looks like you do not need to save/read those objects at all]
 msig_frame_biogrid = readRDS("Biogrid_Msig_Slopes.rds")
 msig_frame_string = readRDS("String_Msig_Slopes.rds")
 msig_frame_string_filt = readRDS("String_Filt_Msig_Slopes.rds")
 
-#Calculating normalized coherence
+# Calculating normalized coherence 
 norm_coh_biogrid = calc_norm_coherence(msig_frame_biogrid, dis_slopes_biogrid_count, num_msig = num_msig, num_rand = num_rand)
 norm_coh_string = calc_norm_coherence(msig_frame_string, dis_slopes_string_count, num_msig = num_msig, num_rand = num_rand)
 norm_coh_string_filt = calc_norm_coherence(msig_frame_string_filt, dis_slopes_string_filt_count,num_msig = num_msig, num_rand = num_rand)
@@ -297,7 +269,6 @@ save_norm_coh = function(coherence_tab, num_msig, num_rand, run, database) {
   fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_",database,"_",num_msig, "_rand_", num_rand, "_", run, ".csv"))
   write_csv(coherence_tab, fileNameOut)
 }
-
 ```
 
 # Save the runs in .csv form
@@ -312,5 +283,3 @@ save_norm_coh(norm_coh_string, num_msig = num_msig, num_rand = num_rand, run = r
 #Saving string filtered results to csv
 save_norm_coh(norm_coh_string_filt, num_msig = num_msig, num_rand = num_rand, run = run, database = "String_Filtered")
 ```
-
-
