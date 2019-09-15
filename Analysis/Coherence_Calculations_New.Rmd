@@ -20,7 +20,7 @@ disease_overall_biogrid     <- readRDS("biogrid_edges_new.rds")
 #Calculate slopes for all diseases under each category
 
 #STRING
-dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>%
     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
@@ -28,7 +28,7 @@ dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>% f
     }) %>% arrange(Slope) %>% filter(Count>4)
 
 #STRING Filtered
-dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>%
     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
@@ -36,7 +36,7 @@ dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal !
     }) %>% arrange(Slope) %>% filter(Count>4)
 
 #BIOGRID
-dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0) %>% filter(Category != "Random") %>% filter(Category != "KEGG") %>%
+dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0)  %>%
     group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
@@ -54,54 +54,18 @@ coherence_string_filt = readRDS("./data/Coherence_Results/coherence_string_filt.
 coherence_string = readRDS("./data/Coherence_Results/coherence_string.rds") %>% dplyr::select(Disease, Coherence)
 coherence_biogrid = readRDS("./data/Coherence_Results/coherence_biogrid.rds") %>% dplyr::select(Disease, Coherence)
 
-#Reactome
-
-coherence_string_filt_react = readRDS("./data/Coherence_Results/coherence_string_filt_react.rds") %>% dplyr::select(Disease, Coherence)
-coherence_string_react = readRDS("./data/Coherence_Results/coherence_string_react.rds") %>% dplyr::select(Disease, Coherence)
-coherence_biogrid_react = readRDS("./data/Coherence_Results/coherence_biogrid_react.rds") %>% dplyr::select(Disease, Coherence)
-
-#CC
-
-coherence_string_filt_cc = readRDS("./data/Coherence_Results/coherence_string_filt_CC.rds") %>% dplyr::select(Disease, Coherence)
-coherence_string_cc = readRDS("./data/Coherence_Results/coherence_string_CC.rds") %>% dplyr::select(Disease, Coherence)
-coherence_biogrid_cc = readRDS("./data/Coherence_Results/coherence_biogrid_CC.rds") %>% dplyr::select(Disease, Coherence)
-
 #Full join KEGG coherence results together based on disease
-coherence_full = full_join(coherence_biogrid, coherence_string, by = "Disease")
+coherence_disease = full_join(coherence_biogrid, coherence_string, by = "Disease")
 
-coherence_full = full_join(coherence_full, coherence_string_filt, by = "Disease")
+coherence_disease = full_join(coherence_disease, coherence_string_filt, by = "Disease")
 
 #Give columns proper name
 
-colnames(coherence_full) = c("Disease", "Biogrid_Coherence", "String_Coherence", "String_Filt_Coherence")
-
-#Save coherence full in this state for later manipulation
-coherence_disease = coherence_full
-
+colnames(coherence_disease) = c("Disease", "Biogrid_Coherence", "String_Coherence", "String_Filt_Coherence")
 
 ```
 
 ```{r}
-#Finish all disease plot (From save coherence disease frame)
-
-#Joining REACTOME
-
-coherence_disease = left_join(coherence_disease, coherence_biogrid_react, by= c("Disease"= "Disease"))
-
-coherence_disease = left_join(coherence_disease, coherence_string_react, by= c("Disease"= "Disease"))
-
-coherence_disease = left_join(coherence_disease, coherence_string_filt_react, by= c("Disease"= "Disease"))
-
-#Joining CC
-
-coherence_disease = left_join(coherence_disease, coherence_biogrid_cc, by= c("Disease"= "Disease"))
-
-coherence_disease = left_join(coherence_disease, coherence_string_cc, by= c("Disease"= "Disease"))
-
-coherence_disease = left_join(coherence_disease, coherence_string_filt_cc, by= c("Disease"= "Disease"))
-
-coherence_disease = coherence_disease  %>% dplyr::rename(`Biogrid Coherence Reactome` = Coherence.x, `String Coherence Reactome` = Coherence.y, `String Filt Coherence Reactome` = Coherence.x.x, `Biogrid Coherence CC` = Coherence.y.y, `String Coherence CC` = Coherence.x.x.x, `String Filt Coherence CC` = Coherence.y.y.y)
-
 #Get categories from slope frame
 
 Cat = bind_rows(dis_slopes_string_count %>% ungroup() %>% dplyr::select(Disease, Category) %>% distinct(), dis_slopes_biogrid_count %>% ungroup() %>% dplyr::select(Disease, Category) %>% distinct())
@@ -114,9 +78,6 @@ coherence_disease =left_join(coherence_disease, Cat)
 #Remove underscores from column names
 colnames(coherence_disease) = gsub("\\_", " ", colnames(coherence_disease))
 
-coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Biogrid Coherence`:`String Filt Coherence CC`) %>% dplyr::distinct()
-
-
 #Adding gene counts
 
 disease_select = read_csv("./data/supplementary_table_diseases_selected.csv") %>% dplyr::select(Disease =`Disease name`, `Number of SNPs`, `Number of genes`)
@@ -125,7 +86,7 @@ disease_select = read_csv("./data/supplementary_table_diseases_selected.csv") %>
 
 coherence_disease = left_join(coherence_disease, disease_select)
 
-coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Number of SNPs`, `Number of genes`, `Biogrid Coherence`:`String Filt Coherence CC`)
+coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Number of SNPs`, `Number of genes`, `Biogrid Coherence`:`String Filt Coherence`)
 ```
 
 ```{r}
@@ -147,13 +108,6 @@ colnames(string_filt_p) = c("Disease", "String Filt P-value", "Ave")
 
 #Joining ignoring the average coherence column I saved
 
-#Trait dataset 
-coherence_full = left_join(coherence_full,biogrid_p %>% dplyr::select(-Ave))
-
-coherence_full = left_join(coherence_full,string_p%>% dplyr::select(-Ave))
-
-coherence_full = left_join(coherence_full,string_filt_p%>% dplyr::select(-Ave))
-
 #Complete Disease dataset by adding p-values
 
 coherence_disease = left_join(coherence_disease,biogrid_p %>% dplyr::select(-Ave), by = c("Disease" = "Disease"))
@@ -169,13 +123,6 @@ coherence_disease = coherence_disease %>% mutate(`Biogrid P-value` = round( as.n
 
 #Arranging by disease and category
 coherence_disease =coherence_disease %>% arrange(`Category`, `Disease`)
-
-#Rename KEGG pathways when necessary
-
-coherence_disease = coherence_disease %>% dplyr::rename(`String Coherence KEGG` = `String Coherence`, `String Filt Coherence KEGG` = `String Filt Coherence`, `Biogrid Coherence KEGG` = `Biogrid Coherence`)
-
-#Rename CC to GOCC to better reflect source
-colnames(coherence_disease) = gsub("CC", "GOCC", colnames(coherence_disease))
 
 #Writing to a tables
 
