@@ -68,11 +68,11 @@ colnames(coherence_disease) = c("Disease", "Biogrid_Coherence", "String_Coherenc
 ```{r}
 #Get categories from slope frame
 
-Cat = bind_rows(dis_slopes_string_count %>% ungroup() %>% dplyr::select(Disease, Category) %>% distinct(), dis_slopes_biogrid_count %>% ungroup() %>% dplyr::select(Disease, Category) %>% distinct())
+Cat = bind_rows(dis_slopes_string_count %>% ungroup() %>% dplyr::select(Disease, Category), dis_slopes_biogrid_count %>% ungroup() %>% dplyr::select(Disease, Category) ) %>% distinct()
 
 #Join to all diseases frame
 
-coherence_disease =left_join(coherence_disease, Cat)
+coherence_disease =left_join(coherence_disease, Cat, "Disease")
 
 
 #Remove underscores from column names
