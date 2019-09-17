@@ -285,3 +285,51 @@ save_norm_coh(norm_coh_string, num_msig = num_msig, num_rand = num_rand, run = r
 #Saving string filtered results to csv
 save_norm_coh(norm_coh_string_filt, num_msig = num_msig, num_rand = num_rand, run = run, database = "String_Filtered")
 ```
+
+# Generating random networks for comparison to msigdf (Category_Tables)
+
+```{r}
+#Function for generating random networks from a set of sizes
+#size_vec is vector of sizes
+
+generate_rand_slopes = function(size_vec, database) {
+  j=1
+  slope_list = c()
+  for (i in size_vec) {
+    # Empty data frame for disease networks
+      diseases = bind_rows()
+      # Generate random networks until there as many internal edges as current diseases
+      while(nrow(diseases)<i) {
+        # Generate random diseases network from PPI database[??? What this function does?]
+        diseases_curr = GeneSample(i, database, directed = FALSE) 
+        # Save internal and external edges
+        diseases_curr = data.frame(Gene = names(diseases_curr$internal_connectivity), Internal = diseases_curr$internal_connectivity, External = diseases_curr$external_connectivity)
+        # Filter out zeros
+        diseases_curr = diseases_curr %>% filter(Internal !=0) 
+        # Bind together non-zero internal/external edges (If all zero then diseases_curr is null and nothing happens)
+        diseases = bind_rows(diseases, diseases_curr)
+      }
+          # Save slope of current network
+          slope_list= c(slope_list,coef(lm(I(sqrt(External)) ~ I(sqrt(Internal))-1, data = diseases))[[1]])
+          # Iterate
+          j = j+1
+    
+  }
+  data.frame(Count = size_vec, Slope = slope_list)
+}
+```
+
+```{r}
+#Read in data if you only want to run this section
+
+# msig_frame_string = readRDS("String_Msig_Slopes.rds")
+
+#Get msig counts (Comment out if using pre-calculated msig slopes)
+
+msig_counts = unique((msig_frame_string %>% filter(Category == "CP:KEGG"))$Num_Genes)
+
+#Generate the random slopes equal to msig lengths
+string_random = generate_rand_slopes(msig_counts, string)
+
+ saveRDS(string_random, "./data/Coherence_Results/string_random_edges.rds")
+```
