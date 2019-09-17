@@ -104,7 +104,7 @@ get_msig_slopes = function(sub_cats, database) {
     #Write to table in format for disease2frame
     write.table(curr_msig$gene_symbol, file = "temp_rea_bio.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
     #Get internal/external connectivity
-    diseases_curr = diseases2frame("temp_rea_bio.txt", links = biogrid) # [??? Shouldn't it be database?]
+    diseases_curr = diseases2frame("temp_rea_bio.txt", links = database)
     #Get disease name
     diseases_curr = diseases_curr %>% mutate(Disease = j)
     mod_over[[index]] = diseases_curr
