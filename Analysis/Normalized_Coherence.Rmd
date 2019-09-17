@@ -154,6 +154,27 @@ saveRDS(msig_frame_string, "String_Msig_Slopes.rds")
 saveRDS(msig_frame_string_filt, "String_Filt_Msig_Slopes.rds")
 ```
 
+# Getting all msig pathway slopes for string (Used in Supplementary Table 2)
+
+```{r}
+#Re-read msig
+msig = msigdbr()
+
+# Define all categories
+all_cats = unique(msig$gs_subcat)
+
+#Remove empty categories
+all_cats = subcats[which(subcats!="")]
+
+#Get slopes
+msig_frame_string_all = get_msig_slopes(sub_cats = all_cats, database = string)
+
+#Save results
+saveRDS(msig_frame_string_all, "./data/coherence_results/All_Msig_String.rds")
+
+
+```
+
 # Define function for calculating slopes and counts from internal/external edges
 
 ```{r}
@@ -333,3 +354,4 @@ string_random = generate_rand_slopes(msig_counts, string)
 
  saveRDS(string_random, "./data/Coherence_Results/string_random_edges.rds")
 ```
+
