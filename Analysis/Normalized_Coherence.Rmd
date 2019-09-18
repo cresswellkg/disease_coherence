@@ -39,7 +39,9 @@ library(broom)   # install.packages("broom")
 # Option for number of msig pathways to take from each category
 num_msig = 10
 # Option for number of random networks to generate (Will generate num_rand-1 networks)
-num_rand = 11
+num_rand = 101
+# Minimum number of genes having non-zero internal edges for a network to be processed
+num_genes = 10
 # Construct file name to save the results
 run <- 1 # Placeholder for the run ID
 fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", num_msig, "_rand_", num_rand, "_", run, ".csv"))
@@ -185,11 +187,11 @@ slopes_from_edges = function(edges) {
   do({
     mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
     data.frame(Slope= coef(mod)[1])
-  }) %>% arrange(Slope) %>% filter(Count>4)
+  }) %>% arrange(Slope) %>% filter(Count > num_genes)
 }
 ```
 
-The above function takes internal and external edges from each gene for each disease and calculates the total number of genes and the slope of internal vs. external edges. Genes with zero internal edges are filtered and diseases with less than 5 non-zero internal edges are filtered.
+The above function takes internal and external edges from each gene for each disease and calculates the total number of genes and the slope of internal vs. external edges. Genes with zero internal edges are filtered and diseases with less than `r num_genes` non-zero internal edges are filtered.
 
 # Get edges for diseases from Biogrid (Connectivity_Comparison.Rmd)
 
