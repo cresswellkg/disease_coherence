@@ -124,6 +124,17 @@ coherence_disease = coherence_disease %>% mutate(`Biogrid P-value` = round( as.n
 #Arranging by disease and category
 coherence_disease =coherence_disease %>% arrange(`Category`, `Disease`)
 
+#Getting non-zero counts for diseases
+count_frame = full_join(dis_slopes_biogrid_count %>% ungroup() %>% dplyr::select(Disease, Count), dis_slopes_string_count %>% ungroup() %>% dplyr::select(Disease, Count), "Disease")
+
+count_frame = full_join(count_frame, dis_slopes_string_filt_count %>% ungroup() %>% dplyr::select(Disease, Count), "Disease") %>% arrange(Disease)
+```
+
+```{r}
+#Adding counts to full frame and reordering
+
+coherence_disease = coherence_disease %>% arrange(Disease) %>% mutate(`Size of Biogrid Network` = count_frame$Count.x, `Size of String Network` = count_frame$Count.y,`Size of String Filt Network`=count_frame$Count) %>% dplyr::select(Disease:`Number of genes`, `Size of Biogrid Network`:`Size of String Filt Network`, `Biogrid Coherence`:`String Filt P-value`)
+
 #Writing to a tables
 
 dir.create("../manuscript/tables")
@@ -131,3 +142,4 @@ write.csv(coherence_disease, ".././manuscript/Tables/supplementary_table_S3.csv"
           row.names = FALSE)
 
 ```
+
