@@ -39,6 +39,13 @@ min_genes <- 10  # Minimum number of genes for a network to be included
 fileNameIn0  <- "../manuscript/Tables/supplementary_table_S3.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
 # iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S3.csv > tmp.csv
 mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
+# Rename some diseases
+mtx0$Disease[mtx0$Disease == "Attention deficit hyperactivity disorder"] <- "ADHD"
+mtx0$Disease[mtx0$Disease == "Inflammatory bowel disease"] <- "IBD"
+mtx0$Disease[mtx0$Disease == "Systemic lupus erythematosus"] <- "SLE"
+mtx0$Disease[mtx0$Disease == "Age-related macular degeneration"] <- "Macular degeneration"
+mtx0$Disease[mtx0$Disease == "Lupus nephritis in systemic lupus erythematosus"] <- "Lupus nephritis in SLE"
+
 rownames(mtx0) <- mtx0$Disease
 ```
 
@@ -93,7 +100,7 @@ mtx_traits_selected_dotplot <- function(category = "Intelligence", mtx_traits = 
   p <- ggplot(data=mtx_traits_selected_to_plot, aes(x=Disease, y=Coherence, colour = "blue", size = Coherence)) + # label = Pvalue, 
     geom_point() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ylab("Normalized coherence") +
+    ylab("Coherence") +
     # geom_text_repel(size = 4, colour = "black") +
     coord_flip() +
     # theme_cowplot(12) +
@@ -109,14 +116,14 @@ mtx_traits_selected_dotplot <- function(category = "Intelligence", mtx_traits = 
 
 ```{r results='hide'}
 # STRING filtered plots only
-p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "String Filt"))
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
 p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, databases = "String Filt"))
-p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "String Filt"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
 
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "String Filt"))
-p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "String Filt"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
 
-png(filename = "../manuscript/Figures/Fig3_summary_traits.png", height = 2500, width = 5000, res = 300)
+png(filename = "../manuscript/Figures/Fig3_summary_traits.png", height = 8, width = 14, units = "in", res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -128,31 +135,31 @@ dev.off()
 ### FigS2_summary_traits_Biogrid.png
 
 ```{r }
-p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "Biogrid"))
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
 p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, databases = "Biogrid"))
-p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "Biogrid"))
-p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "Biogrid"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
+# p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "Biogrid")) # Insufficient data
 p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "Biogrid"))
 
-png(filename = "../manuscript/Figures/FigS2_summary_traits_Biogrid.png", height = 2500, width = 6000, res = 300)
-lay1 <- rbind(c(1, 2, 3))
-lay2 <- rbind(c(1, 2, 3))
-g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
-g2 <- arrangeGrob(grobs = list(p_eye, p_intelligence), layout_matrix = lay2)
+png(filename = "../manuscript/Figures/FigS2_summary_traits_Biogrid.png", height = 6, width = 10, units = "in", res = 300)
+lay1 <- rbind(c(1, 2))
+lay2 <- rbind(c(1, 2))
+g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_metabolic, p_intelligence), layout_matrix = lay2)
 grid.arrange(g1, g2, ncol = 1)
 dev.off()
 ```
 
-### FigS4_summary_traits_STRING.png
+### FigS3_summary_traits_STRING.png
 
 ```{r }
-p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "String"))
+p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Intelligence", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Anthropometric trait", mtx_traits = mtx0, databases = "String"))
-p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "String"))
+p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular trait", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye trait", mtx_traits = mtx0, databases = "String"))
-p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "String"))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic trait", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 
-png(filename = "../manuscript/Figures/FigS4_summary_traits_STRING.png", height = 2500, width = 6000, res = 300)
+png(filename = "../manuscript/Figures/FigS3_summary_traits_STRING.png", height = 8, width = 14, units = "in", res = 300)
 lay1 <- rbind(c(1, 2, 3))
 lay2 <- rbind(c(1, 2, 3))
 g1 <- arrangeGrob(grobs = list(p_anthropometric, p_cardiovascular, p_metabolic), layout_matrix = lay1)
@@ -168,14 +175,14 @@ dev.off()
 ```{r results='hide'}
 # STRING filtered plots only
 p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, databases = "String Filt"))
-p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "String Filt"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank())) 
 p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, databases = "String Filt"))
-p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "String Filt"))
-p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "String Filt"))
-p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "String Filt"))
-p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "String Filt")) 
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank()))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "String Filt") + theme(axis.title.y = element_blank())) 
 
-png(filename = "../manuscript/Figures/Fig4_summary_diseases.png", height = 2500, width = 5000, res = 300)
+png(filename = "../manuscript/Figures/Fig4_summary_diseases.png", height = 8, width = 14, units = "in", res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -188,14 +195,14 @@ dev.off()
 
 ```{r }
 p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, databases = "Biogrid"))
-p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "Biogrid"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
 p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, databases = "Biogrid"))
-p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "Biogrid"))
-p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "Biogrid"))
-p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "Biogrid"))
-p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "Biogrid"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
+p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "Biogrid") + theme(axis.title.y = element_blank()))
 
-png(filename = "../manuscript/Figures/FigS4_summary_diseases_Biogrid.png", height = 3000, width = 8000, res = 300)
+png(filename = "../manuscript/Figures/FigS4_summary_diseases_Biogrid.png", height = 8, width = 14, units = "in", res = 300)
 lay1 <- rbind(c(1, 2, 3, 4))
 lay2 <- rbind(c(1, 2, 3, 4))
 g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
@@ -208,19 +215,22 @@ dev.off()
 
 ```{r }
 p_intelligence <- plot(mtx_traits_selected_dotplot(category = "Autoimmune", mtx_traits = mtx0, databases = "String"))
-p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "String"))
+p_anthropometric <- plot(mtx_traits_selected_dotplot(category = "Cancer", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 p_cardiovascular <- plot(mtx_traits_selected_dotplot(category = "Cardiovascular disease", mtx_traits = mtx0, databases = "String"))
-p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "String"))
-p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "String"))
+p_eye <- plot(mtx_traits_selected_dotplot(category = "Eye disease", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
+p_metabolic <- plot(mtx_traits_selected_dotplot(category = "Metabolic disease", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 p_neurologic <- plot(mtx_traits_selected_dotplot(category = "Neurologic", mtx_traits = mtx0, databases = "String"))
-p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "String"))
+p_psychiatric <- plot(mtx_traits_selected_dotplot(category = "Psychiatric", mtx_traits = mtx0, databases = "String") + theme(axis.title.y = element_blank()))
 
-png(filename = "../manuscript/Figures/FigS5_summary_diseases_STRING.png", height = 3000, width = 8000, res = 300)
-lay1 <- rbind(c(1, 2, 3, 4))
-lay2 <- rbind(c(1, 2, 3, 4))
-g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric, p_neurologic, p_psychiatric), layout_matrix = lay1)
-g2 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay2)
-grid.arrange(g1, g2, ncol = 1)
+png(filename = "../manuscript/Figures/FigS5_summary_diseases_STRING.png", height = 12, width = 10, units = "in", res = 300)
+lay1 <- rbind(c(1, 2))
+lay2 <- rbind(c(1, 2))
+lay3 <- rbind(c(1, 2, 3))
+g1 <- arrangeGrob(grobs = list(p_intelligence, p_anthropometric), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(p_neurologic, p_psychiatric), layout_matrix = lay2)
+g3 <- arrangeGrob(grobs = list(p_cardiovascular, p_metabolic, p_eye), layout_matrix = lay3)
+
+grid.arrange(g1, g2, g3, ncol = 1)
 dev.off()
 ```
 
