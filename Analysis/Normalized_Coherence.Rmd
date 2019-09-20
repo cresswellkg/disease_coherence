@@ -166,7 +166,7 @@ msig = msigdbr()
 all_cats = unique(msig$gs_subcat)
 
 #Remove empty categories
-all_cats = subcats[which(subcats!="")]
+all_cats = all_cats[which(all_cats != "")]
 
 #Get slopes
 msig_frame_string_all = get_msig_slopes(sub_cats = all_cats, database = string)
