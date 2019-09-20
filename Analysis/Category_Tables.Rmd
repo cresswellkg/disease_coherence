@@ -69,7 +69,7 @@ msig = readRDS("./data/Coherence_Results/All_Msig_String.rds")
 
 #Correlation betweeen categories and size
 
-msig_cor = msig %>% group_by(Category) %>% summarise(Slope_Cor = cor(Count, Slope, "complete")) %>% arrange(Slope_Cor)
+msig_cor = msig %>% group_by(Category) %>% summarise(Slope_Cor = cor(Num_Genes, Slope, "complete")) %>% arrange(Slope_Cor)
 
 colnames(msig_cor)[2] = "Size Correlation"
 
@@ -78,7 +78,7 @@ colnames(msig_cor)[2] = "Size Correlation"
 ```{r}
 options(scipen = 2)
 
-msig_sum = msig %>% group_by(Category) %>% summarise(Min_Slope = min(Slope, na.rm = TRUE), Max_Slope = max(Slope, na.rm = TRUE), Mean_Slope = mean(Slope, na.rm = TRUE), Median_Slope = median(Slope, na.rm = TRUE), Min_Genes = min(Count), Max_Genes = max(Count), Mean_Genes = mean(Count), Median_Genes = median(Count), Total_Sets = n()) %>% arrange(Mean_Slope)
+msig_sum = msig %>% group_by(Category) %>% summarise(Min_Slope = min(Slope, na.rm = TRUE), Max_Slope = max(Slope, na.rm = TRUE), Mean_Slope = mean(Slope, na.rm = TRUE), Median_Slope = median(Slope, na.rm = TRUE), Min_Genes = min(Num_Genes), Max_Genes = max(Num_Genes), Mean_Genes = mean(Num_Genes), Median_Genes = median(Num_Genes), Total_Sets = n()) %>% arrange(Mean_Slope)
 
 msig_sum = left_join(msig_sum, msig_cor)
 
@@ -105,9 +105,9 @@ write_xlsx(msig_sum,"../manuscript/Tables/supplementary_table_S2.xlsx")
 
 #Read in counts
 
-kegg_string  = msig %>% filter(Category == "CP:KEGG") %>% dplyr::select(Count, Slope)
+kegg_string  = msig %>% filter(Category == "CP:KEGG") %>% dplyr::select(Num_Genes, Slope)
 
-Slope_Sum = bind_rows(rand_string %>% mutate(Method = "Random"), kegg_string %>% dplyr::select(Count, Slope) %>% mutate(Method = "KEGG"))
+Slope_Sum = bind_rows(rand_string %>% mutate(Method = "Random"), kegg_string %>% dplyr::rename(Count=Num_Genes) %>% dplyr::select(Count, Slope) %>% mutate(Method = "KEGG"))
 ```
 
 ```{r}
