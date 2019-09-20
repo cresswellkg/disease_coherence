@@ -10,17 +10,17 @@ chmod +x get_data.sh
 cd ..
 ````
 
-In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`) and run the scripts in the following order: `GWAS_Prep.Rmd` -> `Connectivity_Comparison.Rmd` -> `Msigdf_*.R` (Any order) -> `Coherence_Calculations_New.Rmd` -> `Category_Tables.Rmd` -> `Analysis_Tables_New.Rmd`
+In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`) and run the scripts in the following order: `GWAS_Prep.Rmd` -> `Connectivity_Comparison.Rmd` -> `Normalized_Coherence.Rmd` -> `Coherence_Calculations_New.Rmd` -> `Category_Tables.Rmd` -> `Analysis_Tables_New.Rmd`
 
 - `GWAS_Prep.Rmd` - Code for parsing through the ebicat and KEGG databases and creating gene lists for each disease and pathway. Creates `data/Disease_Genes` folder. 
 
 - `Connectivity_Comparison.Rmd` - Calculation of degree distributions for disease related data. Results are produced for Biogrid and STRING. Creates `biogrid_edges_new.rds`, `string_edges_new.rds`, `string_filt_edges_new.rds`.
 
-- `Msigdf_*.R` - Scripts for calculating normalized coherence for KEGG, REACTOME and CC networks. Each file outputs a dataset containing slopes, counts, pathway name and category for STRING, STRING Filtered and Biogrid and three normalized coherence files for KEGG, Reactome and GOCC. `Msigdf_String.R` produces two additional files `All_Msig_String.rds` containing slopes for all Msigdf pathways and `string_random_edges.rds` containing slopes for randomly generated pathways. `KEGG_*.rds` files are also created in these scripts but due to long run times they are included in the repository and the code to create them is commented out. Creates `data/CoherenceResults/coherence_*.rds` files
+- `Normalized_Coherence.Rmd` - Scripts for calculating normalized coherence for phenotype-specific networks. Uses PPI data from Biogrid, String, String filtered and `*_edges_new.rds`, calculates slopes for MSigDb networks (KEGG, GOCC, Reactome) and saves them in `Biogrid_Msig_Slopes.rds`, `String_Msig_Slopes.rds`, `String_Filt_Msig_Slopes.rds`, calculates normalized coherence for phenotype-specific networks and saves them in `data/CoherenceResults/coherence_biogrid.rds`, `coherence_string.rds`, `coherence_string_filt.rds`. Produces two additional files `data/CoherenceResults/All_Msig_String.rds` containing slopes for all Msigdf pathways and `data/CoherenceResults/string_random_edges.rds` containing slopes for randomly generated pathways.
 
--`Coherence_Calculations_New.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. Relies on `data/CoherenceResults/coherence_*.rds` files created by `Connectivity_Comparison.Rmd`, `supplementary_table_diseases_selected.csv`, and files in the `Analysis/Permutation_Results` folder. Creates `./manuscript/tables/supplementary_table_S3.csv`.
+-`Coherence_Calculations_New.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. Relies on `data/CoherenceResults/coherence_*.rds` files created by `Normalized_Coherence.Rmd`, `supplementary_table_diseases_selected.csv`, and files in the `Analysis/Permutation_Results` folder. Creates `./manuscript/tables/supplementary_table_S3.csv`.
 
--`Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases seperated by coherence.  Relies on `./manuscript/tables/supplementary_table_S3.csv` created by `Coherence_Calculations_New.Rmd`. Creates `./manuscript/tables/Table_1.csv`, `./manuscript/tables/supplementary_table_S1.xlsx`, `Fig2_Size_Slope_Plot.png`.
+-`Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases seperated by coherence.  Relies on `./manuscript/tables/supplementary_table_S3.csv` created by `Coherence_Calculations_New.Rmd`. Creates `./manuscript/tables/Table_1.csv`, `./manuscript/tables/supplementary_table_S1.xlsx`, `supplementary_table_S2.xlsx`, `Fig2_Size_Slope_Plot.png`.
 
 - `Analysis_Tables_New.Rmd` - Produces main and supplementary figures. Relies on `./manuscript/tables/supplementary_table_S3.csv`. Creates `./manuscript/Figures/*`
 
