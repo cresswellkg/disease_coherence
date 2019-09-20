@@ -10,7 +10,12 @@ library(dplyr)   # install.packages("dplyr")
 library(readr)   # install.packages("readr")
 options(stringsAsFactors = FALSE)
 ```
- 
+
+```{r}
+# Minimum number of genes having non-zero internal edges for a network to be processed
+num_genes = 10
+```
+
 ```{r}
 #Read in edges generated from Connectivity_Comparison_*.Rmd
 disease_overall_string      <- readRDS("string_edges_new.rds")
@@ -25,7 +30,7 @@ dis_slopes_string_count = disease_overall_string %>% filter(Internal != 0) %>%
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
       data.frame(Slope= coef(mod)[1])
-    }) %>% arrange(Slope) %>% filter(Count>4)
+    }) %>% arrange(Slope) %>% filter(Count > num_genes)
 
 #STRING Filtered
 dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal != 0) %>%
@@ -33,7 +38,7 @@ dis_slopes_string_filt_count = disease_overall_string_filt %>% filter(Internal !
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
       data.frame(Slope= coef(mod)[1])
-    }) %>% arrange(Slope) %>% filter(Count>4)
+    }) %>% arrange(Slope) %>% filter(Count > num_genes)
 
 #BIOGRID
 dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0)  %>%
@@ -41,7 +46,7 @@ dis_slopes_biogrid_count = disease_overall_biogrid %>% filter(Internal != 0)  %>
     do({
       mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
       data.frame(Slope= coef(mod)[1])
-    }) %>% arrange(Slope) %>% filter(Count>4)
+    }) %>% arrange(Slope) %>% filter(Count > num_genes)
 
 ```
 
