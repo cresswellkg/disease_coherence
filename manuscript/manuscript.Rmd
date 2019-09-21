@@ -119,20 +119,16 @@ Besides size dependency, coherence estimates depend on the choice of PPI databas
 
 ## Coherence of all phenotypes significantly differs from random
 
-To estimate the significance of coherence measures, we developed a permutation-based approach (see Methods). Notably, we observed coherence for all diseases to be highly significantly different from random (permutation p-value < 0.002, Supplementary Table S3). Similarly, the distribution of coherence estimates was skewed towards 1.00 (highest coherence), with the median coherence being 0.86. Among traits, "Corneal structure", "Body mass index", "Weight" were the most coherent (1.02, 1.00, 0.99, respectively). [???]  
+## Metabolic and intelligence-related traits as examples of networks with overall highest/lowest coherence
 
-"Obesity-related traits" and "Height" were on the lowest range of coherence estimates (0.42 and 0.54, respectively). "Weight", "Telomere length", and "Corneal structure" were on the highest range of coherence (1.00, Supplementary Table S3). These results indicate that coherence of phenotype-specific networks is generally high and significantly different from random.
-
-## Metabolic and intelligence-related traits as examples of high/low coherence
-
-We estimated coherence of 54 traits from five categories (Figure 3, Supplementary Table S3, Supplementary Figures S3-S5). Among anthropometric traits, "Weight" and "Body Mass Index" had the highest level of coherence. Other examples of traits with high coherence include blood pressure-related traits (cardiovascular) and glucose- and cholesterol-related traits (metabolic). Notably, metabolic and eye trait categories had the highest overall coherence (mean coherence 0.90 and 0.93, respectively). Several notable examples of low coherence include "Obesity-related traits", "Height", and "Longevity" (anthropometric traits), blood count-related traits (cardiovascular). Traits in the "Intelligence" category had low overall coherence (mean coherence = 0.76). These results highlight the relatively good knowledge of the genetics of metabolic traits which corresponds to highly coherent networks. Conversely, current knowledge about the genetics of intelligence-related traits appear insufficient as reflected in the low coherence of the corresponding networks.
+We estimated coherence of 54 traits from five categories (Figure 3, Supplementary Table S3, Supplementary Figures S3-S5). Among anthropometric traits, "Weight" and "Body Mass Index" had the highest level of coherence. Other examples of traits with high coherence include blood pressure-related traits (cardiovascular) and glucose-related traits (metabolic). Notably, metabolic trait category had the highest overall coherence (mean coherence 0.91 and 1.05, respectively, Supplementary Table S1). Several notable examples of low coherence include "Obesity-related traits" and "Height" (anthropometric traits), and blood count-related traits (cardiovascular). Traits in the "Intelligence" category had low overall coherence (mean coherence = 0.76). These results highlight the relatively good knowledge of the genetics of metabolic traits which corresponds to highly coherent networks. Conversely, current knowledge about the genetics of intelligence-related traits appear insufficient as reflected in the low coherence of the corresponding networks.
 
 +-------+
 | ![](Figures/Fig3_summary_traits.png)      |
 | **Figure 3. Coherence estimates of traits.** Size of dots represents the level of normalized coherence (X-axis) for individual traits (Y-axis).   |
 +-------+
 
-## Metabolic and neurologic diseases have high coherence
+## Metabolic diseases and cancer networks have high coherence
 
 We further estimated coherence of 80 diseases from seven categories (Figure 4, Supplementary Figures S6-S8, Supplementary Table S3). Metabolic diseases had high overall coherence (average coherence 0.93), with "Obesity" and "Type 2 diabetes" being the most coherent (0.99 and 0.94, respectively). Similarly, the average coherence for neurologic diseases was 0.86, with "Alzheimer's disease" and "Parkinson's disease" being highly coherent (0.94 and 0.92, respectively). The high coherence of metabolic and neurologic disease networks highlight the relatively good knowledge of their genetics.
 
@@ -220,19 +216,13 @@ The authors declare that they have no competing interests.
 
 **Supplementary Figure S1. Normalization of coherence estimates alleviates its network size dependence.** Red/blue gradient and numbers represent Pearson correlation coefficients for each pairwise comparison of the number of SNPs, genes, and the normalized coherence estimates using the corresponding PPI databases.
 
-**Supplementary Figure S2. Coherence estimates are similar when using different references of high coherences and PPI databases.** Red/blue gradient and numbers represent Pearson correlation coefficients for each pairwise comparison of the normalized coherence estimates using the corresponding PPI databases and KEGG/Reactome pathways and Gene Ontology Cellular Component networks as a reference of high coherence.
+**Supplementary Figure S2. Coherence estimates of traits using Biogrid as a reference PPI database.** Size of dots represents the level of normalized coherence (X-axis) for individual traits (Y-axis). Plots are faceted by categories. Missing entries indicate that, for a given trait, a network could not be built and the coherence cannot be estimated.
 
-**Supplementary Figure S3. Coherence estimates of traits using KEGG as a reference of high coherence.** Size of dots represents the level of normalized coherence (X-axis) for individual traits (Y-axis). Plots are faceted by PPI database used to estimate coherence. Missing entries indicate that, for a given PPI database, a phenotype-associated network could not be built.
+**Supplementary Figure S3. Coherence estimates of traits using STRING as a reference of PPI database.** See legend for Supplementary Figure S2.
 
-**Supplementary Figure S4. Coherence estimates of traits using GOCC as a reference of high coherence.** See legend for Supplementary Figure S3.
+**Supplementary Figure S4. Coherence estimates of diseases using Biogrid as a reference PPI database.** See legend for Supplementary Figure S2.
 
-**Supplementary Figure S5. Coherence estimates of traits using Reactome as a reference of high coherence.** See legend for Supplementary Figure S3.
-
-**Supplementary Figure S6. Coherence estimates of diseases using KEGG as a reference of high coherence.** See legend for Supplementary Figure S3.
-
-**Supplementary Figure S7. Coherence estimates of diseases using GOCC as a reference of high coherence.** See legend for Supplementary Figure S3.
-
-**Supplementary Figure S8. Coherence estimates of diseases using Reactome as a reference of high coherence.** See legend for Supplementary Figure S3.
+**Supplementary Figure S5. Coherence estimates of diseases using STRING as a reference PPI database.** See legend for Supplementary Figure S2.
 
 # References
 
