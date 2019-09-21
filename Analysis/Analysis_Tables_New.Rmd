@@ -70,6 +70,13 @@ mtx0_cor <- mtx0[ mtx0 %>% dplyr::select(starts_with("Size")) %>% apply(., 1, mi
 mtx0_cor <- mtx0_cor %>% dplyr::select(contains("Coherence"), contains("Number"))
 # Actual correlation
 diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
+# Average correlation with network size
+print(paste0("Average correlation with network size: ", mean(diff_cors[grepl("Number", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))])))
+# Average correlation of coherences
+diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)) & grepl("String", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors)) & grepl("String", rownames(diff_cors))]
+print(paste0("Average correlation of STRING coherences: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
+diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))]
+print(paste0("Average correlation of coherences: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
 
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
