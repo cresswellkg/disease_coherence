@@ -98,13 +98,13 @@ coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Numb
 
 #Adding p-values from permutation test
 #Biogrid
-biogrid_p = bind_rows(readRDS("./data/Permutation_Results/biogrid_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/biogrid_p_psych_1k.rds") %>% as.data.frame(.))
+biogrid_p = readRDS("./data/Permutation_Results/biogrid_p_1k.rds") %>% as.data.frame(.) %>% dplyr::select(-new_coherence)
 
 #String
-string_p = bind_rows(readRDS("./data/Permutation_Results/string_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_p_psych_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_p_neuro_1k.rds") %>% as.data.frame(.))
+string_p = readRDS("./data/Permutation_Results/string_p_1k.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
 
 #String Filtered
-string_filt_p = bind_rows(readRDS("./data/Permutation_Results/string_filt_p_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_filt_p_psych_1k.rds") %>% as.data.frame(.), readRDS("./data/Permutation_Results/string_filt_p_neuro_1k.rds") %>% as.data.frame(.))
+string_filt_p = readRDS("./data/Permutation_Results/string_filt_p_1k.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
 
 #Give appropriate name
 colnames(biogrid_p) = c("Disease", "Biogrid P-value", "Ave")
