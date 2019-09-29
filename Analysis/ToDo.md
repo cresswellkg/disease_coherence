@@ -1,10 +1,8 @@
 # ToDo
 
-- P-values for disease coherence
+- P-values for disease coherence for n=10,000
 
-- Given the new method (combining KEGG, GOCC, Reactome), “Coherence_Calculations_New.Rmd” needs to be updated, where p-value RDS objects are handled, from line 100.
-
-- Methods, "Permutation test of slopes” section needs your rewriting. “Manuscript.Rmd”, line 188.
-
+- Methods, "Permutation test of slopes”, “Manuscript.Rmd”, line 188.
+    - TBD, random network creation, simplest is to sample pairs of genes until getting the needed number of non-zero interactions
 
 
