@@ -286,19 +286,16 @@ saveRDS(norm_coh_string_filt, "./data/Coherence_Results/coherence_string_filt.rd
 ```
 
 
+```{r eval=FALSE}
 # Write general function for saving runs to .csv
 
-```{r}
 save_norm_coh = function(coherence_tab, num_msig, num_rand, run, database) {
   require(dplyr)
   fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_",database,"_",num_msig, "_rand_", num_rand, "_", run, ".csv"))
   write_csv(coherence_tab, fileNameOut)
 }
-```
 
 # Save the runs in .csv form
-
-```{r}
 #Saving biogrid results to csv
 save_norm_coh(norm_coh_biogrid, num_msig = num_msig, num_rand = num_rand, run = run, database = "Biogrid")
 
