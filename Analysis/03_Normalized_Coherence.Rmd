@@ -351,6 +351,9 @@ msig_counts = unique((msig_frame_string %>% filter(Category == "CP:KEGG"))$Num_G
 #Generate the random slopes equal to msig lengths
 string_random = generate_rand_slopes(msig_counts, string)
 
- saveRDS(string_random, "./data/Coherence_Results/string_random_edges.rds")
+saveRDS(string_random, "./data/Coherence_Results/string_random_edges.rds")
+
+# Small cleanup
+unlink("temp_rea_bio.txt")
 ```
 
