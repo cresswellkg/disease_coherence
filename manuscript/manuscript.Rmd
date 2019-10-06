@@ -10,18 +10,18 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Coherence of Molecular Mechanisms in Genes Identified Through GWAS In Major Human Disease and Traits
+# Coherence of Molecular Mechanisms <!--in Genes Identified Through GWAS -->In Major Human Disease and Traits
 
 Dozmorov, Mikhail G.^1+^ (mikhail.dozmorov@vcuhealth.org)  
 Cresswell, Kellen G.^1+^ (cresswellkg@vcu.edu)  
-Reimers, Mark^2^ (reimersm@msu.edu)  
-Bacanu, Silviu-Alin^3^ (silviu-alin.bacanu@vcuhealth.org)  
+Bacanu, Silviu-Alin^2^ (silviu-alin.bacanu@vcuhealth.org)  
 Craver, Carl^4^ (ccraver@wustl.edu)  
-Kendler, Kenneth S.^3^ (kenneth.kendler@vcuhealth.org)  
+Reimers, Mark^3^ (reimersm@msu.edu)  
+Kendler, Kenneth S.^2^ (kenneth.kendler@vcuhealth.org)  
 
 ^1^ - Department of Biostatistics, Virginia Commonwealth University   
-^2^ - Neuroscience Program and Dept. Biomedical Engineering Michigan State  
-^3^ - Virginia Institute for Psychiatric and Behavior Genetics and the Department of Psychiatry, Virginia Commonwealth University  
+^2^ - Virginia Institute for Psychiatric and Behavior Genetics and the Department of Psychiatry, Virginia Commonwealth University  
+^3^ - Neuroscience Program and Dept. Biomedical Engineering Michigan State  
 ^4^ - Philosophy-Neuroscience-Psychology Program, Washington University in St. Louis  
 ^+^ - equal contribution
 
