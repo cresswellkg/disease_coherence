@@ -74,12 +74,15 @@ mtx0_cor$`String P-value` <- jitter(mtx0_cor$`String P-value`, amount = 0.0001)
 # Actual correlation
 diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
 # Average correlation with network size
-print(paste0("Average correlation with network size: ", mean(diff_cors[grepl("Number", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))])))
-# Average correlation of coherences
+diff_cors_selected <- diff_cors[grepl("Number", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))]
+print(paste0("Average correlation with network size: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
+# Average correlation of STRING and STRING filtered coherences
 diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)) & grepl("String", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors)) & grepl("String", colnames(diff_cors))]
 print(paste0("Average correlation of STRING coherences: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
+# Average correlation of coherences
 diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))]
 print(paste0("Average correlation of coherences: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
+# Average correlation of coherences and p-value
 diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("P-value", colnames(diff_cors))]
 print(paste0("Average correlation of coherences and p-value: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
 
