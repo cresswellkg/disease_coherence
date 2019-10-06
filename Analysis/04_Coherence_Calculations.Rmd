@@ -106,7 +106,7 @@ string_p = readRDS("./data/Permutation_Results/string_p_1k.rds") %>% as.data.fra
 #String Filtered
 string_filt_p = readRDS("./data/Permutation_Results/Complete_10k_String_Filt.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
 
-#Give appropriate name
+#Give appropriate column names
 colnames(biogrid_p) = c("Disease", "Biogrid P-value", "Ave")
 colnames(string_p) = c("Disease", "String P-value", "Ave")
 colnames(string_filt_p) = c("Disease", "String Filt P-value", "Ave") 
