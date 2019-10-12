@@ -101,7 +101,7 @@ coherence_disease = coherence_disease %>% dplyr::select(Disease, Category, `Numb
 biogrid_p = readRDS("./data/Permutation_Results/Complete_10k_Biogrid.rds") %>% as.data.frame(.) %>% dplyr::select(-new_coherence)
 
 #String
-string_p = readRDS("./data/Permutation_Results/string_p_1k.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
+string_p = readRDS("./data/Permutation_Results/Complete_10k_String.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
 
 #String Filtered
 string_filt_p = readRDS("./data/Permutation_Results/Complete_10k_String_Filt.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
@@ -152,3 +152,5 @@ write.csv(coherence_disease, ".././manuscript/Tables/supplementary_table_S3.csv"
 
 ```
 
+```{r}
+```
