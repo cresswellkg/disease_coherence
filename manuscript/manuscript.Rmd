@@ -1,9 +1,9 @@
 ---
-bibliography: [/Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/references/networks.bib,/Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/references/brain.bib,/Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/references/enrichment.bib,/Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/references/3D_refs.bib]
-csl: /Users/mdozmorov/Documents/Work/presentations/Templates/grant_template/styles.ref/genomebiology.csl
+bibliography: [references/networks.bib,references/brain.bib,references/enrichment.bib,references/3D_refs.bib]
+csl: styles.ref/genomebiology.csl
 output:
   word_document:
-    reference_docx: /Users/mdozmorov/Documents/Work/presentations/Templates/manuscript_template/styles.doc/Arial_11_single_space_normal_margins.docx
+    reference_docx: styles.doc/Arial_11_single_space_normal_margins.docx
   pdf_document: default
   html_document: default
 editor_options: 
