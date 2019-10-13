@@ -102,7 +102,7 @@ biogrid_p = readRDS("./data/Permutation_Results/Complete_10k_Biogrid.rds") %>% a
 
 #String
 string_p = readRDS("./data/Permutation_Results/Complete_10k_String.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
-string_p <- string_p[!duplicated(string_p$Disease), ] # Fix "Attention deficit hyperactivity disorder" that was run twice
+string_p <- string_p[!duplicated(string_p[, 1]), ] # Fix "Attention deficit hyperactivity disorder" that was run twice
 
 #String Filtered
 string_filt_p = readRDS("./data/Permutation_Results/Complete_10k_String_Filt.rds") %>% as.data.frame(.)  %>% dplyr::select(-new_coherence)
