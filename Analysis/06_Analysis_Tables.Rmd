@@ -67,10 +67,10 @@ mtx0[, "String Filt Coherence"] %>% unlist %>% c %>% unname %>% summary
 mtx0_cor <- mtx0[ mtx0 %>% dplyr::select(starts_with("Size")) %>% apply(., 1, min, na.rm = TRUE) > min_genes &
                   mtx0 %>% dplyr::select(starts_with("Size")) %>% apply(., 1, max, na.rm = TRUE) < max_genes, ]
 # Remove size columns
-mtx0_cor <- mtx0_cor %>% dplyr::select(contains("Coherence"), contains("Number"), contains("P-value"))
+mtx0_cor <- mtx0_cor %>% dplyr::select(contains("Coherence"), contains("Number"), contains("P value"), contains("Modularity"))
 # Jitter STRING p-value a bit
 set.seed(1)
-mtx0_cor$`String P-value` <- jitter(mtx0_cor$`String P-value`, amount = 0.0001)
+mtx0_cor$`String P value` <- jitter(mtx0_cor$`String P value`, amount = 0.0001)
 # Actual correlation
 diff_cors <- cor(mtx0_cor, use = "pairwise.complete.obs")
 # Average correlation with network size
@@ -83,7 +83,7 @@ print(paste0("Average correlation of STRING coherences: ", mean(diff_cors_select
 diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("Coherence", colnames(diff_cors))]
 print(paste0("Average correlation of coherences: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
 # Average correlation of coherences and p-value
-diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("P-value", colnames(diff_cors))]
+diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("P value", colnames(diff_cors))]
 print(paste0("Average correlation of coherences and p-value: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
 
 
@@ -106,7 +106,7 @@ mtx_traits_selected_dotplot <- function(category = "Intelligence", mtx_traits = 
   mtx_traits_selected <- mtx_traits[mtx_traits$Category == category, grepl(databases, colnames(mtx_traits))]
   
   mtx_traits_selected_to_plot <- data.frame(Disease = rownames(mtx_traits_selected), 
-                                            Pvalue = mtx_traits_selected[, grepl(paste0(databases, " P-value"), colnames(mtx_traits_selected)) ], 
+                                            Pvalue = mtx_traits_selected[, grepl(paste0(databases, " P value"), colnames(mtx_traits_selected)) ], 
                                             Coherence = mtx_traits_selected[, grepl(paste0(databases, " Coherence"), colnames(mtx_traits_selected)) ])
   # Remove noninformative rows
   mtx_traits_selected_to_plot <- mtx_traits_selected_to_plot[!is.na(mtx_traits_selected_to_plot$Coherence), ]
