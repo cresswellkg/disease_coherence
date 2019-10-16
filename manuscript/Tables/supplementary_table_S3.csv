@@ -1,118 +1,117 @@
-"Disease","Category","Number of SNPs","Number of genes","Biogrid Coherence","String Coherence","String Filt Coherence","Biogrid P value","String P value","String Filt P value","Biogrid Modularity","String Modularity","String Filt Modularity"
-"Body mass index","Anthropometric trait",154,107,NA,0.85,0.96,NA,1e-04,1e-04,NA,"0.325198692183608","0.722692141570719"
-"Breast size","Anthropometric trait",31,31,NA,0.52,0.47,NA,1e-04,0.0169,NA,"0.418875752457672","0.675984020115832"
-"Height","Anthropometric trait",597,418,0.47,0.45,0.44,1e-04,1e-04,1e-04,"0.512354751358631","0.293672083908177","0.617496293871847"
-"Hippocampal volume","Anthropometric trait",24,24,NA,0.55,NA,NA,1e-04,NA,NA,"0.596502187338755",NA
-"Infant length","Anthropometric trait",15,15,NA,0.85,NA,NA,1e-04,NA,NA,"0.564307835399731",NA
-"Longevity","Anthropometric trait",43,42,NA,0.33,NA,NA,2e-04,NA,NA,"0.489322216462726",NA
-"Menarche (age at onset)","Anthropometric trait",172,142,0.47,0.51,0.62,5e-04,1e-04,1e-04,"0.763556580858897","0.344813971065268","0.762662517163789"
-"Menopause (age at onset)","Anthropometric trait",36,35,NA,0.87,0.94,NA,1e-04,1e-04,NA,"0.471397606730909","0.752782705455113"
-"Obesity-related traits","Anthropometric trait",833,779,0.44,0.32,0.32,1e-04,1e-04,1e-04,"0.488059800569656","0.308653865323598","0.625670598874866"
-"Subcutaneous adipose tissue","Anthropometric trait",37,36,NA,0.39,NA,NA,2e-04,NA,NA,"0.510765560827069",NA
-"Telomere length","Anthropometric trait",30,27,NA,1.15,NA,NA,1e-04,NA,NA,"0.615203898593603",NA
-"Visceral fat","Anthropometric trait",39,39,NA,0.38,NA,NA,1e-04,NA,NA,"0.482899717916093",NA
-"Waist-hip ratio","Anthropometric trait",22,21,NA,0.88,NA,NA,1e-04,NA,NA,"0.511023530749907",NA
-"Waist circumference","Anthropometric trait",24,24,NA,0.61,NA,NA,1e-04,NA,NA,"0.543838221280995",NA
-"Weight","Anthropometric trait",33,31,NA,0.89,1.09,NA,1e-04,1e-04,NA,"0.527951860294897","0.786364871751316"
-"Allergic rhinitis","Autoimmune",22,22,NA,0.56,0.51,NA,1e-04,0.0031,NA,"0.512817018444673","0.77372857020456"
-"Ankylosing spondylitis","Autoimmune",25,22,NA,0.96,NA,NA,1e-04,NA,NA,"0.507356578423169",NA
-"Asthma","Autoimmune",53,47,NA,0.87,0.67,NA,1e-04,1e-04,NA,"0.395450125354471","0.724881596373952"
-"Atopic dermatitis","Autoimmune",39,34,NA,0.89,0.6,NA,1e-04,1e-04,NA,"0.408736568490794","0.677069779038318"
-"Celiac disease","Autoimmune",65,64,0.26,0.77,0.62,0.1611,1e-04,1e-04,"0.493578913922217","0.361156634847014","0.687827284984315"
-"Crohn's disease","Autoimmune",193,143,0.52,0.8,0.74,2e-04,1e-04,1e-04,"0.683911621558898","0.293146049420934","0.624117371762516"
-"Graves' disease","Autoimmune",23,23,NA,0.92,NA,NA,1e-04,NA,NA,"0.533430763691894",NA
-"Inflammatory bowel disease","Autoimmune",114,111,0.54,0.77,0.63,1e-04,1e-04,1e-04,"0.641254205272652","0.292015924885963","0.60292896959518"
-"Inflammatory skin disease","Autoimmune",88,84,0.25,0.62,0.76,0.1107,1e-04,1e-04,"0.695038939876607","0.349555103901333","0.75598888673701"
-"Kawasaki disease","Autoimmune",19,18,NA,0.83,NA,NA,1e-04,NA,NA,"0.538521384395197",NA
-"Multiple sclerosis","Autoimmune",162,141,0.54,0.63,0.64,1e-04,1e-04,1e-04,"0.639113183453401","0.313084023983596","0.631472044414533"
-"Psoriasis","Autoimmune",47,39,NA,0.83,0.78,NA,1e-04,1e-04,"0.729429631834176","0.42260413332073","0.715493612779455"
-"Rheumatoid arthritis","Autoimmune",183,136,0.53,0.89,0.86,1e-04,1e-04,1e-04,"0.764369821978277","0.314285023256165","0.666735943289225"
-"Systemic lupus erythematosus","Autoimmune",90,71,0.42,0.88,0.8,0.0375,1e-04,1e-04,"0.729323897148887","0.341869976847739","0.658555609135589"
-"Systemic sclerosis","Autoimmune",18,16,NA,0.98,0.79,NA,1e-04,1e-04,NA,"0.454479484033683","0.546103836773427"
-"Type 1 diabetes","Autoimmune",78,72,NA,0.89,0.75,NA,1e-04,1e-04,NA,"0.319282260401677","0.699179615891586"
-"Ulcerative colitis","Autoimmune",127,106,0.34,0.8,0.67,0.0846,1e-04,1e-04,"0.709744394691301","0.316653395662188","0.626648013677202"
-"Vitiligo","Autoimmune",37,35,NA,0.87,NA,NA,1e-04,NA,NA,"0.444814635576041",NA
-"Acute lymphoblastic leukemia (childhood)","Cancer",46,40,NA,0.45,NA,NA,1e-04,NA,NA,"0.45716197083929",NA
-"Basal cell carcinoma","Cancer",17,17,NA,0.59,NA,NA,1e-04,NA,NA,"0.450738315539799",NA
-"Bladder cancer","Cancer",21,18,NA,0.98,NA,NA,1e-04,NA,NA,"0.631363924090991",NA
-"Breast cancer","Cancer",149,109,0.52,0.72,0.61,0.0047,1e-04,1e-04,"0.65548387758831","0.258536817563929","0.668063166870495"
-"Chronic lymphocytic leukemia","Cancer",40,35,NA,0.64,0.74,NA,1e-04,1e-04,NA,"0.441791762896548","0.719282593064919"
-"Colorectal cancer","Cancer",69,59,0.41,0.62,0.6,0.0677,1e-04,1e-04,"0.642117292344952","0.342013854890515","0.739644109741298"
-"Epithelial ovarian cancer","Cancer",22,22,NA,0.53,NA,NA,2e-04,NA,NA,"0.556292548113395",NA
-"Hodgkin's lymphoma","Cancer",16,14,NA,0.59,NA,NA,4e-04,NA,NA,"0.410674198539238",NA
-"Lung cancer","Cancer",27,24,NA,0.65,NA,NA,1e-04,NA,NA,"0.459140983088351",NA
-"Melanoma","Cancer",23,21,NA,0.88,NA,NA,1e-04,NA,NA,"0.493154631911564",NA
-"Multiple myeloma (IgH translocation)","Cancer",23,21,NA,0.28,NA,NA,0.0342,NA,NA,"0.555336034208147",NA
-"Non-small cell lung cancer","Cancer",17,17,NA,0.94,NA,NA,1e-04,NA,NA,"0.688817964659797",NA
-"Pancreatic cancer","Cancer",48,44,NA,0.78,0.74,NA,1e-04,1e-04,NA,"0.482369335016113","0.815026969111724"
-"Prostate cancer","Cancer",131,109,0.54,0.77,0.73,0.0029,1e-04,1e-04,"0.780760218434082","0.320515849899217","0.735445896625782"
-"Testicular germ cell tumor","Cancer",21,20,NA,0.92,0.92,NA,1e-04,1e-04,NA,"0.48726640467782","0.727269363651362"
-"Atrial fibrillation","Cardiovascular disease",20,15,NA,0.9,NA,NA,1e-04,NA,NA,"0.549628488038571",NA
-"Coronary artery disease","Cardiovascular disease",26,26,NA,0.94,0.83,NA,1e-04,1e-04,NA,"0.51004390518599","0.750269596306098"
-"Coronary heart disease","Cardiovascular disease",100,83,0.38,0.78,0.62,0.0436,1e-04,1e-04,"0.615327259309285","0.286952551453782","0.68149444375286"
-"Heart failure","Cardiovascular disease",17,17,NA,0.47,NA,NA,9e-04,NA,NA,"0.609397417171977",NA
-"Hypertension","Cardiovascular disease",62,51,NA,0.53,0.53,NA,1e-04,2e-04,NA,"0.407670954963824","0.811948790741731"
-"Sudden cardiac arrest","Cardiovascular disease",50,50,NA,0.37,NA,NA,1e-04,NA,NA,"0.373665485930514",NA
-"Venous thromboembolism","Cardiovascular disease",26,17,NA,0.87,NA,NA,1e-04,NA,NA,"0.584022116640766",NA
-"Blood pressure","Cardiovascular trait",90,83,NA,0.74,0.78,NA,1e-04,1e-04,NA,"0.328839697882972","0.803928284084681"
-"Diastolic blood pressure","Cardiovascular trait",44,37,NA,0.89,0.89,NA,1e-04,1e-04,NA,"0.423084560111168","0.8143308529353"
-"Electrocardiographic traits","Cardiovascular trait",27,23,NA,0.9,0.86,NA,1e-04,1e-04,NA,"0.474328843151258","0.70467296234574"
-"Heart rate","Cardiovascular trait",37,37,NA,0.7,0.47,NA,1e-04,0.0098,NA,"0.405901641010421","0.694443165880912"
-"Mean corpuscular hemoglobin","Cardiovascular trait",30,22,NA,0.66,0.58,NA,1e-04,0.0019,NA,"0.425052905065852","0.675212568929236"
-"Mean corpuscular volume","Cardiovascular trait",38,29,NA,0.54,0.66,NA,1e-04,4e-04,NA,"0.432223928749857","0.733310311974021"
-"Mean platelet volume","Cardiovascular trait",53,43,NA,0.74,0.58,NA,1e-04,1e-04,NA,"0.41056633854423","0.77141187615374"
-"Neutrophil count","Cardiovascular trait",26,25,NA,0.39,NA,NA,4e-04,NA,NA,"0.486521434739251",NA
-"Platelet counts","Cardiovascular trait",77,68,NA,0.63,0.51,NA,1e-04,1e-04,NA,"0.315334764376682","0.716810208573606"
-"PR interval","Cardiovascular trait",34,21,NA,0.73,NA,NA,1e-04,NA,NA,"0.459997470062405",NA
-"QT interval","Cardiovascular trait",145,103,0.6,0.62,0.73,3e-04,1e-04,1e-04,"0.69926188425092","0.281467752645344","0.746212520697301"
-"Red blood cell traits","Cardiovascular trait",45,45,0.51,0.54,0.49,0.017,1e-04,0.0044,"0.691536810893485","0.35523306307148","0.769097214032067"
-"Resting heart rate","Cardiovascular trait",13,12,NA,0.65,NA,NA,1e-04,NA,NA,"0.527026845337967",NA
-"Systolic blood pressure","Cardiovascular trait",44,37,NA,0.86,0.7,NA,1e-04,1e-04,NA,"0.416207452783298","0.811957992168031"
-"White blood cell count","Cardiovascular trait",25,19,NA,0.54,0.25,NA,1e-04,0.0852,NA,"0.482430291391734","0.740635847107438"
-"Age-related macular degeneration","Eye disease",66,48,NA,0.84,0.82,NA,1e-04,1e-04,NA,"0.344619906163586","0.708043933141769"
-"Corneal astigmatism","Eye disease",30,30,NA,0.31,0.35,NA,0.0012,0.0409,NA,"0.513913751025945","0.796164182505429"
-"Myopia (pathological)","Eye disease",78,73,0.33,0.4,0.47,0.1955,1e-04,1e-04,"0.634633030495913","0.358317114240103","0.794307090455386"
-"Refractive error","Eye disease",29,27,NA,0.97,1.01,NA,1e-04,1e-04,NA,"0.475223739631131","0.789154233175403"
-"Vertical cup-disc ratio","Eye disease",26,24,NA,0.63,NA,NA,1e-04,NA,NA,"0.452522533040299",NA
-"Axial length","Eye trait",21,21,NA,0.53,NA,NA,1e-04,NA,NA,"0.540003637587489",NA
-"Corneal curvature","Eye trait",18,17,NA,0.39,NA,NA,0.0034,NA,NA,"0.491673808501863",NA
-"Corneal structure","Eye trait",26,26,NA,1.04,1.05,NA,1e-04,1e-04,NA,"0.434158132402285","0.788769326358366"
-"Intraocular pressure","Eye trait",69,22,NA,0.87,NA,NA,1e-04,NA,NA,"0.556357778206473",NA
-"Optic cup area","Eye trait",24,23,NA,0.79,NA,NA,1e-04,NA,NA,"0.478161003331033",NA
-"Cognitive function","Intelligence",59,59,NA,0.39,0.46,NA,1e-04,0.0054,"0.761106284865074","0.357796685685573","0.791132656165848"
-"Educational attainment","Intelligence",70,68,0.18,0.43,0.35,0.2959,1e-04,0.0112,"0.565709928982621","0.345040288426919","0.812295222803729"
-"Personality dimensions","Intelligence",21,21,NA,0.44,NA,NA,3e-04,NA,NA,"0.497757819683135",NA
-"Verbal declarative memory","Intelligence",31,29,NA,0.32,NA,NA,0.0124,NA,NA,"0.589461461300385",NA
-"Diabetic retinopathy","Metabolic disease",28,27,NA,0.69,NA,NA,1e-04,NA,NA,"0.532154807237774",NA
-"Metabolic syndrome","Metabolic disease",47,42,NA,0.84,0.8,NA,1e-04,1e-04,NA,"0.423602372795332","0.765736919095621"
-"Obesity","Metabolic disease",28,26,NA,0.86,1.01,NA,1e-04,1e-04,NA,"0.383397601361917","0.7175401215807"
-"Type 2 diabetes","Metabolic disease",228,174,0.47,0.91,0.91,5e-04,1e-04,1e-04,"0.751701470646161","0.308856050051195","0.690171744021098"
-"Blood metabolite levels","Metabolic trait",183,152,0.81,0.81,0.87,1e-04,1e-04,1e-04,"0.737847557572375","0.32250058387049","0.724566076176405"
-"Cardiovascular disease risk factors","Metabolic trait",21,20,NA,0.79,0.79,NA,1e-04,1e-04,NA,"0.45486172561877","0.680029397135177"
-"Cholesterol, total","Metabolic trait",91,82,1.01,0.84,0.86,1e-04,1e-04,1e-04,"0.73012","0.328342759459229","0.750757490160317"
-"Fasting glucose-related traits","Metabolic trait",17,17,NA,1.03,0.99,NA,1e-04,1e-04,NA,"0.466844607729201","0.642626679294233"
-"Fasting plasma glucose","Metabolic trait",26,24,NA,0.9,0.99,NA,1e-04,1e-04,NA,"0.498035637007764","0.723214825159875"
-"HDL cholesterol","Metabolic trait",152,114,0.53,0.8,0.85,4e-04,1e-04,1e-04,"0.757625459480024","0.300195127571525","0.689912576969266"
-"LDL cholesterol","Metabolic trait",113,94,0.6,0.77,0.82,5e-04,1e-04,1e-04,"0.658194093845948","0.296806551554005","0.692475042497017"
-"Metabolite levels (Pyroglutamine)","Metabolic trait",23,23,NA,0.24,NA,NA,0.0355,NA,NA,"0.584002031124843",NA
-"Phospholipid levels (plasma)","Metabolic trait",61,52,NA,0.75,0.75,NA,1e-04,1e-04,NA,"0.485982818663663","0.837877303875706"
-"Triglycerides","Metabolic trait",103,68,NA,0.86,0.85,NA,1e-04,1e-04,"0.807218836608718","0.336843536166231","0.719743246405835"
-"Alzheimer's disease","Neurologic",56,49,NA,0.79,0.88,NA,1e-04,1e-04,NA,"0.474004929171295","0.792942760661826"
-"Amyotrophic lateral sclerosis","Neurologic",59,55,NA,0.31,0.61,NA,1e-04,0.001,NA,"0.436602709193313","0.823088277777778"
-"Hippocampal atrophy","Neurologic",34,34,NA,0.34,NA,NA,2e-04,NA,NA,"0.54946570639636",NA
-"Migraine","Neurologic",70,67,NA,0.51,0.54,NA,1e-04,1e-04,NA,"0.33985690639805","0.749334598678452"
-"Migraine with aura","Neurologic",23,23,NA,0.13,NA,NA,0.1603,NA,NA,"0.579403519345894",NA
-"Migraine without aura","Neurologic",32,31,NA,0.55,NA,NA,1e-04,NA,NA,"0.464648790763797",NA
-"Parkinson's disease","Neurologic",98,74,NA,0.82,0.84,NA,1e-04,1e-04,NA,"0.321684388330633","0.759539871485805"
-"Alcohol dependence","Psychiatric",29,28,NA,0.71,0.82,NA,1e-04,1e-04,NA,"0.483472143366601","0.798864590098831"
-"Anorexia nervosa","Psychiatric",15,15,NA,0.67,NA,NA,1e-04,NA,NA,"0.549315950497381",NA
-"Anxiety disorder","Psychiatric",15,14,NA,0.4,NA,NA,0.0096,NA,NA,"0.629102150075029",NA
-"Attention deficit hyperactivity disorder","Psychiatric",75,75,NA,0.45,0.55,NA,1e-04,1e-04,NA,"0.373032319808107","0.817468192829031"
-"Attention deficit hyperactivity disorder","Psychiatric",75,75,NA,0.45,0.55,NA,1e-04,1e-04,NA,"0.373032319808107","0.817468192829031"
-"Autism","Psychiatric",25,18,NA,0.62,NA,NA,1e-04,NA,NA,"0.56584974632695",NA
-"Bipolar disorder","Psychiatric",127,106,0.66,0.5,0.76,0.0014,1e-04,1e-04,"0.782285362412181","0.320458666164954","0.791702019287348"
-"Major depressive disorder","Psychiatric",77,76,NA,0.33,0.33,NA,1e-04,0.0348,NA,"0.366260707990444","0.795636669734981"
-"Panic disorder","Psychiatric",17,17,NA,0.7,NA,NA,1e-04,NA,NA,"0.628575048816938",NA
-"Post-traumatic stress disorder","Psychiatric",24,24,NA,0.42,NA,NA,1e-04,NA,NA,"0.522735058945484",NA
-"Schizophrenia","Psychiatric",233,199,0.42,0.55,0.52,1e-04,1e-04,1e-04,"0.668202276273809","0.334044723707715","0.707228598732608"
-"Smoking behavior","Psychiatric",41,39,NA,0.72,0.87,NA,1e-04,1e-04,NA,"0.482901106302815","0.81278794030138"
+"Disease","Category","Number of SNPs","Number of genes","Size of Biogrid Network","Size of String Network","Size of String Filt Network","Biogrid Coherence","String Coherence","String Filt Coherence","Biogrid P value","String P value","String Filt P value","Biogrid Modularity","String Modularity","String Filt Modularity"
+"Acute lymphoblastic leukemia (childhood)","Cancer",46,40,NA,29,NA,NA,0.45,NA,NA,1e-04,NA,NA,"0.45716197083929",NA
+"Age-related macular degeneration","Eye disease",66,48,NA,39,28,NA,0.84,0.82,NA,1e-04,1e-04,NA,"0.344619906163586","0.708043933141769"
+"Alcohol dependence","Psychiatric",29,28,NA,25,12,NA,0.71,0.82,NA,1e-04,1e-04,NA,"0.483472143366601","0.798864590098831"
+"Allergic rhinitis","Autoimmune",22,22,NA,27,14,NA,0.56,0.51,NA,1e-04,0.0031,NA,"0.512817018444673","0.77372857020456"
+"Alzheimer's disease","Neurologic",56,49,NA,37,20,NA,0.79,0.88,NA,1e-04,1e-04,NA,"0.474004929171295","0.792942760661826"
+"Amyotrophic lateral sclerosis","Neurologic",59,55,NA,41,12,NA,0.31,0.61,NA,1e-04,0.001,NA,"0.436602709193313","0.823088277777778"
+"Ankylosing spondylitis","Autoimmune",25,22,NA,16,NA,NA,0.96,NA,NA,1e-04,NA,NA,"0.507356578423169",NA
+"Anorexia nervosa","Psychiatric",15,15,NA,16,NA,NA,0.67,NA,NA,1e-04,NA,NA,"0.549315950497381",NA
+"Anxiety disorder","Psychiatric",15,14,NA,11,NA,NA,0.4,NA,NA,0.0096,NA,NA,"0.629102150075029",NA
+"Asthma","Autoimmune",53,47,NA,45,31,NA,0.87,0.67,NA,1e-04,1e-04,NA,"0.395450125354471","0.724881596373952"
+"Atopic dermatitis","Autoimmune",39,34,NA,31,16,NA,0.89,0.6,NA,1e-04,1e-04,NA,"0.408736568490794","0.677069779038318"
+"Atrial fibrillation","Cardiovascular disease",20,15,NA,13,NA,NA,0.9,NA,NA,1e-04,NA,NA,"0.549628488038571",NA
+"Attention deficit hyperactivity disorder","Psychiatric",75,75,NA,66,19,NA,0.45,0.55,NA,1e-04,1e-04,NA,"0.373032319808107","0.817468192829031"
+"Autism","Psychiatric",25,18,NA,14,NA,NA,0.62,NA,NA,1e-04,NA,NA,"0.56584974632695",NA
+"Axial length","Eye trait",21,21,NA,18,NA,NA,0.53,NA,NA,1e-04,NA,NA,"0.540003637587489",NA
+"Basal cell carcinoma","Cancer",17,17,NA,12,NA,NA,0.59,NA,NA,1e-04,NA,NA,"0.450738315539799",NA
+"Bipolar disorder","Psychiatric",127,106,15,86,28,0.66,0.5,0.76,0.0014,1e-04,1e-04,"0.782285362412181","0.320458666164954","0.791702019287348"
+"Bladder cancer","Cancer",21,18,NA,15,NA,NA,0.98,NA,NA,1e-04,NA,NA,"0.631363924090991",NA
+"Blood metabolite levels","Metabolic trait",183,152,25,147,106,0.81,0.81,0.87,1e-04,1e-04,1e-04,"0.737847557572375","0.32250058387049","0.724566076176405"
+"Blood pressure","Cardiovascular trait",90,83,NA,70,36,NA,0.74,0.78,NA,1e-04,1e-04,NA,"0.328839697882972","0.803928284084681"
+"Body mass index","Anthropometric trait",154,107,NA,91,55,NA,0.85,0.96,NA,1e-04,1e-04,NA,"0.325198692183608","0.722692141570719"
+"Breast cancer","Cancer",149,109,18,86,40,0.52,0.72,0.61,0.0047,1e-04,1e-04,"0.65548387758831","0.258536817563929","0.668063166870495"
+"Breast size","Anthropometric trait",31,31,NA,24,11,NA,0.52,0.47,NA,1e-04,0.0169,NA,"0.418875752457672","0.675984020115832"
+"Cardiovascular disease risk factors","Metabolic trait",21,20,NA,20,14,NA,0.79,0.79,NA,1e-04,1e-04,NA,"0.45486172561877","0.680029397135177"
+"Celiac disease","Autoimmune",65,64,12,60,29,0.26,0.77,0.62,0.1611,1e-04,1e-04,"0.493578913922217","0.361156634847014","0.687827284984315"
+"Cholesterol, total","Metabolic trait",91,82,13,90,52,1.01,0.84,0.86,1e-04,1e-04,1e-04,"0.73012","0.328342759459229","0.750757490160317"
+"Chronic lymphocytic leukemia","Cancer",40,35,NA,35,19,NA,0.64,0.74,NA,1e-04,1e-04,NA,"0.441791762896548","0.719282593064919"
+"Cognitive function","Intelligence",59,59,NA,52,13,NA,0.39,0.46,NA,1e-04,0.0054,"0.761106284865074","0.357796685685573","0.791132656165848"
+"Colorectal cancer","Cancer",69,59,11,48,20,0.41,0.62,0.6,0.0677,1e-04,1e-04,"0.642117292344952","0.342013854890515","0.739644109741298"
+"Corneal astigmatism","Eye disease",30,30,NA,21,12,NA,0.31,0.35,NA,0.0012,0.0409,NA,"0.513913751025945","0.796164182505429"
+"Corneal curvature","Eye trait",18,17,NA,12,NA,NA,0.39,NA,NA,0.0034,NA,NA,"0.491673808501863",NA
+"Corneal structure","Eye trait",26,26,NA,27,17,NA,1.04,1.05,NA,1e-04,1e-04,NA,"0.434158132402285","0.788769326358366"
+"Coronary artery disease","Cardiovascular disease",26,26,NA,22,12,NA,0.94,0.83,NA,1e-04,1e-04,NA,"0.51004390518599","0.750269596306098"
+"Coronary heart disease","Cardiovascular disease",100,83,13,74,47,0.38,0.78,0.62,0.0436,1e-04,1e-04,"0.615327259309285","0.286952551453782","0.68149444375286"
+"Crohn's disease","Autoimmune",193,143,31,134,91,0.52,0.8,0.74,2e-04,1e-04,1e-04,"0.683911621558898","0.293146049420934","0.624117371762516"
+"Diabetic retinopathy","Metabolic disease",28,27,NA,20,NA,NA,0.69,NA,NA,1e-04,NA,NA,"0.532154807237774",NA
+"Diastolic blood pressure","Cardiovascular trait",44,37,NA,34,18,NA,0.89,0.89,NA,1e-04,1e-04,NA,"0.423084560111168","0.8143308529353"
+"Educational attainment","Intelligence",70,68,11,55,18,0.18,0.43,0.35,0.2959,1e-04,0.0112,"0.565709928982621","0.345040288426919","0.812295222803729"
+"Electrocardiographic traits","Cardiovascular trait",27,23,NA,17,14,NA,0.9,0.86,NA,1e-04,1e-04,NA,"0.474328843151258","0.70467296234574"
+"Epithelial ovarian cancer","Cancer",22,22,NA,17,NA,NA,0.53,NA,NA,2e-04,NA,NA,"0.556292548113395",NA
+"Fasting glucose-related traits","Metabolic trait",17,17,NA,16,14,NA,1.03,0.99,NA,1e-04,1e-04,NA,"0.466844607729201","0.642626679294233"
+"Fasting plasma glucose","Metabolic trait",26,24,NA,18,12,NA,0.9,0.99,NA,1e-04,1e-04,NA,"0.498035637007764","0.723214825159875"
+"Graves' disease","Autoimmune",23,23,NA,14,NA,NA,0.92,NA,NA,1e-04,NA,NA,"0.533430763691894",NA
+"HDL cholesterol","Metabolic trait",152,114,23,114,61,0.53,0.8,0.85,4e-04,1e-04,1e-04,"0.757625459480024","0.300195127571525","0.689912576969266"
+"Heart failure","Cardiovascular disease",17,17,NA,12,NA,NA,0.47,NA,NA,9e-04,NA,NA,"0.609397417171977",NA
+"Heart rate","Cardiovascular trait",37,37,NA,32,12,NA,0.7,0.47,NA,1e-04,0.0098,NA,"0.405901641010421","0.694443165880912"
+"Height","Anthropometric trait",597,418,174,406,307,0.47,0.45,0.44,1e-04,1e-04,1e-04,"0.512354751358631","0.293672083908177","0.617496293871847"
+"Hippocampal atrophy","Neurologic",34,34,NA,23,NA,NA,0.34,NA,NA,2e-04,NA,NA,"0.54946570639636",NA
+"Hippocampal volume","Anthropometric trait",24,24,NA,17,NA,NA,0.55,NA,NA,1e-04,NA,NA,"0.596502187338755",NA
+"Hodgkin's lymphoma","Cancer",16,14,NA,11,NA,NA,0.59,NA,NA,4e-04,NA,NA,"0.410674198539238",NA
+"Hypertension","Cardiovascular disease",62,51,NA,40,17,NA,0.53,0.53,NA,1e-04,2e-04,NA,"0.407670954963824","0.811948790741731"
+"Infant length","Anthropometric trait",15,15,NA,13,NA,NA,0.85,NA,NA,1e-04,NA,NA,"0.564307835399731",NA
+"Inflammatory bowel disease","Autoimmune",114,111,39,121,77,0.54,0.77,0.63,1e-04,1e-04,1e-04,"0.641254205272652","0.292015924885963","0.60292896959518"
+"Inflammatory skin disease","Autoimmune",88,84,14,81,47,0.25,0.62,0.76,0.1107,1e-04,1e-04,"0.695038939876607","0.349555103901333","0.75598888673701"
+"Intraocular pressure","Eye trait",69,22,NA,18,NA,NA,0.87,NA,NA,1e-04,NA,NA,"0.556357778206473",NA
+"Kawasaki disease","Autoimmune",19,18,NA,15,NA,NA,0.83,NA,NA,1e-04,NA,NA,"0.538521384395197",NA
+"LDL cholesterol","Metabolic trait",113,94,22,99,59,0.6,0.77,0.82,5e-04,1e-04,1e-04,"0.658194093845948","0.296806551554005","0.692475042497017"
+"Longevity","Anthropometric trait",43,42,NA,29,NA,NA,0.33,NA,NA,2e-04,NA,NA,"0.489322216462726",NA
+"Lung cancer","Cancer",27,24,NA,25,NA,NA,0.65,NA,NA,1e-04,NA,NA,"0.459140983088351",NA
+"Major depressive disorder","Psychiatric",77,76,NA,64,14,NA,0.33,0.33,NA,1e-04,0.0348,NA,"0.366260707990444","0.795636669734981"
+"Mean corpuscular hemoglobin","Cardiovascular trait",30,22,NA,19,13,NA,0.66,0.58,NA,1e-04,0.0019,NA,"0.425052905065852","0.675212568929236"
+"Mean corpuscular volume","Cardiovascular trait",38,29,NA,26,13,NA,0.54,0.66,NA,1e-04,4e-04,NA,"0.432223928749857","0.733310311974021"
+"Mean platelet volume","Cardiovascular trait",53,43,NA,39,21,NA,0.74,0.58,NA,1e-04,1e-04,NA,"0.41056633854423","0.77141187615374"
+"Melanoma","Cancer",23,21,NA,11,NA,NA,0.88,NA,NA,1e-04,NA,NA,"0.493154631911564",NA
+"Menarche (age at onset)","Anthropometric trait",172,142,25,132,66,0.47,0.51,0.62,5e-04,1e-04,1e-04,"0.763556580858897","0.344813971065268","0.762662517163789"
+"Menopause (age at onset)","Anthropometric trait",36,35,NA,28,11,NA,0.87,0.94,NA,1e-04,1e-04,NA,"0.471397606730909","0.752782705455113"
+"Metabolic syndrome","Metabolic disease",47,42,NA,36,22,NA,0.84,0.8,NA,1e-04,1e-04,NA,"0.423602372795332","0.765736919095621"
+"Metabolite levels (Pyroglutamine)","Metabolic trait",23,23,NA,15,NA,NA,0.24,NA,NA,0.0355,NA,NA,"0.584002031124843",NA
+"Migraine","Neurologic",70,67,NA,58,23,NA,0.51,0.54,NA,1e-04,1e-04,NA,"0.33985690639805","0.749334598678452"
+"Migraine with aura","Neurologic",23,23,NA,14,NA,NA,0.13,NA,NA,0.1603,NA,NA,"0.579403519345894",NA
+"Migraine without aura","Neurologic",32,31,NA,28,NA,NA,0.55,NA,NA,1e-04,NA,NA,"0.464648790763797",NA
+"Multiple myeloma (IgH translocation)","Cancer",23,21,NA,12,NA,NA,0.28,NA,NA,0.0342,NA,NA,"0.555336034208147",NA
+"Multiple sclerosis","Autoimmune",162,141,46,135,87,0.54,0.63,0.64,1e-04,1e-04,1e-04,"0.639113183453401","0.313084023983596","0.631472044414533"
+"Myopia (pathological)","Eye disease",78,73,11,64,28,0.33,0.4,0.47,0.1955,1e-04,1e-04,"0.634633030495913","0.358317114240103","0.794307090455386"
+"Neutrophil count","Cardiovascular trait",26,25,NA,19,NA,NA,0.39,NA,NA,4e-04,NA,NA,"0.486521434739251",NA
+"Non-small cell lung cancer","Cancer",17,17,NA,12,NA,NA,0.94,NA,NA,1e-04,NA,NA,"0.688817964659797",NA
+"Obesity","Metabolic disease",28,26,NA,51,28,NA,0.86,1.01,NA,1e-04,1e-04,NA,"0.383397601361917","0.7175401215807"
+"Obesity-related traits","Anthropometric trait",833,779,269,701,521,0.44,0.32,0.32,1e-04,1e-04,1e-04,"0.488059800569656","0.308653865323598","0.625670598874866"
+"Optic cup area","Eye trait",24,23,NA,15,NA,NA,0.79,NA,NA,1e-04,NA,NA,"0.478161003331033",NA
+"Pancreatic cancer","Cancer",48,44,NA,34,14,NA,0.78,0.74,NA,1e-04,1e-04,NA,"0.482369335016113","0.815026969111724"
+"Panic disorder","Psychiatric",17,17,NA,11,NA,NA,0.7,NA,NA,1e-04,NA,NA,"0.628575048816938",NA
+"Parkinson's disease","Neurologic",98,74,NA,69,45,NA,0.82,0.84,NA,1e-04,1e-04,NA,"0.321684388330633","0.759539871485805"
+"Personality dimensions","Intelligence",21,21,NA,15,NA,NA,0.44,NA,NA,3e-04,NA,NA,"0.497757819683135",NA
+"Phospholipid levels (plasma)","Metabolic trait",61,52,NA,38,20,NA,0.75,0.75,NA,1e-04,1e-04,NA,"0.485982818663663","0.837877303875706"
+"Platelet counts","Cardiovascular trait",77,68,NA,68,41,NA,0.63,0.51,NA,1e-04,1e-04,NA,"0.315334764376682","0.716810208573606"
+"Post-traumatic stress disorder","Psychiatric",24,24,NA,18,NA,NA,0.42,NA,NA,1e-04,NA,NA,"0.522735058945484",NA
+"PR interval","Cardiovascular trait",34,21,NA,15,NA,NA,0.73,NA,NA,1e-04,NA,NA,"0.459997470062405",NA
+"Prostate cancer","Cancer",131,109,18,94,38,0.54,0.77,0.73,0.0029,1e-04,1e-04,"0.780760218434082","0.320515849899217","0.735445896625782"
+"Psoriasis","Autoimmune",47,39,NA,38,25,NA,0.83,0.78,NA,1e-04,1e-04,"0.729429631834176","0.42260413332073","0.715493612779455"
+"QT interval","Cardiovascular trait",145,103,22,91,47,0.6,0.62,0.73,3e-04,1e-04,1e-04,"0.69926188425092","0.281467752645344","0.746212520697301"
+"Red blood cell traits","Cardiovascular trait",45,45,13,48,15,0.51,0.54,0.49,0.017,1e-04,0.0044,"0.691536810893485","0.35523306307148","0.769097214032067"
+"Refractive error","Eye disease",29,27,NA,22,12,NA,0.97,1.01,NA,1e-04,1e-04,NA,"0.475223739631131","0.789154233175403"
+"Resting heart rate","Cardiovascular trait",13,12,NA,11,NA,NA,0.65,NA,NA,1e-04,NA,NA,"0.527026845337967",NA
+"Rheumatoid arthritis","Autoimmune",183,136,26,121,69,0.53,0.89,0.86,1e-04,1e-04,1e-04,"0.764369821978277","0.314285023256165","0.666735943289225"
+"Schizophrenia","Psychiatric",233,199,42,185,108,0.42,0.55,0.52,1e-04,1e-04,1e-04,"0.668202276273809","0.334044723707715","0.707228598732608"
+"Smoking behavior","Psychiatric",41,39,NA,31,13,NA,0.72,0.87,NA,1e-04,1e-04,NA,"0.482901106302815","0.81278794030138"
+"Subcutaneous adipose tissue","Anthropometric trait",37,36,NA,23,NA,NA,0.39,NA,NA,2e-04,NA,NA,"0.510765560827069",NA
+"Sudden cardiac arrest","Cardiovascular disease",50,50,NA,43,NA,NA,0.37,NA,NA,1e-04,NA,NA,"0.373665485930514",NA
+"Systemic lupus erythematosus","Autoimmune",90,71,16,83,50,0.42,0.88,0.8,0.0375,1e-04,1e-04,"0.729323897148887","0.341869976847739","0.658555609135589"
+"Systemic sclerosis","Autoimmune",18,16,NA,19,18,NA,0.98,0.79,NA,1e-04,1e-04,NA,"0.454479484033683","0.546103836773427"
+"Systolic blood pressure","Cardiovascular trait",44,37,NA,35,21,NA,0.86,0.7,NA,1e-04,1e-04,NA,"0.416207452783298","0.811957992168031"
+"Telomere length","Anthropometric trait",30,27,NA,22,NA,NA,1.15,NA,NA,1e-04,NA,NA,"0.615203898593603",NA
+"Testicular germ cell tumor","Cancer",21,20,NA,14,11,NA,0.92,0.92,NA,1e-04,1e-04,NA,"0.48726640467782","0.727269363651362"
+"Triglycerides","Metabolic trait",103,68,NA,61,29,NA,0.86,0.85,NA,1e-04,1e-04,"0.807218836608718","0.336843536166231","0.719743246405835"
+"Type 1 diabetes","Autoimmune",78,72,NA,68,42,NA,0.89,0.75,NA,1e-04,1e-04,NA,"0.319282260401677","0.699179615891586"
+"Type 2 diabetes","Metabolic disease",228,174,31,158,114,0.47,0.91,0.91,5e-04,1e-04,1e-04,"0.751701470646161","0.308856050051195","0.690171744021098"
+"Ulcerative colitis","Autoimmune",127,106,12,92,56,0.34,0.8,0.67,0.0846,1e-04,1e-04,"0.709744394691301","0.316653395662188","0.626648013677202"
+"Venous thromboembolism","Cardiovascular disease",26,17,NA,13,NA,NA,0.87,NA,NA,1e-04,NA,NA,"0.584022116640766",NA
+"Verbal declarative memory","Intelligence",31,29,NA,12,NA,NA,0.32,NA,NA,0.0124,NA,NA,"0.589461461300385",NA
+"Vertical cup-disc ratio","Eye disease",26,24,NA,16,NA,NA,0.63,NA,NA,1e-04,NA,NA,"0.452522533040299",NA
+"Visceral fat","Anthropometric trait",39,39,NA,28,NA,NA,0.38,NA,NA,1e-04,NA,NA,"0.482899717916093",NA
+"Vitiligo","Autoimmune",37,35,NA,30,NA,NA,0.87,NA,NA,1e-04,NA,NA,"0.444814635576041",NA
+"Waist circumference","Anthropometric trait",24,24,NA,17,NA,NA,0.61,NA,NA,1e-04,NA,NA,"0.543838221280995",NA
+"Waist-hip ratio","Anthropometric trait",22,21,NA,19,NA,NA,0.88,NA,NA,1e-04,NA,NA,"0.511023530749907",NA
+"Weight","Anthropometric trait",33,31,NA,24,12,NA,0.89,1.09,NA,1e-04,1e-04,NA,"0.527951860294897","0.786364871751316"
+"White blood cell count","Cardiovascular trait",25,19,NA,16,13,NA,0.54,0.25,NA,1e-04,0.0852,NA,"0.482430291391734","0.740635847107438"
