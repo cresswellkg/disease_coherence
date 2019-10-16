@@ -1,0 +1,53 @@
+---
+title: "07_Modularity_Analysis"
+author: "Kellen Cresswell"
+date: "October 15, 2019"
+output: pdf_document
+---
+
+```{r}
+require(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+#Read in modularity
+
+biogrid_mod = as.data.frame(readRDS("./data/Modularity_Results/biogrid_mod.rds"))
+string_mod = as.data.frame(readRDS("./data/Modularity_Results/string_mod.rds"))
+string_filt_mod = as.data.frame(readRDS("./data/Modularity_Results/string_filt_mod.rds"))
+```
+
+```{r}
+#Read in coherence table
+
+coherence_table = read.csv(".././manuscript/Tables/supplementary_table_S3.csv")
+
+#Putting together frame for merging
+
+mod_frame_b_s = full_join(biogrid_mod, string_mod, "i")
+
+mod_frame = full_join(mod_frame_b_s, string_filt_mod, "i")
+
+#Fixing column names
+
+mod_frame = mod_frame %>% dplyr::rename(Disease = i, Biogrid.Modularity = mod.x, String.Modularity=mod.y, String.Filt.Modularity = mod)
+
+#Join to coherence_table
+
+coherence_table = left_join(coherence_table, mod_frame, "Disease")
+
+#Fix mod cutoff being 5 and p-value being 10 for filtered
+
+coherence_table = coherence_table %>% mutate(String.Filt.Modularity = ifelse(is.na(String.Filt.P.value), NA, String.Filt.Modularity   ))
+
+#Remove . added by read.csv
+
+colnames(coherence_table) = gsub("\\.", " ",colnames(coherence_table))
+```
+
+```{r}
+#Write to table
+write.csv(coherence_table, ".././manuscript/Tables/supplementary_table_S3.csv", 
+          row.names = FALSE)
+```
