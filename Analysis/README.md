@@ -59,7 +59,13 @@ Contains individual files for all diseases in `data(ebicat37)` from the `gwascat
 
 ### `Cluster_Scripts`
 
-Permutation analysis scripts ran on the cluster. `biogrid_perm*.R`, `string_perm_cluster*.R`, `string_perm_filt*R` run the permutation analysis in batches using Biogrid, STRING, STRING filtered PPI databases, respectively. `bind*.R` combine the results to produce `Complete_10k_Biogrid.rds`, `Complete_10k_String.rds`, `Complete_10k_String_Filt.rds` files, to be placed in the `Permutation_Results` folder
+Permutation analysis scripts ran on the cluster: `biogrid_perm*.R`, `string_perm_cluster*.R`, `string_perm_filt*R` run the permutation analysis in batches using Biogrid, STRING, STRING filtered PPI databases, respectively. `bind*.R` combine the results to produce `Complete_10k_Biogrid.rds`, `Complete_10k_String.rds`, `Complete_10k_String_Filt.rds` files, to be placed in the `Permutation_Results` folder
+
+Modularity analysis scripts ran on the cluster: `biogrid_modularity.R`, `string_modularity.R`, `string_filt_modularity.R` run the modularity analysis using Biogrid, STRING, STRING filtered PPI databases, respectively. Produced `biogrid_mod.rds`, `string_filt_mod.rds`, `string_mod.rds` files are in the `Modularity_Results` folder
+
+### `Modularity_Results`
+
+Results of the modularity analysis used by `07_Modularity_Analysis.Rmd`
 
 ### `Permutation_Results`
 
