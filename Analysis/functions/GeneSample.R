@@ -1,7 +1,7 @@
 GeneSample = function(num_genes, actions, directed = TRUE) {
   
   require(igraph)
-  gene_list = sample(unique(actions$hgnc_symbol_a), num_genes)
+  gene_list = base::sample(unique(actions$hgnc_symbol_a), num_genes)
   
   if (directed) {
   act_sub = actions %>% 

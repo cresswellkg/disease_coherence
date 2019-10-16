@@ -6,7 +6,7 @@ diseases2mod = function(disease_dis, links) {
   #Get internal vs. external connectivity
   
   disease_nets = lapply(disease_dis, function(x) {
-    gene_list = read.table(x)$V1
+    gene_list = disease_dis$Genes
     genes2graph(gene_list, links, directed = FALSE)
   })
   
