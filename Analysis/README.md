@@ -22,12 +22,14 @@ In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`)
     - Calculates normalized coherence for phenotype-specific networks and saves them in `data/CoherenceResults/coherence_biogrid.rds`, `coherence_string.rds`, `coherence_string_filt.rds`. 
     - Produces two additional files `data/CoherenceResults/All_Msig_String.rds` containing slopes for all Msigdf pathways and `data/CoherenceResults/string_random_edges.rds` containing slopes for randomly generated pathways.
 
--`04_Coherence_Calculations.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. 
+- `04_Coherence_Calculations.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. 
     - Uses `data/CoherenceResults/coherence_*.rds` files, `supplementary_table_diseases_selected.csv`, and files in the `Analysis/Permutation_Results` folder. Creates `./manuscript/tables/supplementary_table_S3.csv`.
 
 -`05_Category_Tables.Rmd` - Produces tables and plots summarizing coherence of Msigdf pathways and diseases separated by coherence.  Relies on `./manuscript/tables/supplementary_table_S3.csv` created by `04_Coherence_Calculations.Rmd`. Creates `./manuscript/tables/Table_1.csv`, `./manuscript/tables/supplementary_table_S1.xlsx`, `supplementary_table_S2.xlsx`, `Fig2_Size_Slope_Plot.png`.
 
 - `06_Analysis_Tables.Rmd` - Produces main and supplementary figures. Relies on `./manuscript/tables/supplementary_table_S3.csv`. Creates `./manuscript/Figures/*`
+
+- `07_Modularity_Analysis.Rmd`  - Takes `./manuscript/tables/supplementary_table_S3.csv` created by `04_Coherence_Calculations.Rmd`, adds Modularity results
 
 Files:
 
