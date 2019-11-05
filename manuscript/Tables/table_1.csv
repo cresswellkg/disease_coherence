@@ -1,0 +1,13 @@
+"Category","Number of SNPs","Number of Genes","Total Diseases","Mean Biogrid Coherence","Mean String Coherence","Mean String Filtered Coherence"
+"Anthropometric trait",2090,1771,15,0.46,0.636666666666667,0.691428571428571
+"Autoimmune",1383,1184,18,0.425,0.82,0.701428571428571
+"Cancer",670,570,15,0.49,0.689333333333333,0.723333333333333
+"Cardiovascular disease",301,259,7,0.38,0.694285714285714,0.66
+"Cardiovascular trait",728,604,15,0.555,0.675333333333333,0.625
+"Eye disease",229,202,5,0.33,0.63,0.6625
+"Eye trait",158,109,5,NA,0.724,1.05
+"Intelligence",181,177,4,0.18,0.395,0.405
+"Metabolic disease",331,269,4,0.47,0.825,0.906666666666667
+"Metabolic trait",790,646,10,0.7375,0.779,0.863333333333333
+"Neurologic",372,333,7,NA,0.492857142857143,0.7175
+"Psychiatric",678,611,11,0.54,0.551818181818182,0.641666666666667
