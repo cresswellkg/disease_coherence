@@ -3,7 +3,7 @@ bibliography: [references/networks.bib,references/brain.bib,references/enrichmen
 csl: styles.ref/genomebiology.csl
 output:
   word_document:
-    reference_docx: styles.doc/Arial_11_single_space_normal_margins.docx
+    reference_docx: styles.doc/BMC_Bioinformatics.docx
   pdf_document: default
   html_document: default
 editor_options: 
