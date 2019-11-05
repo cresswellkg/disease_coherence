@@ -1,6 +1,6 @@
 ---
 bibliography: [references/networks.bib,references/brain.bib,references/enrichment.bib,references/3D_refs.bib]
-csl: styles.ref/genomebiology.csl
+csl: styles.ref/bmc-bioinformatics.csl
 output:
   word_document:
     reference_docx: styles.doc/BMC_Bioinformatics.docx
