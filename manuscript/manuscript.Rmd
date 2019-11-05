@@ -197,6 +197,10 @@ To test whether each slope is significantly different than random, we used a per
 
 <!--For each disease, we find the absolute value of the difference between its slope and the random coherence slope. Next, we combine the genes for each disease with those of the random diseases and take two random samples of equal size to the disease gene set. We then calculate the absolute difference in slopes between the randomly sampled gene sets. This process is repeated 1000 times. Finally, we obtain a permutation p-value by taking the number of times the difference in slopes between random samples were less than the overall difference in slopes and dividing by 1000. -->
 
+## Availability of data and materials
+
+The code and the data supporting the conclusions of this article are available in the https://github.com/dozmorovlab/disease_coherence GitHub repository.
+
 # Abbreviations
 
 - GWAS - Genome-Wide Association Study
