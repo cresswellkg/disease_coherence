@@ -133,6 +133,7 @@ We further estimated coherence of 67 diseases from seven categories (Figure 4, S
 ## Intermediate coherence of autoimmune, neurologic, and eye diseases
 
 "Rheumatoid arthritis", "Systemic Lupus Erythematosus", and "Systemic sclerosis" were the most coherent in the "Autoimmune" category (0.86, 0.80, 0.79, respectively). On the other end of the coherence spectrum, "Allergic rinitis" and "Atopic dermatitis" were the least coherent (0.51, 0.60, respectively). The average coherence of autoimmune diseases was high, 0.70 (Table 1), with all autoimmune diseases, except "Allergic rinitis", having coherence estimates > 0.60 (Supplementary Table S3). Diseases in the "Neurologic" category were similarly highly coherent (average coherence 0.72). However, the average coherence of neurologic disorders using STRING database was 0.49, suggesting that, with larger number of networks being estimated the overall coherence of neurologic diseases is low. "Alzheimer's disease" and "Parkinson's disease" were the most coherent (0.88 and 0.84, respectively), while "Migraine" was the least coherent (0.54). Diseases in the "Eye disease" category were more heterogeneous, with coherence ranging from 0.35 for "Corneal astigmatism" to 1.01 for "Refractive error". The average coherence of diseases in the "Eye disease" category was relatively high (0.66). 
+
 +-------+
 | ![](Figures/Fig4_summary_diseases.png)      |
 | **Figure 4. Coherence estimates of diseases.** Size of dots represents the level of normalized coherence (X-axis) for individual diseases (Y-axis).   |
