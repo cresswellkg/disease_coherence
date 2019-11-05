@@ -203,11 +203,7 @@ The code and the data supporting the conclusions of this article are available i
 
 # Abbreviations
 
-- GWAS - Genome-Wide Association Study
-- KEGG - Kyoto Encyclopedia of Genes and Genomes
-- MSigDb - Molecular Signatures Database 
-- PPI - Protein-Protein Interaction
-- SNP - Single Nucleotide Polymorphism
+GWAS - Genome-Wide Association Study; KEGG - Kyoto Encyclopedia of Genes and Genomes; MSigDb - Molecular Signatures Database; PPI - Protein-Protein Interaction; SNP - Single Nucleotide Polymorphism
 
 # Acknowledgements
 
@@ -216,6 +212,10 @@ This work was supported by a Genetics and Human Agency Award from the Templeton 
 ## Competing interests
 
 The authors declare that they have no competing interests.
+
+## Authors’ contributions
+
+MD, KK, CC, and MR conceived the study. KC and MD performed the experiments. MD primarily wrote the manuscript. KK, MR, CC, and SB participated in manuscript writing. All authors read and approved the final manuscript.
 
 # Supplementary material
 
