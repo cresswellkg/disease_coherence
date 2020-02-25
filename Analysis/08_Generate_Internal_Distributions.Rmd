@@ -1,0 +1,194 @@
+---
+title: "Density_Plots"
+author: "Kellen Cresswell"
+date: "February 22, 2020"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+require(dplyr)
+require(ggplot2)
+library(readr)
+source("functions/GeneSample.R")
+library(cowplot)
+library(gridExtra)
+```
+
+```{r}
+#Repeating for string
+
+data_dir = "./data/"
+
+#Read in new string database
+
+string = read_table2(paste0(data_dir,"9606.protein.links.v11.0.txt.gz"))
+
+string = string %>% mutate(protein1 = gsub("9606.", "", protein1), 
+                             protein2 = gsub("9606.", "", protein2))
+
+#Read in ensemble protein ID
+
+ensembl = biomaRt::useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "www")
+
+#Get gene set
+genes = biomaRt::getBM(attributes=c('ensembl_peptide_id','hgnc_symbol'), mart = ensembl)
+
+
+#Join gene names with string
+
+string = left_join(string, genes, by = c("protein1" = "ensembl_peptide_id", "protein2" = "ensembl_peptide_id"))
+
+#Rename to work with our functions
+
+string = string %>% dplyr::rename(hgnc_symbol_a = hgnc_symbol)
+
+#Repeat for second set of proteins
+
+string = left_join(string, genes, by = c("protein2" = "ensembl_peptide_id"))
+
+string = string %>% dplyr::rename(hgnc_symbol_b = hgnc_symbol)
+
+string_filt = string %>% filter(combined_score>=500)
+
+dim(string)
+```
+
+```{r}
+disease_overall = readRDS("biogrid_edges_new.rds")
+disease_overall_string = readRDS("string_edges_new.rds")
+disease_overall_string_filt = readRDS("string_filt_edges_new.rds")
+```
+
+```{r}
+coherence = readRDS("data/Coherence_Results/coherence_biogrid.rds") %>% dplyr::mutate(High = ifelse(Coherence>.85, "High", ifelse(Coherence<.58, "Low", "Neither"))) %>% dplyr::select(Disease, High)
+coherence_string = readRDS("data/Coherence_Results/coherence_string.rds") %>% dplyr::mutate(High = ifelse(Coherence>.85, "High", ifelse(Coherence<.58, "Low", "Neither"))) %>% dplyr::select(Disease, High)
+coherence_string_filt =  readRDS("data/Coherence_Results/coherence_string_filt.rds") %>% dplyr::mutate(High = ifelse(Coherence>.85, "High", ifelse(Coherence<.58, "Low", "Neither"))) %>% dplyr::select(Disease, High)
+```
+
+```{r}
+counts_biogrid = disease_overall %>% group_by(Disease) %>% filter(Internal !=0) %>% summarise(Count = n())
+
+counts_string = disease_overall_string %>% group_by(Disease) %>% filter(Internal !=0) %>% summarise(Count = n())
+
+counts_string_filt = disease_overall_string_filt %>% group_by(Disease) %>% filter(Internal !=0) %>% summarise(Count = n())
+```
+
+```{r}
+disease_overall = left_join(disease_overall, coherence) %>% dplyr::filter(High %in% c("High", "Low"))
+disease_overall_string = left_join(disease_overall_string, coherence_string)  %>% dplyr::filter(High %in% c("High", "Low"))
+disease_overall_string_filt = left_join(disease_overall_string_filt, coherence_string_filt)  %>% dplyr::filter(High %in% c("High", "Low"))
+```
+
+
+```{r}
+disease_overall = left_join(disease_overall, counts_biogrid)
+disease_overall_string = left_join(disease_overall_string, counts_string)
+disease_overall_string_filt = left_join(disease_overall_string_filt, counts_string_filt)
+
+```
+
+```{r}
+#Generate random networks equivalent to high coherence (STRING)
+random_string_high = bind_rows()
+
+for (i in unique((disease_overall_string %>% filter(High == "High"))$Count)) {
+ diseases_curr = GeneSample(i, string, directed = FALSE)
+ diseases_curr = data.frame(Genes = names(diseases_curr$internal_connectivity), Internal = (diseases_curr$internal_connectivity), External = (diseases_curr$external_connectivity), Disease = "Random", Category = "Random", High = "Random", Count = i)
+ diseases_curr  = diseases_curr %>% filter(Internal != 0)
+  random_string_high = bind_rows(diseases_curr, random_string_high)
+}
+  
+#Generate random networks equivalent to low coherence (STRING)
+random_string_low = bind_rows()
+
+for (i in unique((disease_overall_string %>% filter(High == "Low"))$Count)) {
+ diseases_curr = GeneSample(i, string, directed = FALSE)
+ diseases_curr = data.frame(Genes = names(diseases_curr$internal_connectivity), Internal = (diseases_curr$internal_connectivity), External = (diseases_curr$external_connectivity), Disease = "Random", Category = "Random", High = "Random", Count = i)
+ diseases_curr  = diseases_curr %>% filter(Internal != 0)
+  random_string_low = bind_rows(diseases_curr, random_string_low)
+}
+
+#Generate random networks equivalent to high coherence (STRING Filtered)
+random_string_filt_high = bind_rows()
+
+for (i in unique((disease_overall_string_filt %>% filter(High == "High"))$Count)) {
+ diseases_curr = GeneSample(i, string_filt, directed = FALSE)
+ diseases_curr = data.frame(Genes = names(diseases_curr$internal_connectivity), Internal = (diseases_curr$internal_connectivity), External = (diseases_curr$external_connectivity), Disease = "Random", Category = "Random", High = "Random", Count = i)
+ diseases_curr  = diseases_curr %>% filter(Internal != 0)
+  random_string_filt_high = bind_rows(diseases_curr, random_string_filt_high)
+}
+  
+#Generate random networks equivalent to low coherence (STRING Filtered)
+random_string_filt_low = bind_rows()
+
+for (i in unique((disease_overall_string_filt %>% filter(High == "Low"))$Count)) {
+ diseases_curr = GeneSample(i, string_filt, directed = FALSE)
+ diseases_curr = data.frame(Genes = names(diseases_curr$internal_connectivity), Internal = (diseases_curr$internal_connectivity), External = (diseases_curr$external_connectivity), Disease = "Random", Category = "Random", High = "Random", Count = i)
+ diseases_curr  = diseases_curr %>% filter(Internal != 0)
+  random_string_filt_low = bind_rows(diseases_curr, random_string_filt_low)
+}
+  
+#Adding random to string and string filtered
+disease_overall_string = bind_rows(disease_overall_string, random_string_high, random_string_low)
+
+disease_overall_string_filt = bind_rows(disease_overall_string_filt, random_string_filt_high, random_string_filt_low)
+```
+
+```{r}
+#Performing wilcox test of internal edges
+string_wilcox = pairwise.wilcox.test(disease_overall_string$Internal, disease_overall_string$High, "bonferroni")
+string_wilcox_filt = pairwise.wilcox.test(disease_overall_string_filt$Internal, disease_overall_string_filt$High, "bonferroni")
+
+#Performing wilcox test of external edges
+string_wilcox_ex = pairwise.wilcox.test(disease_overall_string$External, disease_overall_string$High, "bonferroni")
+string_wilcox_filt_ex = pairwise.wilcox.test(disease_overall_string_filt$External, disease_overall_string_filt$High, "bonferroni")
+
+#Performing KS test of internal edges
+# source("https://raw.githubusercontent.com/happyrabbit/DataScienceR/master/R/pairwise_ks_test.R")
+# string_ks = pairwise_ks_test(disease_overall_string$Internal, disease_overall_string$High)
+# string_ks_filt = pairwise_ks_test(disease_overall_string_filt$Internal, disease_overall_string_filt$High)
+# string_ks
+# string_ks_filt
+
+# Save in Supplementary Table S4 that will be Additional File 9
+x <- list(data.frame(Coherence = c("Low", "Random"), string_wilcox$p.value), 
+          data.frame(Coherence = c("Low", "Random"), string_wilcox_filt$p.value), 
+          data.frame(Coherence = c("Low", "Random"), string_wilcox_ex$p.value), 
+          data.frame(Coherence = c("Low", "Random"), string_wilcox_filt_ex$p.value))
+names(x) <- c("STRING_internal", "STRINGfilt_internal", "STIRNG_external",  "STIRNGfilt_external")
+writexl::write_xlsx(x, path = "../manuscript/Tables/supplementary_table_S4.xlsx")
+```
+
+```{r}
+#Internal edges 
+# gg_biogrid = ggplot(disease_overall %>% dplyr::filter(Internal != 0), aes(x = Internal, fill = High)) + geom_density(alpha = 0.1) + labs(fill = "Coherence",x = "Internal Edges")
+# plot(gg_biogrid)
+# ggsave(gg_biogrid + theme_bw(20), file= './figures/Internal_Distribution_Biogrid.png', units = "in", width = 3.5, height = 2.5, scale = 2.8)
+
+gg_string = ggplot(disease_overall_string %>% dplyr::filter(Internal != 0), aes(x = Internal, fill = High)) + geom_density(alpha = 0.3) + labs(fill = "Coherence", x = "Internal Edges", y = "Density") + xlim(0, 75) + theme_cowplot() + theme(legend.position = c(0.6, 0.6)) + ggtitle("STRING") + theme(plot.title = element_text(size=12, hjust = 0.5, margin = margin(t = 10, b = -10)))
+plot(gg_string)
+# ggsave(gg_string, file= './figures/Internal_Distribution_String.png', units = "in", width = 4, height = 3)
+
+gg_string_filt = ggplot(disease_overall_string_filt %>% dplyr::filter(Internal != 0), aes(x = Internal, fill = High)) + geom_density(alpha = 0.3) + labs(fill = "Coherence", x = "Internal Edges", y = "Density") + xlim(0, 25) + theme_cowplot() + theme(legend.position = "none") + ggtitle("STRING Filtered") + theme(plot.title = element_text(size=12, hjust = 0.5, margin = margin(t = 10, b = -10)))
+# plot(gg_string_filt)
+# ggsave(gg_string_filt, file= './figures/Internal_Distribution_String_Filt.png', units = "in", width = 4, height = 3)
+
+#External edges
+gg_string_ex = ggplot(disease_overall_string, aes(x = External, fill = High)) + geom_density(alpha = 0.3) + labs(fill = "Coherence", x = "External Edges", y = "Density") + xlim(0, 4000) + theme_cowplot() + theme(legend.position = "none") + ggtitle("STRING") + theme(plot.title = element_text(size=12, hjust = 0.5, margin = margin(t = 10, b = -10)))
+# print(gg_string_ex)
+# ggsave(gg_string_ex, file= './figures/External_Distribution_String.png', units = "in", width = 4, height = 3)
+
+gg_string_filt_ex = ggplot(disease_overall_string_filt, aes(x = External, fill = High)) + geom_density(alpha = 0.3) + labs(fill = "Coherence", x = "External Edges", y = "Density") + xlim(0, 500) + theme_cowplot() + theme(legend.position = "none") + ggtitle("STRING Filtered") + theme(plot.title = element_text(size=12, hjust = 0.5, margin = margin(t = 10, b = -10)))
+# print(gg_string_filt_ex)
+# ggsave(gg_string_filt_ex, file= './figures/External_Distribution_String_Filt.png', units = "in", width = 4, height = 3)
+
+png(filename = "../manuscript/Figures/Fig3_degree_distributions.png", height = 5, width = 7, units = "in", res = 300)
+lay1 <- rbind(c(1, 2))
+lay2 <- rbind(c(1, 2))
+g1 <- arrangeGrob(grobs = list(gg_string, gg_string_filt), layout_matrix = lay1)
+g2 <- arrangeGrob(grobs = list(gg_string_ex, gg_string_filt_ex), layout_matrix = lay2)
+grid.arrange(g1, g2, ncol = 1)
+dev.off()
+```
