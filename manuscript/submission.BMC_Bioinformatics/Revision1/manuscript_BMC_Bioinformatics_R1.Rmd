@@ -10,7 +10,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Coherence of Molecular Mechanisms <!--in Genes Identified Through GWAS -->In Major Human Disease and Traits
+# <!-- New in Revision 1 -->A Method for Estimating <!-- End New in Revision 1 -->Coherence of Molecular Mechanisms <!--in Genes Identified Through GWAS -->In Major Human Disease and Traits
 
 Dozmorov, Mikhail G.^1+\*^ (mikhail.dozmorov@vcuhealth.org)  
 Cresswell, Kellen G.^1+^ (cresswellkg@vcu.edu)  
