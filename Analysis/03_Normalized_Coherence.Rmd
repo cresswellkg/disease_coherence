@@ -193,6 +193,21 @@ slopes_from_edges = function(edges) {
 
 The above function takes internal and external edges from each gene for each disease and calculates the total number of genes and the slope of internal vs. external edges. Genes with zero internal edges are filtered and diseases with less than `r num_genes` non-zero internal edges are filtered.
 
+# Define function for calculating confidence intervals from edges
+
+```{r}
+ci_from_edges = function(edges) {
+  edges %>% filter(Internal != 0)  %>% 
+    group_by(Disease, Category) %>% mutate(Count = n()) %>% group_by(Disease, Category, Count) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Lower = confint(mod)[1], Upper = confint(mod)[2])
+    }) %>% arrange(Lower) %>% filter(Count > num_genes)
+}
+```
+
+The above function takes internal and external edges from each gene for each disease and calculates the 95% confidence interval for coherence. Genes with zero internal edges are filtered and diseases with less than `r num_genes` non-zero internal edges are filtered.
+
 # Get edges for diseases from Biogrid (Connectivity_Comparison.Rmd)
 
 ```{r}
@@ -200,23 +215,25 @@ The above function takes internal and external edges from each gene for each dis
 disease_overall_biogrid     <- readRDS("biogrid_edges_new.rds")
 # Get Biogrid slopes and edge counts
 dis_slopes_biogrid_count = slopes_from_edges(disease_overall_biogrid)
-
+dis_slopes_biogrid_ci = ci_from_edges(disease_overall_biogrid)
 # String
 disease_overall_string     <- readRDS("string_edges_new.rds")
 # Get string slopes and edge counts
 dis_slopes_string_count = slopes_from_edges(disease_overall_string)
+dis_slopes_string_ci = ci_from_edges(disease_overall_string)
 
 # String Filtered
 disease_overall_string_filt     <- readRDS("string_filt_edges_new.rds")
 # Get string filtered slopes and edge counts
 dis_slopes_string_filt_count = slopes_from_edges(disease_overall_string_filt)
+dis_slopes_string_filt_ci = ci_from_edges(disease_overall_string_filt)
 ```
 
 # Define function for calculating normalized coherence and counts ignoring zero internal edges
 
 ```{r}
 # [??? What this function does? Write roxygen help]
-calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, num_rand = 10) {
+calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, num_rand = 10, ci = FALSE) {
   # Splitting into list by categories 
   Count_Sum = split(msig_frame %>% dplyr::select(Disease,Category, Num_Genes) %>% distinct() , msig_frame$Category)
   coherence_tab = bind_rows()
@@ -258,6 +275,7 @@ calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, n
       # Get median of all slopes
       rand_slope = median(unlist(slope_list))
 
+      if (!ci) {
       # Calculate coherence
       coherence = (dis$Slope - rand_slope)/(mod_slope-rand_slope)
       
@@ -265,8 +283,21 @@ calc_norm_coherence = function(msig_frame, dis_frame, database, num_msig = 10, n
       coherence = data.frame(Disease = dis$Disease, Coherence = coherence, 
                              Msig_Norm = mod_slope, Rand_Norm = rand_slope, Count = dis$Count)
       coherence_tab = bind_rows(coherence, coherence_tab)
+
+  
+  } else {
+  #Lower interval for coherence
+      coherence_low = (dis$Upper - rand_slope)/(mod_slope-rand_slope)
+      #Upper interval for coherence
+      coherence_up = (dis$Lower - rand_slope)/(mod_slope-rand_slope)
+      
+      coherence = data.frame(Disease = dis$Disease, Coherence_Lower = coherence_low, Coherence_Upper = coherence_up,Msig_Norm = mod_slope, Rand_Norm = rand_slope, Count = dis$Count)  
+      
+      coherence_tab = bind_rows(coherence, coherence_tab)
+
   }
-  return(coherence_tab)
+}
+return(coherence_tab)
 
 }
 ```
@@ -283,6 +314,20 @@ norm_coh_string_filt = calc_norm_coherence(msig_frame_string_filt, dis_slopes_st
 saveRDS(norm_coh_biogrid, "./data/Coherence_Results/coherence_biogrid.rds")
 saveRDS(norm_coh_string, "./data/Coherence_Results/coherence_string.rds")
 saveRDS(norm_coh_string_filt, "./data/Coherence_Results/coherence_string_filt.rds")
+```
+
+# Calculating CIs for normalized coherence
+
+```{r}
+# Calculating normalized coherence 
+norm_coh_biogrid_ci = calc_norm_coherence(msig_frame_biogrid, dis_slopes_biogrid_ci, database = biogrid, num_msig = num_msig, num_rand = num_rand, ci = TRUE)
+norm_coh_string_ci = calc_norm_coherence(msig_frame_string, dis_slopes_string_ci, database = string, num_msig = num_msig, num_rand = num_rand, ci = TRUE)
+norm_coh_string_filt = calc_norm_coherence(msig_frame_string_filt, dis_slopes_string_filt_ci, database = string_filt, num_msig = num_msig, num_rand = num_rand, ci = TRUE)
+
+#Saving to .rds files
+saveRDS(norm_coh_biogrid, "./data/Coherence_Results/coherence_biogrid_ci.rds")
+saveRDS(norm_coh_string, "./data/Coherence_Results/coherence_string_ci.rds")
+saveRDS(norm_coh_string_filt, "./data/Coherence_Results/coherence_string_filt_ci.rds")
 ```
 
 
