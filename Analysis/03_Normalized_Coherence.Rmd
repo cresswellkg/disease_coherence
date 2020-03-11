@@ -51,7 +51,7 @@ fileNameOut <- file.path("./data/Coherence_Results/", paste0("coherence_msig_", 
 
 ```{r}
 # Reading in Biogrid data
-biogrid = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt.gz")
+biogrid = read_tsv("./data/BIOGRID-ALL-3.5.174.mitab.txt")
 biogrid = biogrid %>% filter(`Taxid Interactor A` == "taxid:9606" & `Taxid Interactor B` == "taxid:9606")
 
 #Split based on Biogrid ID system then pull out gene names
@@ -135,6 +135,59 @@ get_msig_slopes = function(sub_cats, database) {
 }
 ```
 
+```{r}
+# [??? What this function does? Write roxygen help]
+
+get_msig_ci = function(sub_cats, database) {
+  require(msigdbr)
+  msig = msigdbr()
+  
+  # Subset to include msig
+  msig = msig %>% filter(gs_subcat %in% sub_cats)
+  
+  # Create empty list
+  mod_over = list()
+  # Set index for list entries
+  index = 1
+  # Loop through each pathway
+  for (j in unique(msig$gs_name)) {
+    #Subset to only include current pathway
+    curr_msig = msig %>% filter(gs_name == j)
+    #Write to table in format for disease2frame
+    write.table(curr_msig$gene_symbol, file = "temp_rea_bio.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+    #Get internal/external connectivity
+    diseases_curr = diseases2frame("temp_rea_bio.txt", links = database)
+    #Get disease name
+    diseases_curr = diseases_curr %>% mutate(Disease = j)
+    mod_over[[index]] = diseases_curr
+    index =  index+1
+  } 
+  
+  # Bind together list
+  mod_over = bind_rows(mod_over)
+  
+  # Applying categories
+  msig_cats  = msig %>% 
+    dplyr::select(Disease = gs_name, Category = gs_subcat) %>% 
+    distinct() #Get categories in order
+  
+  # Joining categories
+  mod_over = left_join(mod_over, msig_cats)
+  
+  #Getting gene counts
+  mod_over = mod_over %>% group_by(Disease) %>% filter(Internal != 0) %>% mutate(Num_Genes = n())
+  
+  #Getting slopes from each diseases
+  mod_over = mod_over %>% group_by(Disease, Category, Num_Genes) %>%
+    do({
+      mod = lm(sqrt(External) ~ sqrt(Internal)-1, data = .)
+      data.frame(Lower = confint(mod)[1], Upper = confint(mod)[2])
+    }) 
+  #Rename x (Default do tidy result) to Slope
+  return(mod_over)
+}
+```
+
 # Getting slope between internal/external edges from GOCC, KEGG and REACTOME pathways
 
 ```{r}
@@ -154,6 +207,24 @@ msig_frame_string_filt = get_msig_slopes(sub_cats = subcats, database = string_f
 saveRDS(msig_frame_biogrid, "Biogrid_Msig_Slopes.rds")
 saveRDS(msig_frame_string, "String_Msig_Slopes.rds")
 saveRDS(msig_frame_string_filt, "String_Filt_Msig_Slopes.rds")
+```
+
+# Getting 95% between internal/external edges from GOCC, KEGG and REACTOME pathways
+
+```{r}
+# Getting biogrid msig slopes
+msig_frame_biogrid_ci = get_msig_ci(sub_cats = subcats, database = biogrid)
+
+# Getting string msig slopes
+msig_frame_string_ci = get_msig_ci(sub_cats = subcats, database = string)
+
+# Getting string filtered msig slopes
+msig_frame_string_filt_ci = get_msig_ci(sub_cats = subcats, database = string_filt)
+
+# Saving the files
+saveRDS(msig_frame_biogrid_ci, "Biogrid_Msig_CI.rds")
+saveRDS(msig_frame_string_ci, "String_Msig_CI.rds")
+saveRDS(msig_frame_string_filt_ci, "String_Filt_Msig_CI.rds")
 ```
 
 # Getting all msig pathway slopes for string (Used in Supplementary Table 2)
