@@ -289,21 +289,27 @@ dis_slopes_string_filt_ci = ci_from_edges(disease_overall_string_filt)
 #Renaming names before joining and manipulating
 
 #BIOGRID
+dis_slopes_biogrid_count = dis_slopes_biogrid_count %>% ungroup() %>% dplyr::select(-Count) %>% dplyr::rename(`Biogrid Slope` = Slope)
 dis_slopes_biogrid_ci = dis_slopes_biogrid_ci %>% ungroup() %>% dplyr::select(-Count) %>% dplyr::rename(`Biogrid Lower` = Lower, `Biogrid Upper` = Upper)
+dis_slopes_biogrid <- full_join(dis_slopes_biogrid_count, dis_slopes_biogrid_ci, by = c("Disease", "Category"))
 
 #STRING
+dis_slopes_string_count = dis_slopes_string_count %>% dplyr::rename(`String Slope` = Slope)
 dis_slopes_string_ci = dis_slopes_string_ci %>% ungroup() %>% dplyr::select(-Count) %>% dplyr::rename(`String Lower` = Lower, `String Upper` = Upper)
+dis_slopes_string <- full_join(dis_slopes_string_count, dis_slopes_string_ci, by = c("Disease", "Category"))
 
 #STRING Filtered
+dis_slopes_string_filt_count = dis_slopes_string_filt_count %>% ungroup() %>% dplyr::select(-Count) %>% dplyr::rename(`String Filt Slope` = Slope)
 dis_slopes_string_filt_ci = dis_slopes_string_filt_ci %>% ungroup() %>% dplyr::select(-Count) %>% dplyr::rename(`String Filt Lower` = Lower, `String Filt Upper` = Upper)
+dis_slopes_string_filt <- full_join(dis_slopes_string_filt_count, dis_slopes_string_filt_ci, by = c("Disease", "Category"))
 
 #Biogrid and STRING
-ci = full_join(dis_slopes_biogrid_ci, dis_slopes_string_ci, by = c("Disease", "Category"))
+ci = full_join(dis_slopes_biogrid, dis_slopes_string, by = c("Disease", "Category"))
 
 #Merging in STRING Filtered
-ci = full_join(ci, dis_slopes_string_filt_ci, by = c("Disease", "Category"))
+ci = full_join(ci, dis_slopes_string_filt, by = c("Disease", "Category"))
 
-write.csv(ci, 'Confidence_Intervals.csv', quote = FALSE)
+write.csv(ci, '../manuscript/Tables/Confidence_Intervals.csv', quote = FALSE)
 ```
 
 # Define function for calculating normalized coherence and counts ignoring zero internal edges
