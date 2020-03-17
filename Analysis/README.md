@@ -20,7 +20,7 @@ In RStudio, set working directory to the `Analysis` folder (`setwd("Analysis")`)
 - `03_Normalized_Coherence.Rmd` - Scripts for calculating normalized coherence for phenotype-specific networks. 
     - Uses PPI data from Biogrid, String, String filtered and `*_edges_new.rds`, calculates slopes for MSigDb networks (KEGG, GOCC, Reactome) and saves them in `Biogrid_Msig_Slopes.rds`, `String_Msig_Slopes.rds`, `String_Filt_Msig_Slopes.rds`. 
     - Calculates normalized coherence for phenotype-specific networks and saves them in `data/CoherenceResults/coherence_biogrid.rds`, `coherence_string.rds`, `coherence_string_filt.rds`. 
-    - Produces two additional files `data/CoherenceResults/All_Msig_String.rds` containing slopes for all Msigdf pathways and `data/CoherenceResults/string_random_edges.rds` containing slopes for randomly generated pathways.
+    - Produces two additional files `data/CoherenceResults/All_Msig_String.rds` containing slopes for all Msigdf pathways and `data/CoherenceResults/string_random_edges.rds` containing slopes for randomly generated pathways. Also, saves results of confidence interval estimations for the normalized coherence, in `data/CoherenceResults/coherence_*_ci.rds`
 
 - `04_Coherence_Calculations.Rmd` - Takes normalized coherence, p-values and SNP/Gene counts and puts them into tables. 
     - Uses `data/CoherenceResults/coherence_*.rds` files, `supplementary_table_diseases_selected.csv`, and files in the `Analysis/Permutation_Results` folder. Creates `./manuscript/tables/supplementary_table_S3.csv`.
