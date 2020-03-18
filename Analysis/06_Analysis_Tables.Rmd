@@ -8,6 +8,8 @@ output:
   html_document:
     theme: cerulean
     toc: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -37,6 +39,7 @@ library(cowplot)
 max_genes <- 200 # Maximum number of genes for a network to be included
 min_genes <- 10  # Minimum number of genes for a network to be included
 fileNameIn0  <- "../manuscript/Tables/supplementary_table_S3.csv"   # diseases and traits, coherence new KEGG, REACTOME, CC. 2019-07-14, Kellen
+fileNameIn1 <- "../manuscript/Tables/Confidence_Intervals.csv" # Confidence intervals, generated in 03_Normalized_Coherence 2020-03-17
 # iconv -f UTF-8 -t ISO-8859-1 -c supplementary_table_S3.csv > tmp.csv
 mtx0 <- read_csv(fileNameIn0) %>% as.data.frame()
 # Rename some diseases
@@ -47,6 +50,15 @@ mtx0$Disease[mtx0$Disease == "Age-related macular degeneration"] <- "Macular deg
 mtx0$Disease[mtx0$Disease == "Lupus nephritis in systemic lupus erythematosus"] <- "Lupus nephritis in SLE"
 
 rownames(mtx0) <- mtx0$Disease
+```
+
+### Append confidence intervals
+
+```{r}
+# Should be done one time
+mtx <- read_csv(fileNameIn1)
+mtx0 <- left_join(mtx0, mtx, by = c("Disease", "Category"))
+write_csv(mtx0, fileNameIn0)
 ```
 
 ### Coherence distribution
@@ -62,12 +74,14 @@ mtx0[, "String Filt Coherence"] %>% unlist %>% c %>% unname %>% summary
 **Supplementary Figure S1.[FILE: Figures/FigS1_corr_coherence.png] Normalized coherence is unaffected by network size.** Red/blue gradient and numbers represent Pearson correlation coefficients between corresponding entries. 
 
 ```{r}
+# Add CI size
+mtx0 <- mtx0 %>% mutate(`CI Biogrid`=`Biogrid Upper`-`Biogrid Lower`, `CI String`=`String Upper`-`String Lower`, `CI String Filt`=`String Filt Upper`-`String Filt Lower`)
 # Selected data for correlation
 # Remove small/large networks
 mtx0_cor <- mtx0[ mtx0 %>% dplyr::select(starts_with("Size")) %>% apply(., 1, min, na.rm = TRUE) > min_genes &
                   mtx0 %>% dplyr::select(starts_with("Size")) %>% apply(., 1, max, na.rm = TRUE) < max_genes, ]
 # Remove size columns
-mtx0_cor <- mtx0_cor %>% dplyr::select(contains("Coherence"), contains("Number"), contains("P value"), contains("Modularity"))
+mtx0_cor <- mtx0_cor %>% dplyr::select(contains("Coherence"), contains("Number"), contains("P value"), contains("Modularity"), contains("Slope"), contains("CI"))
 # Jitter STRING p-value a bit
 set.seed(1)
 mtx0_cor$`String P value` <- jitter(mtx0_cor$`String P value`, amount = 0.0001)
@@ -85,12 +99,17 @@ print(paste0("Average correlation of coherences: ", mean(diff_cors_selected[uppe
 # Average correlation of coherences and p-value
 diff_cors_selected <- diff_cors[grepl("Coherence", rownames(diff_cors)), grepl("P value", colnames(diff_cors))]
 print(paste0("Average correlation of coherences and p-value: ", mean(diff_cors_selected[upper.tri(diff_cors_selected)])))
-
+# Average correlation of slopes and network sizes
+diff_cors_selected <- diff_cors[grepl("Slope", rownames(diff_cors)), grepl("Number of genes", colnames(diff_cors))]
+print(paste0("Average correlation of sloped and the number of genes: ", mean(diff_cors_selected)))
+# Average correlation of CIs and network sizes
+diff_cors_selected <- diff_cors[grepl("CI", rownames(diff_cors)), grepl("Number of genes", colnames(diff_cors))]
+print(paste0("Average correlation of CIs and the number of genes: ", mean(diff_cors_selected)))
 
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 # Selected correlations
-png(filename = "../manuscript/Figures/FigS1_corr_coherence.png", height = 2000, width = 2000, res = 300)
+png(filename = "../manuscript/Figures/FigS1_corr_coherence.png", height = 3000, width = 3000, res = 300)
 # corrgram::corrgram(diff_cors, order = FALSE, upper.panel=panel.cor, cex.labels = 4)
 corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circle", upper.col = col3(100), tl.cex = 1, tl.pos = "lt", tl.col = "black")
 dev.off()
@@ -283,4 +302,36 @@ corrplot.mixed(diff_cors, lower = "number", lower.col = col3(100), upper = "circ
 dev.off()
 ```
 
+
+# Confidence Interval investigation
+
+```{r eval=FALSE}
+mtx_ci_dotplot <- function(category = "Intelligence", mtx_traits = mtx, databases = c("Biogrid", "String", "String.Filt")) {
+  
+  mtx_traits_selected <- mtx_traits[mtx_traits$Category == category, grepl(databases, colnames(mtx_traits), fixed = TRUE)]
+  
+  mtx_traits_selected_to_plot <- data.frame(Disease = rownames(mtx_traits_selected), 
+                                            Slope = mtx_traits_selected[, paste0(databases, ".Slope")], 
+                                            Lower = mtx_traits_selected[, paste0(databases, ".Lower")],
+                                            Upper = mtx_traits_selected[, paste0(databases, ".Upper")])
+  # Remove noninformative rows
+  mtx_traits_selected_to_plot <- mtx_traits_selected_to_plot[complete.cases(mtx_traits_selected_to_plot), ]
+  # Sort by decreasing level of slope
+  mtx_traits_selected_to_plot$Disease <- factor(mtx_traits_selected_to_plot$Disease, levels = mtx_traits_selected_to_plot$Disease[order(mtx_traits_selected_to_plot$Slope)])
+  
+  p <- ggplot() +
+    geom_point(data=mtx_traits_selected_to_plot, mapping=aes(x=Disease, y=Slope), size=4, shape=21, fill="white") +
+    geom_errorbar(data=mtx_traits_selected_to_plot, mapping=aes(x=Disease, ymin=Lower, ymax=Upper), width=0.2, size=1, color="blue") +  
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ylab("Slope (unnormalized coherence") +
+    # geom_text_repel(size = 4, colour = "black") +
+    coord_flip() +
+    # theme_cowplot(12) +
+    theme(legend.position="none") +
+    theme(axis.text = element_text(size = 12)) + 
+    ggtitle(category)
+}
+
+
+```
 
