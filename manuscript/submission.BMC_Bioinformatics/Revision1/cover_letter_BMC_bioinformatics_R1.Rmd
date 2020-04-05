@@ -5,6 +5,24 @@ output:
   html_document: default
 ---
 
+Dear Dr. Talbot,
+
+This submission is the full revision of the manuscript BINF-D-19-01133. The title of the revised manuscript is "A Method for Estimating Coherence of Molecular Mechanisms In Major Human Disease and Traits". This manuscript will be of interest to the network analysis community working with the analysis of molecular networks.
+
+All comments raised during previous revisions have been addressed. The point-by-point response is attached.
+
+The brief overview of our revised work are:
+
+- Focus on a novel method for estimating and comparing the coherence of molecular-interaction networks. This method is independent of the size of molecular networks, allowing for comparing coherences across phenotype-specific networks of different sizes. The high coherence of a molecular network may inform about the therapeutically targetable molecular mechanisms.
+- Coherence estimation and comparison across 116 phenotype-specific networks from seven disease- and five trait categories, including the estimation of statistical significance of coherence measures.
+- Validation of our approach using different protein-protein interaction (PPI) databases.
+- Identification of diseases and traits with high or low coherence. E.g., metabolic diseases and traits showed consistently high coherence, while psychiatric disorders and intelligence-related traits were the least coherent.
+- Demonstration that coherence and the commonly used modularity measures capture different network properties.
+
+All data used in the manuscript was sourced from publicly available repositories (GWAScatalog, STRING, and Biogrid PPIs, MSigDb). All code and data needed to reproduce our results are made available on our GitHub repository https://github.com/dozmorovlab/disease_coherence. We also want to assure that this manuscript is not being considered for publication elsewhere.
+
+=== Start of Point-by-point response ===
+
 This resubmission has been extensively reworked with new results added. Major changes include:
 
 - New title to reflect the fact the manuscript presents the method
@@ -52,3 +70,18 @@ We agree with the need to investigate and compare degree distributions. We added
 > Another major drawback of the approach as presented is that there is no estimate of variance in the measure, that is, coherence should be treated as a random variable. In order to say that phenotype X has a higher coherence than phenotype Y, one would like to know the distributional properties of the point estimates, as I'm sure the authors are aware. It is not the same as saying a coherence value is different from random. The authors should provide confidence intervals etc. or remove all claims that one set of phenotypes has a "lower coherence" than another. The closest the authors get is comparing STRING and BioGRID (the authors do not mention their lack of independence; these databases overlap extensively). And the comparison is very qualitative anyway, for example saying on p9 line 22 that the "overall correlation remained high" without any numbers given.
 
 We agree that confidence intervals are important information that should be presented. We now report the untransformed slopes and the corresponding confidence intervals in numerical form (Additional file 3) and in terms of their correlations with network size (Additional file 4). It should be noted, however, that the untransformed slopes and their confidence intervals cannot be directly compared as they are expectedly affected by network size. We described those results in the "Network size and configuration hinders direct comparison of degree distributions" section. Normalizing confidence intervals using our strategy for normalizing slopes to size-matched random-high coherence range defy interpretability of confidence intervals in that their overlap would not be indicative of (the presence or the lack of) significant difference. Overall, we tried to keep our narrative maximally accessible to the reader while being quantitatively accurate. We report all numerical data in the main text or the additional files, e.g., the "overall correlation remained high" results can be easily seen on the cited Additional File 4 figure.
+
+=== End of Point-by-point response ===
+
+With our best regards,  
+On behalf of all authors,
+
+Mikhail Dozmorov, Ph.D., Blick scholar  
+Assistant Professor,  Department of Biostatistics 
+Affiliate, Department of Pathology  
+Virginia Commonwealth University  
+One Capitol Square, room 738  
+830 East Main Street  
+Richmond,  Virginia  23298  
+e-mail:  mikhail.dozmorov@vcuhealth.org  
+Phone: 804-827-2055  
