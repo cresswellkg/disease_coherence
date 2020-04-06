@@ -184,32 +184,6 @@ Our study investigated the coherence of the molecular mechanisms of genes associ
 
 GWAS - Genome-Wide Association Study; KEGG - Kyoto Encyclopedia of Genes and Genomes; MSigDb - Molecular Signatures Database; PPI - Protein-Protein Interaction; SNP - Single Nucleotide Polymorphism
 
-# Declarations
-
-## Ethics approval and consent to participate
-
-Not applicable.
-
-## Consent for publication
-
-Not applicable.
-
-## Availability of data and materials
-
-The code and the data supporting the conclusions of this article are available in the https://github.com/dozmorovlab/disease_coherence GitHub repository.
-
-## Competing interests
-
-The authors declare that they have no competing interests.
-
-## Funding
-
-This work was supported by a Genetics and Human Agency Award GF13361-152627 from the Templeton Foundation to KSK, MR, CC, SB. The content is solely the responsibility of the authors and does not necessarily represent the official views of the Templeton Foundation. 
-
-## Authors’ contributions
-
-MD, KK, CC, and MR conceived the study. KC and MD performed the experiments. MD primarily wrote the manuscript. KK, MR, CC, and SB participated in manuscript writing. All authors read and approved the final manuscript.
-
 # Methods
 
 ## Data sources
@@ -331,6 +305,36 @@ In GWAS, it is often assumed that local correlations between adjacent hypotheses
 | Eye disease            |       229      |       202       |        5       |          0.330         |         0.630         |              0.663             |
 | Cardiovascular disease |       301      |       259       |        7       |          0.380         |         0.694         |              0.660             |
 | Psychiatric            |       678      |       611       |       11       |          0.540         |         0.552         |              0.642             |
+
+# Declarations
+
+## Ethics approval and consent to participate
+
+Not applicable.
+
+## Consent for publication
+
+Not applicable.
+
+## Availability of data and materials
+
+The code and the data supporting the conclusions of this article are available in the https://github.com/dozmorovlab/disease_coherence GitHub repository.
+
+## Competing interests
+
+The authors declare that they have no competing interests.
+
+## Funding
+
+This work was supported by a Genetics and Human Agency Award GF13361-152627 from the Templeton Foundation to KSK, MR, CC, SB. The content is solely the responsibility of the authors and does not necessarily represent the official views of the Templeton Foundation. 
+
+## Authors’ contributions
+
+MD, KK, CC, and MR conceived the study. KC and MD performed the experiments. MD primarily wrote the manuscript. KK, MR, CC, and SB participated in manuscript writing. All authors read and approved the final manuscript.
+
+## Acknowledgements
+
+Not applicable
 
 # References
 

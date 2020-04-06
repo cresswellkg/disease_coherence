@@ -1,9 +1,12 @@
 ---
 output:
+  pdf_document: default
+  html_document: default
   word_document:
     reference_docx: /Users/mdozmorov/Documents/Work/presentations/Templates/grant_template/styles.doc/NSF_grant_style.docx
-  html_document: default
 ---
+
+# Revision changes
 
 This resubmission has been extensively reworked with new results added. Major changes include:
 
@@ -19,7 +22,7 @@ This resubmission has been extensively reworked with new results added. Major ch
     - Updated Additional File 4 showing the correlation of slopes and the sized of their confidence intervals with other measures
 - All results have been described in the corresponding Results sections, Methods sections and legends got updated
 
-Reviewer reports:
+# Reviewer response
 
 > This manuscript introduces a method, "network coherence", and applies it to human disease genes (from GWAS); in addition to introducing a new method, they make a claim that the coherence measure varies among specific disorders in a biologically significant manner. As such this work needs to be evaluated in these two aspects: First, whether the method is novel and sufficiently well-validated. Second, whether the data support the claims about human phenotypes.
 
